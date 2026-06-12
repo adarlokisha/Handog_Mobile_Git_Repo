@@ -5,8 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Handog_MobileApp"
     Shell.FlyoutBehavior="Disabled"
-    Title="Handog_MobileApp">
-
+    Title="Handog_MobileApp"
+    Shell.NavBarIsVisible="False">
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
