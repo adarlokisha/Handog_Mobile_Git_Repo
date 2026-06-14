@@ -20,9 +20,7 @@ namespace Handog_MobileApp
         // FIXED: Added the missing handler for the Volunteer navigation route
         private async void VClick_Clicked(object sender, EventArgs e)
         {
-            // Replace 'V_HOME' with whatever your actual volunteer home page class is named
-            // await Navigation.PushAsync(new V_HOME());
-            await DisplayAlert("Volunteer", "Volunteer flow initiated.", "OK");
+            await Navigation.PushAsync(new V_HOME());
         }
     }
 }

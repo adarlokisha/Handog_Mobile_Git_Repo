@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Handog_MobileApp.V_HOME"
+                      BackgroundColor="#F4F6F8"
+         NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="*, Auto">
+
+        <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Spacing="16" Padding="0,0,0,24">
+
+                <Grid BackgroundColor="#00BAC7" 
+                  RowDefinitions="Auto, Auto" 
+                  ColumnDefinitions="*, Auto" 
+                  Padding="20, 48, 20, 24"
+                  IgnoreSafeArea="True">
+
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="Welcome back," 
+                           TextColor="#1A1A1A" 
+                           FontSize="14"
+                           Opacity="0.7"/>
+                        <Label Text="Username!" 
+                           TextColor="#1A1A1A" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           Margin="0,2,0,0"/>
+                    </VerticalStackLayout>
+
+                    <Image Grid.Row="0" Grid.Column="1" 
+                       Source="bell_black.png" 
+                       WidthRequest="24" HeightRequest="24" 
+                       VerticalOptions="Center"
+                       Margin="0,0,4,0"/>
+
+                </Grid>
+
+                <Grid HeightRequest="210" Margin="0,4,0,0">
+                    <Image Source="o_greetingcard.png" Aspect="AspectFill"/>
+
+                    <BoxView BackgroundColor="White" Opacity="0.12"/>
+
+                    <VerticalStackLayout Padding="20" VerticalOptions="Center" Spacing="6">
+                        <Label Text="CONNECTING HEARTS&#10;AND STRENGTHENING&#10;COMMUNITIES" 
+                           TextColor="#1A1A1A" 
+                           FontAttributes="Bold" 
+                           FontSize="18" 
+                           LineHeight="1.15"/>
+
+                        <Label Text="Start bridging the gap by joining an initiative; volunteer now!" 
+                           TextColor="#444444" 
+                           FontSize="12" 
+                           Margin="0,2,40,12"/>
+
+                        <Button Text="+ JOIN EVENT" 
+                            BackgroundColor="#00BAC7" 
+                            TextColor="White" 
+                            FontAttributes="Bold" 
+                            HeightRequest="38"
+                            HorizontalOptions="Start"
+                            Padding="16,0"
+                            FontSize="12"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
+                    </Border.Shadow>
+
+                    <Grid ColumnDefinitions="*, Auto" Padding="16" VerticalOptions="Center">
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                            <Label Text="PARTICIPATION RATE" 
+                               TextColor="#1A1A1A" 
+                               FontAttributes="Bold" 
+                               FontSize="15"/>
+                            <Label Text="You've joined 29 out of 34 events!" 
+                               TextColor="#777777" 
+                               FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Grid Grid.Column="1" WidthRequest="64" HeightRequest="64" HorizontalOptions="End">
+                            <Ellipse Stroke="#F0F2F5" StrokeThickness="6" WidthRequest="60" HeightRequest="60"/>
+                            <Ellipse Stroke="#FAD02C" StrokeThickness="6" StrokeDashArray="10, 2" WidthRequest="60" HeightRequest="60"/>
+                            <Label Text="92%" 
+                               TextColor="#1A1A1A" 
+                               FontAttributes="Bold" 
+                               FontSize="14" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Padding="20" HorizontalOptions="Center" Spacing="14">
+                        <Label Text="OUR STORY" 
+                           TextColor="#E0B513" 
+                           FontAttributes="Bold" 
+                           FontSize="12" 
+                           HorizontalOptions="Center"
+                           CharacterSpacing="1"/>
+
+                        <Image Source="logo_teal.png" 
+                           WidthRequest="240" 
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center" 
+                           Margin="0,2"/>
+
+                        <Label Text="Our platform was created with one simple goal — to make community engagement easier, more organized, and more accessible for everyone. We saw the gap between people who want to serve, those who need support, and organizers who are willing to lead initiatives, but lack a centralized system to connect them all." 
+                           TextColor="#555555" 
+                           FontSize="13" 
+                           HorizontalTextAlignment="Center" 
+                           LineHeight="1.45"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" 
+            BackgroundColor="#00BAC7" 
+            StrokeShape="RoundRectangle 20,20,0,0" 
+            StrokeThickness="0" 
+            HeightRequest="60"
+            Padding="12, 0">
+            <Grid ColumnDefinitions="*, *, *, *">
+
+                <ImageButton Grid.Column="0" 
+                         Source="home.png" 
+                         HorizontalOptions="Center" 
+                         VerticalOptions="Center"
+                         HeightRequest="24" WidthRequest="24"
+                         BackgroundColor="Transparent"/>
+                <!--                          
+                <ImageButton Grid.Column="1" 
+                         Source="proposals.png" 
+                         Clicked="ProposalsBtn_Clicked"
+                         HorizontalOptions="Center" 
+                         VerticalOptions="Center"
+                         HeightRequest="24" WidthRequest="24"
+                         BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="2" 
+                         Source="events.png" 
+                         HorizontalOptions="Center"
+                         Clicked="EventsBtn_Clicked"
+                         VerticalOptions="Center"
+                         HeightRequest="28" WidthRequest="28"
+                         BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="3" 
+                         Source="profile.png" 
+                         Clicked="ProfileBtn_Clicked"
+                         HorizontalOptions="Center" 
+                         VerticalOptions="Center"
+                         HeightRequest="24" WidthRequest="24"
+                         BackgroundColor="Transparent"/>
+                -->
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
