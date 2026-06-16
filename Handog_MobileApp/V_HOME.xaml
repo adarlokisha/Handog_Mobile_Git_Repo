@@ -136,7 +136,7 @@
                          VerticalOptions="Center"
                          HeightRequest="24" WidthRequest="24"
                          BackgroundColor="Transparent"/>
-                <!--                          
+                                          
                 <ImageButton Grid.Column="1" 
                          Source="proposals.png" 
                          Clicked="ProposalsBtn_Clicked"
@@ -144,7 +144,7 @@
                          VerticalOptions="Center"
                          HeightRequest="24" WidthRequest="24"
                          BackgroundColor="Transparent"/>
-
+                <!--
                 <ImageButton Grid.Column="2" 
                          Source="events.png" 
                          HorizontalOptions="Center"

@@ -8,6 +8,12 @@ public partial class V_HOME : ContentPage
         NavigationPage.SetHasNavigationBar(this, false);
     }
 
+    private async void ProposalsBtn_Clicked(object sender, EventArgs e)
+    {
+        await AnimateButton(sender as ImageButton);
+        await Navigation.PushAsync(new V_PROPOSALS());
+    }
+
     private async Task AnimateButton(ImageButton button)
     {
         if (button != null)
