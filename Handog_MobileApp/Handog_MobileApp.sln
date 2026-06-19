@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handog_MobileApp", "Handog_MobileApp.csproj", "{1CE9DFCB-CD56-45BB-93DD-4E1E747AAF4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handog_AdminWeb", "..\Handog_AdminWeb\Handog_AdminWeb.csproj", "{F6361A3B-C5DE-40CD-A866-C376788CFB9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,14 @@ Global
 		{1CE9DFCB-CD56-45BB-93DD-4E1E747AAF4A}.Release|ARM32.ActiveCfg = Release|ARM32
 		{1CE9DFCB-CD56-45BB-93DD-4E1E747AAF4A}.Release|ARM32.Build.0 = Release|ARM32
 		{1CE9DFCB-CD56-45BB-93DD-4E1E747AAF4A}.Release|ARM32.Deploy.0 = Release|ARM32
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Debug|ARM32.ActiveCfg = Debug|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Debug|ARM32.Build.0 = Debug|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|ARM32.ActiveCfg = Release|Any CPU
+		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|ARM32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
