@@ -1,0 +1,73 @@
+﻿@page "/admin/login"
+@page "/"
+@layout Layout.EmptyLayout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<div class="login-screen-wrapper" style="width: 100vw; height: 100vh; display: flex; font-family: 'Segoe UI', sans-serif; background-color: #F8F9FA; margin: 0; padding: 0; overflow: hidden; position: fixed; top: 0; left: 0;">
+
+    <div style="flex: 1.2; background-color: #1A1A1A; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
+        <img src="mobile-images/logo_teal.png" alt="Handog Admin" style="width: 220px; height: auto; margin-bottom: 24px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));" />
+        <h1 style="color: #FAD02C; font-weight: bold; margin: 0; font-size: 36px;">HANDOG</h1>
+        <p style="color: #777777; margin-top: 10px; font-size: 14px; text-align: center; max-width: 300px; line-height: 1.5;">Centralized Management Hub & Volunteer Operations Control Center</p>
+    </div>
+
+    <div style="flex: 1; background-color: white; display: flex; justify-content: center; align-items: center; padding: 40px; box-shadow: -10px 0 30px rgba(0,0,0,0.05);">
+        <div style="width: 100%; max-width: 360px;">
+            <div style="margin-bottom: 35px;">
+                <h2 style="color: #1A1A1A; font-weight: bold; margin: 0; font-size: 24px;">Administrator Login</h2>
+                <p style="color: #777777; margin: 5px 0 0 0; font-size: 13px;">Enter system credentials to access master metrics dashboard.</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div style="padding: 12px; background-color: #FFEBEB; border-left: 4px solid #E60026; color: #E60026; font-size: 13px; font-weight: bold; border-radius: 4px; margin-bottom: 20px;">
+                    ❌ @ErrorMessage
+                </div>
+            }
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #555555; margin-bottom: 8px; text-transform: uppercase;">Admin Username</label>
+                <input type="text" @bind="InputUsername" placeholder="e.g., admin"
+                       style="width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #CCCCCC; font-size: 14px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #555555; margin-bottom: 8px; text-transform: uppercase;">Security Password</label>
+                <input type="password" @bind="InputPassword" placeholder="••••••••"
+                       style="width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #CCCCCC; font-size: 14px; box-sizing: border-box;" />
+            </div>
+
+            <button @onclick="ProcessLoginVerification"
+                    style="width: 100%; background-color: #FAD02C; color: #1A1A1A; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(250, 208, 44, 0.2);">
+                ACCESS COMMAND CENTER
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected string InputUsername { get; set; } = string.Empty;
+    protected string InputPassword { get; set; } = string.Empty;
+    protected string ErrorMessage { get; set; } = string.Empty;
+
+    protected void ProcessLoginVerification()
+    {
+        ErrorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(InputUsername) || string.IsNullOrWhiteSpace(InputPassword))
+        {
+            ErrorMessage = "Fields cannot be blank.";
+            return;
+        }
+
+        if (InputUsername == "admin" && InputPassword == "Pass123")
+        {
+            Navigation.NavigateTo("/admin/dashboard");
+        }
+        else
+        {
+            ErrorMessage = "Invalid administrative credentials.";
+        }
+    }
+}
