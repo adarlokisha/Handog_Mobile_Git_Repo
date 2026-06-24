@@ -2,86 +2,86 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Handog_MobileApp.O_PROFILE"
-             BackgroundColor="#F4F6F8"
+             Title="Organizer Profile"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *, Auto" BackgroundColor="#F4F6F8">
+    <Grid RowDefinitions="Auto, *, Auto">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#F4F6F8">
-            <Grid BackgroundColor="#FAD02C" ColumnDefinitions="Auto, *, Auto" Padding="16, 16, 16, 16">
+        <VerticalStackLayout Grid.Row="0" Spacing="0">
+            <Grid ColumnDefinitions="Auto, *, Auto" Padding="16">
                 <ImageButton Grid.Column="0"
                              Source="back_black.png" 
                              Clicked="BackBtn_Clicked"
-                             WidthRequest="24" HeightRequest="24"
+                             WidthRequest="24" 
+                             HeightRequest="24"
                              BackgroundColor="Transparent"
                              VerticalOptions="Center"
                              HorizontalOptions="Start"/>
 
                 <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
-                    <Label Text="Hi," TextColor="#1A1A1A" FontSize="15" Opacity="0.8" VerticalOptions="Center"/>
-                    <Label Text="Username!" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label Text="Hi," FontSize="15" Opacity="0.8" VerticalOptions="Center"/>
+                    <Label x:Name="LblHeaderUsername" Text="Organizer!" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </Grid>
 
             <VerticalStackLayout Padding="24, 20, 24, 12" HorizontalOptions="Center" Spacing="8">
                 <Image Source="profile_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
-                <Label Text="PROFILE" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
+                <Label Text="PROFILE" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
 
         <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
             <VerticalStackLayout Spacing="16" Padding="16,12,16,24">
 
-                <Border StrokeShape="RoundRectangle 8" StrokeThickness="1" Stroke="#CCCCCC" BackgroundColor="White" Padding="16">
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="1" Padding="16">
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="16">
                         <Grid Grid.Column="0" WidthRequest="70" HeightRequest="70" VerticalOptions="Center">
-                            <Ellipse Stroke="#1A1A1A" StrokeThickness="1.5" WidthRequest="70" HeightRequest="70"/>
-                            <Line X1="13" Y1="13" X2="57" Y2="57" Stroke="#1A1A1A" StrokeThickness="1.5"/>
-                            <Line X1="57" Y1="13" X2="13" Y2="57" Stroke="#1A1A1A" StrokeThickness="1.5"/>
+                            <Ellipse StrokeThickness="1.5" WidthRequest="70" HeightRequest="70"/>
+                            <Line X1="13" Y1="13" X2="57" Y2="57" StrokeThickness="1.5"/>
+                            <Line X1="57" Y1="13" X2="13" Y2="57" StrokeThickness="1.5"/>
                         </Grid>
 
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label Text="FNAME LNAME" TextColor="#000000" FontAttributes="Bold" FontSize="20"/>
-                            <Label Text="USERID" TextColor="#888888" FontSize="12" FontAttributes="Italic"/>
-                            <BoxView HeightRequest="1" BackgroundColor="#CCCCCC" Margin="0,4,0,2"/>
-                            <Label Text="ORGANIZER" TextColor="#FAD02C" FontAttributes="Bold" FontSize="13"/>
+                            <Label x:Name="LblFullName" Text="Loading Name..." FontAttributes="Bold" FontSize="20"/>
+                            <Label x:Name="LblAccountID" Text="Loading ID..." FontSize="12" FontAttributes="Italic"/>
+                            <BoxView HeightRequest="1" Margin="0,4,0,2"/>
+                            <Label Text="ORGANIZER" FontAttributes="Bold" FontSize="13"/>
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
 
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="STATISTICS" TextColor="#555555" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
+                    <Label Text="STATISTICS" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
 
-                    <Border StrokeShape="RoundRectangle 8" StrokeThickness="1" Stroke="#CCCCCC" BackgroundColor="White" Padding="12,16">
+                    <Border StrokeShape="RoundRectangle 8" StrokeThickness="1" Padding="12,16">
                         <Grid ColumnDefinitions="*, *, *">
                             <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="3" TextColor="#FAD02C" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
-                                <Label Text="Organized" TextColor="#555555" FontSize="12" HorizontalOptions="Center"/>
+                                <Label x:Name="LblCountOrganized" Text="0" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="Organized" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
 
                             <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="5" TextColor="#FAD02C" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
-                                <Label Text="Joined" TextColor="#555555" FontSize="12" HorizontalOptions="Center"/>
+                                <Label x:Name="LblCountJoined" Text="0" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="Joined" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
 
                             <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="0" TextColor="#FF0033" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
-                                <Label Text="Absences" TextColor="#555555" FontSize="12" HorizontalOptions="Center"/>
+                                <Label x:Name="LblCountAbsences" Text="0" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="Absences" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
                         </Grid>
                     </Border>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="UNIQUE QR CODE" TextColor="#555555" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
+                    <Label Text="UNIQUE QR CODE" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
 
-                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Stroke="#CCCCCC" BackgroundColor="White" Padding="20">
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Padding="20">
                         <VerticalStackLayout Spacing="12">
                             <Border x:Name="QrCodeContainer"
                                     HeightRequest="240" 
                                     WidthRequest="240" 
                                     StrokeThickness="0"
-                                    BackgroundColor="#EFEFEF" 
                                     HorizontalOptions="Center" 
                                     VerticalOptions="Center">
                                 <Image Source="qr_placeholder_wireframe.png" Aspect="AspectFit"/>
@@ -91,10 +91,8 @@
                 </VerticalStackLayout>
 
                 <Button Text="LOGOUT"
-                        TextColor="White"
                         FontAttributes="Bold"
                         FontSize="12"
-                        BackgroundColor="#E60026"
                         HeightRequest="32"
                         WidthRequest="94"
                         CornerRadius="16"
@@ -106,7 +104,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Border Grid.Row="2" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 20,20,0,0" StrokeThickness="0" HeightRequest="60" Padding="12, 0">
+        <Border Grid.Row="2" StrokeShape="RoundRectangle 20,20,0,0" StrokeThickness="0" HeightRequest="60" Padding="12, 0">
             <Grid ColumnDefinitions="*, *, *, *">
                 <ImageButton Grid.Column="0" Source="home.png" Clicked="HomeBtn_Clicked" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
                 <ImageButton Grid.Column="1" Source="proposals.png" Clicked="ProposalsBtn_Clicked" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>

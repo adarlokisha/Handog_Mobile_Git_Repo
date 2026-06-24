@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto, *, Auto" BackgroundColor="#F4F6F8">
 
         <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#F4F6F8">
-            <Grid BackgroundColor="#FAD02C" ColumnDefinitions="Auto, *, Auto" Padding="16, 16, 16, 16">
+            <Grid BackgroundColor="#FAD02C" ColumnDefinitions="Auto, *, Auto" Padding="16">
                 <ImageButton Grid.Column="0"
                              Source="back_black.png" 
                              Clicked="BackBtn_Clicked"
@@ -19,7 +19,7 @@
 
                 <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
                     <Label Text="Hi," TextColor="#1A1A1A" FontSize="15" Opacity="0.8" VerticalOptions="Center"/>
-                    <Label Text="Username!" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label x:Name="LblHeaderOrganizerName" Text="" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </Grid>
 
@@ -29,65 +29,80 @@
 
                 <Border StrokeShape="RoundRectangle 12" 
                         StrokeThickness="0" 
-                        Stroke="Transparent"
                         BackgroundColor="White"
                         HeightRequest="46" 
                         WidthRequest="320"
                         Margin="0,8,0,0">
-                    <SearchBar Placeholder="Search events..."
+                    <SearchBar x:Name="EventSearchBar"
+                               Placeholder="Search events..."
                                PlaceholderColor="#999999"
                                TextColor="#1A1A1A"
+                               TextChanged="EventSearchBar_TextChanged"
                                BackgroundColor="Transparent"/>
                 </Border>
             </VerticalStackLayout>
 
             <Border Margin="16,8" StrokeShape="RoundRectangle 20" StrokeThickness="1" Stroke="Transparent" BackgroundColor="#EFEFEF" Padding="2" HorizontalOptions="Fill">
                 <Grid ColumnDefinitions="*, *, *">
-                    <Border Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" Stroke="Transparent" BackgroundColor="White">
+                    <Border x:Name="TabMyEvents" Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="White">
                         <Label Text="My Events" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="MyEventsTab_Tapped"/>
+                        </Border.GestureRecognizers>
                     </Border>
-                    <Label Grid.Column="1" Text="All Events" TextColor="#555555" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <Label Grid.Column="2" Text="Completed" TextColor="#555555" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                    <Border x:Name="TabAllEvents" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                        <Label x:Name="LblAllEvents" Text="All Events" TextColor="#555555" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="AllEventsTab_Tapped"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border x:Name="TabCompleted" Grid.Column="2" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                        <Label x:Name="LblCompleted" Text="Completed" TextColor="#555555" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="CompletedTab_Tapped"/>
+                        </Border.GestureRecognizers>
+                    </Border>
                 </Grid>
             </Border>
         </VerticalStackLayout>
 
-        <CollectionView Grid.Row="1" 
+        <CollectionView x:Name="EventsCollectionView"
+                        Grid.Row="1" 
                         Margin="16,0" 
                         SelectionMode="None">
-
             <CollectionView.Footer>
                 <BoxView HeightRequest="80" Color="Transparent"/>
             </CollectionView.Footer>
-
-            <CollectionView.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>Soup Kitchen Initiative</x:String>
-                    <x:String>Coastal Clean-Up Drive</x:String>
-                    <x:String>Barangay Tree Planting</x:String>
-                    <x:String>Disaster Relief Packaging</x:String>
-                    <x:String>Stray Animal Feeding</x:String>
-                    <x:String>Youth IT Bootcamp Seminar</x:String>
-                </x:Array>
-            </CollectionView.ItemsSource>
-
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="0,6" StrokeShape="RoundRectangle 12" StrokeThickness="0" Stroke="Transparent" BackgroundColor="White">
+                    <Border Margin="0,6" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
                             <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
                         </Border.Shadow>
 
-                        <Grid ColumnDefinitions="*, 110" HeightRequest="130">
-                            <VerticalStackLayout Grid.Column="0" Padding="14" Spacing="4" VerticalOptions="Center">
-                                <Label Text="{Binding .}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation"/>
+                        <Grid ColumnDefinitions="*, 110" HeightRequest="140">
+                            <VerticalStackLayout Grid.Column="0" Padding="14" Spacing="2" VerticalOptions="Center">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <Label Grid.Column="0" Text="{Binding EventTitle}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation"/>
+                                    <ImageButton Grid.Column="1" 
+                                                 Source="trash_red.png"
+                                                 WidthRequest="16" HeightRequest="16"
+                                                 IsVisible="{Binding IsMyEvent}"
+                                                 Clicked="DeleteEventBtn_Clicked"
+                                                 CommandParameter="{Binding .}"
+                                                 BackgroundColor="Transparent"
+                                                 Margin="4,0,0,0"/>
+                                </Grid>
+
+                                <Label Text="{Binding OrganizerName, StringFormat='Organizer: {0}'}" TextColor="#00BAC7" FontAttributes="Bold" FontSize="9"/>
 
                                 <VerticalStackLayout Spacing="1" Margin="0,2,0,0">
-                                    <Label Text="• VENUE: BRGY. HALL AUDITORIUM" TextColor="#777777" FontSize="10"/>
-                                    <Label Text="• ADDRESS: North Point, Pula, Cabuyao, Laguna" TextColor="#777777" FontSize="10" LineBreakMode="TailTruncation"/>
-                                    <Label Text="• TIME: 8:00 AM - 1:30 PM" TextColor="#777777" FontSize="10"/>
-                                    <Label Text="• DATE: August 21, 2026" TextColor="#777777" FontSize="10"/>
-                                    <Label Text="• DETAIL: Identification IDs and kits provided." TextColor="#777777" FontSize="10" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding EventVenue, StringFormat='• VENUE: {0}'}" TextColor="#777777" FontSize="10" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding EventAddress, StringFormat='• ADDRESS: {0}'}" TextColor="#777777" FontSize="10" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding EventTime, StringFormat='• TIME: {0}'}" TextColor="#777777" FontSize="10"/>
+                                    <Label Text="{Binding EventDate, StringFormat='• DATE: {0}'}" TextColor="#777777" FontSize="10"/>
                                 </VerticalStackLayout>
                             </VerticalStackLayout>
 
@@ -95,11 +110,13 @@
                                 <Image Source="image_a16d41.jpg" Aspect="AspectFill"/>
                                 <BoxView BackgroundColor="#00BAC7" Opacity="0.2"/>
 
-                                <Border HeightRequest="28" WidthRequest="64" StrokeShape="RoundRectangle 14" StrokeThickness="0" Stroke="Transparent" BackgroundColor="#FAD02C" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Border HeightRequest="28" WidthRequest="64" StrokeShape="RoundRectangle 14" StrokeThickness="0" BackgroundColor="#FAD02C" HorizontalOptions="Center" VerticalOptions="Center">
                                     <Button Text="VIEW" 
                                             TextColor="#1A1A1A" 
                                             FontAttributes="Bold" 
                                             FontSize="11"
+                                            Clicked="ViewEventDetailsBtn_Clicked"
+                                            CommandParameter="{Binding .}"
                                             BackgroundColor="Transparent"
                                             Padding="0"/>
                                 </Border>
@@ -114,8 +131,6 @@
             <Border HeightRequest="44" 
                     WidthRequest="140"
                     StrokeShape="RoundRectangle 22" 
-                    StrokeThickness="0" 
-                    Stroke="Transparent"
                     BackgroundColor="#00BAC7">
                 <Border.Shadow>
                     <Shadow Brush="#000000" Offset="0,4" Radius="8" Opacity="0.15"/>
@@ -124,8 +139,121 @@
                         TextColor="White" 
                         FontAttributes="Bold" 
                         FontSize="13"
+                        Clicked="OpenOrganizePanelBtn_Clicked"
                         BackgroundColor="Transparent"
                         Padding="0"/>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="PopupOrganizePanel" Grid.Row="0" Grid.RowSpan="2" BackgroundColor="#80000000" IsVisible="False">
+            <Border VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="335" HeightRequest="520" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="20">
+                <Grid RowDefinitions="Auto, *, Auto" VerticalOptions="Fill">
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="NEW PLATFORM INITIATIVE" FontSize="11" TextColor="#00BAC7" FontAttributes="Bold" CharacterSpacing="1"/>
+                            <Label Text="Organize Event" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                        </VerticalStackLayout>
+                        <ImageButton Grid.Column="1" Source="close_black.png" WidthRequest="24" HeightRequest="24" Clicked="CloseOrganizePanelBtn_Clicked" BackgroundColor="Transparent" VerticalOptions="Start"/>
+                    </Grid>
+
+                    <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                        <VerticalStackLayout Spacing="12" Padding="2,2,2,10">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="ORGANIZER ASSIGNED" FontSize="10" FontAttributes="Bold" TextColor="#777777"/>
+                                <Entry x:Name="EntryFormOrganizer" IsReadOnly="True" BackgroundColor="#F2F4F7" TextColor="#555555" FontSize="13"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="EVENT TITLE" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                <Entry x:Name="EntryFormTitle" Placeholder="e.g., Feeding Program" TextColor="#1A1A1A" FontSize="13"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="VENUE BASE NAME" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                <Entry x:Name="EntryFormVenue" Placeholder="e.g., Barangay Hall" TextColor="#1A1A1A" FontSize="13"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="MUNICIPALITY TARGET ADDRESS" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                <Entry x:Name="EntryFormAddress" Placeholder="e.g., Pula, Cabuyao, Laguna" TextColor="#1A1A1A" FontSize="13"/>
+                            </VerticalStackLayout>
+
+                            <Grid ColumnSpacing="10">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label Text="DATE" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                    <DatePicker x:Name="PickerFormDate" MinimumDate="2026-01-01" Format="yyyy-MM-dd" TextColor="#1A1A1A" FontSize="12"/>
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                    <Label Text="TIME FRAME" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                    <Entry x:Name="EntryFormTime" Placeholder="8:00 AM - 1:00 PM" TextColor="#1A1A1A" FontSize="13"/>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="LOGISTICS / PROVISION DETAILS" FontSize="10" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                <Editor x:Name="EditorFormDetails" Placeholder="Enter required kits or specific items..." HeightRequest="70" AutoSize="Disabled" TextColor="#1A1A1A" FontSize="13"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </ScrollView>
+
+                    <Button Grid.Row="2" Text="PUBLISH ACTION EVENT" Clicked="PublishNewEventBtn_Clicked" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" HeightRequest="44"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="PopupDetailsPanel" Grid.Row="0" Grid.RowSpan="2" BackgroundColor="#80000000" IsVisible="False">
+            <Border VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="340" HeightRequest="540" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="18">
+                <Grid RowDefinitions="Auto, *, Auto" VerticalOptions="Fill">
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,8">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label x:Name="PopupModalTitle" Text="Event Details" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                            <Label x:Name="PopupModalOrganizer" Text="By: --" FontSize="11" TextColor="#00BAC7" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                        <ImageButton Grid.Column="1" Source="close_black.png" WidthRequest="24" HeightRequest="24" Clicked="CloseDetailsPanelBtn_Clicked" BackgroundColor="Transparent" VerticalOptions="Start"/>
+                    </Grid>
+
+                    <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                        <VerticalStackLayout Spacing="12" Margin="0,4,0,10">
+                            <Frame Padding="10" BackgroundColor="#F8F9FA" HasShadow="False" CornerRadius="8">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label x:Name="PopupTxtVenue" Text="• VENUE: " TextColor="#444444" FontSize="12" FontAttributes="Bold"/>
+                                    <Label x:Name="PopupTxtAddress" Text="• ADDRESS: " TextColor="#555555" FontSize="11"/>
+                                    <Label x:Name="PopupTxtDateTime" Text="• SCHEDULE: " TextColor="#555555" FontSize="11"/>
+                                    <Label x:Name="PopupTxtDetails" Text="• DETAILS: " TextColor="#666666" FontSize="11"/>
+                                </VerticalStackLayout>
+                            </Frame>
+
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="REGISTERED VOLUNTEERS ROSTER" FontSize="11" FontAttributes="Bold" TextColor="#1A1A1A" CharacterSpacing="0.5"/>
+
+                                <Border StrokeThickness="1" Stroke="#E0E0E0" StrokeShape="RoundRectangle 8" Padding="2">
+                                    <StackLayout>
+                                        <Grid ColumnDefinitions="*, 80" BackgroundColor="#F1F3F5" Padding="8,6">
+                                            <Label Grid.Column="0" Text="Volunteer Name" FontAttributes="Bold" FontSize="11" TextColor="#444444"/>
+                                            <Label Grid.Column="1" Text="Attendance" FontAttributes="Bold" FontSize="11" TextColor="#444444" HorizontalOptions="Center"/>
+                                        </Grid>
+
+                                        <CollectionView x:Name="AttendeesListView" HeightRequest="130" SelectionMode="None">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="*, 80" Padding="8,6">
+                                                        <Label Grid.Column="0" Text="{Binding VolunteerName}" VerticalOptions="Center" FontSize="12" TextColor="#333333"/>
+                                                        <Label Grid.Column="1" Text="{Binding StatusText}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="11" FontAttributes="Bold" TextColor="{Binding StatusColor}"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </StackLayout>
+                                </Border>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </ScrollView>
+
+                    <VerticalStackLayout x:Name="ManagementActionPanel" Grid.Row="2" Spacing="8" Margin="0,6,0,0">
+                        <Button x:Name="BtnConfirmAttendance" Text="✔ LOG ATTENDANCE PRESENT" Clicked="ConfirmAttendanceBtn_Clicked" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" HeightRequest="38" FontSize="12"/>
+                        <Button x:Name="BtnCompleteEvent" Text="🛑 FINALISE EVENT COMPLETION" Clicked="ConfirmCompletionBtn_Clicked" BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" HeightRequest="38" FontSize="12"/>
+                    </VerticalStackLayout>
+                </Grid>
             </Border>
         </Grid>
 
