@@ -1,14 +1,23 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Maui.Controls;
+//using Microsoft.UI.Xaml;
 using System;
+//using Windows.System;
 
 namespace Handog_MobileApp;
 
 public partial class LoginPage : ContentPage
 {
-    private readonly string _connectionString = "Server=10.0.2.2,1433;Database=HANDOG_MOBILE;User Id=sa;Password=password123;TrustServerCertificate=True;";
+    private readonly string _connectionString =
+        "Server = tcp:handog-mobile-server.database.windows.net,1433;" +
+        "Initial Catalog = HandogMobileDB; Persist Security Info=False;" +
+        "User ID = handogmobileadmin; Password=password123!!; " +
+        "MultipleActiveResultSets=False;" +
+        "Encrypt=True;" +
+        "TrustServerCertificate=False;" +
+        "Connection Timeout = 30;";
 
-    public LoginPage()
+public LoginPage()
 	{
 		InitializeComponent();
 	}
@@ -53,12 +62,14 @@ public partial class LoginPage : ContentPage
                             if (role.Equals("Organizer", StringComparison.OrdinalIgnoreCase))
                             {
                                 // Route seamlessly to your Organizer Dashboard page
+                                await DisplayAlert("Success", $"Logged in as {firstName} ({role})", "OK");
                                 await Navigation.PushAsync(new O_HOME());
                             }
                             else
                             {
                                 // Fallback route for generic volunteers/admins down the road
                                 await DisplayAlert("Success", $"Logged in as {firstName} ({role})", "OK");
+                                await Navigation.PushAsync(new V_HOME());
                             }
                         }
                         else
@@ -71,7 +82,6 @@ public partial class LoginPage : ContentPage
         }
         catch (Exception ex)
         {
-            // Catches database engine exceptions, timeout errors, or bad connection string properties
             await DisplayAlert("Database Connection Error", ex.Message, "OK");
         }
 
