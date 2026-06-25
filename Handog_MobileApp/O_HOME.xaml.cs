@@ -7,9 +7,6 @@ namespace Handog_MobileApp
 {
     public partial class O_HOME : ContentPage
     {
-        // Global string holding your SQL Server instance configuration details
-        private readonly string connectionString = "Server=handog-mobile-server.database.windows.net;Database=HandogMobileDB;Trusted_Connection=True;TrustServerCertificate=True;";
-
         // Tracks the runtime user sequence context passed during authentication
         private int currentAccountNum;
 
@@ -44,22 +41,37 @@ namespace Handog_MobileApp
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                // Swapped to use your centralized AppConfig connection string!
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
 
+                    // Query A: Extract Logged-In Account First Name Profile parameters
                     // Query A: Extract Logged-In Account First Name Profile parameters
                     string accountQuery = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccountNum";
                     using (SqlCommand cmd = new SqlCommand(accountQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@AccountNum", currentAccountNum);
                         var result = await cmd.ExecuteScalarAsync();
-                        if (result != null)
+
+                        // Force MAUI to update the visual UI on the main thread
+                        MainThread.BeginInvokeOnMainThread(() =>
                         {
-                            // Sets the name label directly under "Welcome," without a placeholder string
-                            LblOrganizerName.Text = result.ToString();
-                        }
-                    } // Command A closes and disposes completely here, freeing up the data pipe
+                            if (result != null && result != DBNull.Value && !string.IsNullOrWhiteSpace(result.ToString()))
+                            {
+                                // Success: Sets the name label directly
+                                LblOrganizerName.Text = result.ToString();
+                            }
+                            else
+                            {
+                                // Fallback: If this shows up, the database query returned nothing!
+                                LblOrganizerName.Text = "Organizer";
+
+                                // Temporary debug alert so you know if the ID passed correctly
+                                DisplayAlert("Debug Warning", $"No name found in DB for AccountNum: {currentAccountNum}", "OK");
+                            }
+                        });
+                    } // Command A closes and disposes completely here
 
                     // Query B: Aggregate Operational Attendance Metrics across past reports
                     string metricsQuery = @"
@@ -101,9 +113,15 @@ namespace Handog_MobileApp
             }
             catch (Exception ex)
             {
-                // Graceful fallback display mapping if server context breaks offline
-                LblAttendanceSummary.Text = "Metrics sync currently offline.";
-                System.Diagnostics.Debug.WriteLine($"Database pipeline connectivity fault: {ex.Message}");
+                // Force the UI to show us the exact error on the physical phone screen
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    LblOrganizerName.Text = "Error!";
+                    LblAttendanceSummary.Text = "Metrics sync currently offline.";
+
+                    // This popup will reveal exactly what Azure/Android is complaining about
+                    await DisplayAlert("Hidden DB Error", ex.Message, "OK");
+                });
             }
         }
 

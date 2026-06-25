@@ -7,7 +7,6 @@ namespace Handog_MobileApp
 {
     public partial class O_PROFILE : ContentPage
     {
-        private readonly string connectionString = "Server=handog-mobile-server.database.windows.net;Database=HandogMobileDB;Trusted_Connection=True;TrustServerCertificate=True;";
         private readonly int currentOrganizerAccountNum;
 
         // Constructor tracking active context parameters directly
@@ -20,6 +19,14 @@ namespace Handog_MobileApp
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            // Safety Check: If the ID is 0, it means it wasn't passed correctly from the previous page
+            if (currentOrganizerAccountNum == 0)
+            {
+                await DisplayAlert("Error", "Account ID missing. The profile cannot load.", "OK");
+                return;
+            }
+
             await LoadTargetAccountProfileInformation();
         }
 
@@ -27,7 +34,8 @@ namespace Handog_MobileApp
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                // Using the global connection string so you don't have to copy/paste it everywhere
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
 
@@ -46,6 +54,11 @@ namespace Handog_MobileApp
                                 LblHeaderUsername.Text = $"{firstName}!";
                                 LblFullName.Text = $"{firstName} {lastName}".ToUpper();
                                 LblAccountID.Text = reader["Account_ID"].ToString();
+                            }
+                            else
+                            {
+                                // If the query works but finds no data, you will see this alert.
+                                await DisplayAlert("Notice", "Profile data not found in database.", "OK");
                             }
                         }
                     }

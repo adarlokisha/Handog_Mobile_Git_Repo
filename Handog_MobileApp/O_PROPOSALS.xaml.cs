@@ -9,8 +9,6 @@ namespace Handog_MobileApp
 {
     public partial class O_PROPOSALS : ContentPage
     {
-        private readonly string connectionString = "Server=handog-mobile-server.database.windows.net;Database=HandogMobileDB;Trusted_Connection=True;TrustServerCertificate=True;";
-
         private readonly int currentOrganizerAccountNum;
         private int currentOrganizerLocaleNum;
 
@@ -27,19 +25,48 @@ namespace Handog_MobileApp
             BindingContext = this;
         }
 
+        // 1. Add this call to your existing OnAppearing()
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            await FetchOrganizerName(); // New call
             await FetchPendingProposalsFromDatabase();
+        }
+
+        // 2. Add this method to your class
+        private async Task FetchOrganizerName()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    string sql = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccNum";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AccNum", currentOrganizerAccountNum);
+                        await conn.OpenAsync();
+                        var result = await cmd.ExecuteScalarAsync();
+
+                        if (result != null)
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => {
+                                LblHeaderUsername.Text = $"{result}!";
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading name: {ex.Message}");
+            }
         }
 
         private async Task FetchPendingProposalsFromDatabase()
         {
             try
             {
-                ActiveProposalsCollection.Clear();
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     string sql = @"SELECT p.ProposalNum, p.Proposal_ID, p.AccountNum, p.CategoryNum,
                                           p.ProposalTitle, p.ProposalDetails, p.PreferredDate,
@@ -61,17 +88,24 @@ namespace Handog_MobileApp
                             dt.Load(reader);
                         }
 
-                        // Feed the rows straight into your collection
-                        foreach (DataRow row in dt.Rows)
+                        // Safely feed the rows straight into your collection on the UI Thread
+                        MainThread.BeginInvokeOnMainThread(() =>
                         {
-                            ActiveProposalsCollection.Add(row);
-                        }
+                            ActiveProposalsCollection.Clear();
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                ActiveProposalsCollection.Add(row);
+                            }
+                        });
                     }
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Sync Fault", $"Could not load proposals: {ex.Message}", "OK");
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await DisplayAlert("Sync Fault", $"Could not load proposals: {ex.Message}", "OK");
+                });
             }
         }
 
@@ -96,7 +130,7 @@ namespace Handog_MobileApp
 
                 try
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                     {
                         string sql = "UPDATE EVENTPROPOSAL SET ProposalStatus = 'Rejected' WHERE ProposalNum = @ProposalNum";
                         using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -107,7 +141,11 @@ namespace Handog_MobileApp
                         }
                     }
 
-                    ActiveProposalsCollection.Remove(row);
+                    // Remove from list visually
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        ActiveProposalsCollection.Remove(row);
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -120,7 +158,7 @@ namespace Handog_MobileApp
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
 
@@ -184,7 +222,7 @@ namespace Handog_MobileApp
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
 
@@ -254,6 +292,20 @@ namespace Handog_MobileApp
 
         private void OnCloseModalClicked(object sender, EventArgs e) => PopupCreateModal.IsVisible = false;
 
-        private async void OnLogoutClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
+        // --- NAVIGATION HANDLERS ---
+        private async void HomeBtn_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new O_HOME(currentOrganizerAccountNum));
+        }
+
+        private async void EventsBtn_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new O_EVENTS(currentOrganizerAccountNum));
+        }
+
+        private async void ProfileBtn_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new O_PROFILE(currentOrganizerAccountNum));
+        }
     }
 }
