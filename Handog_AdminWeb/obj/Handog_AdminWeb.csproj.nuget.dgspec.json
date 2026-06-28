@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {}
+    "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {
+    "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+        "projectUniqueName": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
         "projectName": "Handog_AdminWeb",
-        "projectPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
-        "packagesPath": "C:\\Users\\Rance\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\obj\\",
+        "projectPath": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+        "packagesPath": "C:\\Users\\Kisha Adarlo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Rance\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Kisha Adarlo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -69,7 +69,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

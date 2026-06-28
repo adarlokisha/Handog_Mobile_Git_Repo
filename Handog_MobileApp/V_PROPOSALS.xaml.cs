@@ -1,37 +1,76 @@
 using System.Collections.ObjectModel;
+using Microsoft.Data.SqlClient;
 
 namespace Handog_MobileApp;
 
 public partial class V_PROPOSALS : ContentPage
 {
+    private int loggedInAccountNum;
     public ObservableCollection<ProposalModel> Proposals { get; set; }
 
-    public V_PROPOSALS()
+    public V_PROPOSALS(int accountNum)
     {
         InitializeComponent();
+        this.loggedInAccountNum = accountNum;
 
-        Proposals = new ObservableCollection<ProposalModel>
-            {
-                new ProposalModel { RequestorName = "NAME OF REQUESTOR", RequestType = "HEALTH RELATED", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore." },
-                new ProposalModel { RequestorName = "NAME OF REQUESTOR", RequestType = "FEEDING PROGRAM", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore." },
-                new ProposalModel { RequestorName = "NAME OF REQUESTOR", RequestType = "LITERACY", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore." }
-            };
-
+        Proposals = new ObservableCollection<ProposalModel>();
         ProposalsCollectionView.ItemsSource = Proposals;
+
+        // Load data on page entry
+        _ = LoadProposalsFromDatabase();
     }
 
-    // Top Back Arrow Behavior
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _ = LoadProposalsFromDatabase();
+    }
+
+    private async Task LoadProposalsFromDatabase()
+    {
+        try
+        {
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+            {
+                await conn.OpenAsync();
+                // Ensure these column names exist in your EVENTPROPOSAL table
+                string query = "SELECT ProposalTitle, ProposalDetails FROM EVENTPROPOSAL WHERE AccountNum = @AccountNum";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@AccountNum", loggedInAccountNum);
+
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        Proposals.Clear();
+                        while (await reader.ReadAsync())
+                        {
+                            Proposals.Add(new ProposalModel
+                            {
+                                RequestorName = reader["RequestorName"]?.ToString() ?? "Unknown",
+                                RequestType = reader["RequestType"]?.ToString() ?? "General",
+                                Description = reader["Description"]?.ToString() ?? ""
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Database Error", $"Could not load proposals: {ex.Message}", "OK");
+        }
+    }
+
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
         if (FormViewContainer.IsVisible)
         {
-            // If they are on the Form, return back to the List View
-            FormViewContainer.IsVisible = true;
+            FormViewContainer.IsVisible = false;
             ListViewContainer.IsVisible = true;
         }
         else
         {
-            // If they are already on the List, exit back to previous application page
             await Navigation.PopAsync();
         }
     }
@@ -39,10 +78,9 @@ public partial class V_PROPOSALS : ContentPage
     private async void HomeBtn_Clicked(object sender, EventArgs e)
     {
         await AnimateButton(sender as ImageButton);
-        await Navigation.PushAsync(new V_HOME());
+        await Navigation.PushAsync(new V_HOME(loggedInAccountNum));
     }
 
-    // Toggles display to show the Add Proposal Form layout
     private void OnAddProposalClicked(object sender, EventArgs e)
     {
         ListViewContainer.IsVisible = false;
@@ -52,40 +90,80 @@ public partial class V_PROPOSALS : ContentPage
     private async void OnSaveDraftClicked(object sender, EventArgs e)
     {
         await DisplayAlert("Draft Saved", "Your proposal workspace draft state has been updated.", "OK");
-
-        // Swap back view state to list area
         FormViewContainer.IsVisible = false;
         ListViewContainer.IsVisible = true;
     }
 
+    private int GetCategoryNum(string categoryName) => categoryName switch
+    {
+        "Medical Mission" => 1,
+        "Feeding Program" => 2,
+        "Youth Activity" => 3,
+        "Spiritual Gathering" => 4,
+        "Environmental Care" => 5,
+        _ => 1
+    };
+
     private async void OnSubmitProposalClicked(object sender, EventArgs e)
     {
+        // 1. Validation
         if (string.IsNullOrWhiteSpace(EventTitleEntry.Text) || EventTypePicker.SelectedItem == null)
         {
-            await DisplayAlert("Incomplete Form", "Please fill out the Event Type and Title field parameters.", "OK");
+            await DisplayAlert("Incomplete Form", "Please fill out the Event Type and Title field.", "OK");
             return;
         }
 
-        // Append the new proposal to your list dynamically
-        Proposals.Add(new ProposalModel
+        try
         {
-            RequestorName = "YOU (VOLUNTEER)",
-            RequestType = EventTypePicker.SelectedItem.ToString().ToUpper(),
-            Description = EventDescriptionEditor.Text ?? "No description provided."
-        });
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+            {
+                await conn.OpenAsync();
 
-        await DisplayAlert("Success", "Proposal submitted to organizers!", "OK");
+                // 2. Generate Proposal_ID (e.g., PR001)
+                string countSql = "SELECT ISNULL(MAX(ProposalNum), 0) + 1 FROM EVENTPROPOSAL";
+                int nextId = (int)await new SqlCommand(countSql, conn).ExecuteScalarAsync();
+                string proposalIdFormatted = "PR" + nextId.ToString("D3");
 
-        // Clean up inputs
-        EventTitleEntry.Text = string.Empty;
-        EventDescriptionEditor.Text = string.Empty;
-        BeneficiariesEntry.Text = string.Empty;
-        LocationEntry.Text = string.Empty;
-        EventTypePicker.SelectedItem = null;
+                // 3. Insert into database
+                // Note: I mapped 'CategoryNum' to a placeholder. 
+                // If your logic requires specific IDs for categories, use a switch statement on the selected string.
+                string insertQuery = @"INSERT INTO EVENTPROPOSAL 
+                                   (Proposal_ID, AccountNum, CategoryNum, ProposalTitle, ProposalDetails, 
+                                    ProposalStatus, DateCreated) 
+                                   VALUES (@ID, @Account, @Cat, @Title, @Details, 'Pending', GETDATE())";
 
-        // Go back to the updated list view container
-        FormViewContainer.IsVisible = false;
-        ListViewContainer.IsVisible = true;
+                using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ID", proposalIdFormatted);
+                    cmd.Parameters.AddWithValue("@Account", loggedInAccountNum);
+                    cmd.Parameters.AddWithValue("@Cat", 1); // Replace '1' with mapping logic based on EventTypePicker selection
+                    cmd.Parameters.AddWithValue("@Title", EventTitleEntry.Text);
+                    cmd.Parameters.AddWithValue("@Details",
+                        $"Description: {EventDescriptionEditor.Text ?? ""}\n" +
+                        $"Beneficiaries: {BeneficiariesEntry.Text ?? "0"}\n" +
+                        $"Location: {LocationEntry.Text ?? "Not specified"}");
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                await DisplayAlert("Success", $"Proposal {proposalIdFormatted} submitted!", "OK");
+
+                // 4. Clear UI
+                EventTitleEntry.Text = string.Empty;
+                EventDescriptionEditor.Text = string.Empty;
+                BeneficiariesEntry.Text = string.Empty;
+                LocationEntry.Text = string.Empty;
+                EventTypePicker.SelectedItem = null;
+
+                await LoadProposalsFromDatabase();
+                FormViewContainer.IsVisible = false;
+                ListViewContainer.IsVisible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "Could not submit proposal: " + ex.Message, "OK");
+        }
     }
 
     private async Task AnimateButton(ImageButton button)
@@ -96,8 +174,19 @@ public partial class V_PROPOSALS : ContentPage
             await button.ScaleTo(1.0, 50, Easing.Linear);
         }
     }
-}
 
+    private void SetTabActive(Border activeBorder)
+    {
+        TabMyProposals.BackgroundColor = Colors.Transparent;
+        TabAllProposals.BackgroundColor = Colors.Transparent;
+        TabApprovedProposals.BackgroundColor = Colors.Transparent;
+        activeBorder.BackgroundColor = Colors.White;
+    }
+
+    private void MyProposalsTab_Tapped(object sender, EventArgs e) => SetTabActive(TabMyProposals);
+    private void AllProposalsTab_Tapped(object sender, EventArgs e) => SetTabActive(TabAllProposals);
+    private void ApprovedProposalsTab_Tapped(object sender, EventArgs e) => SetTabActive(TabApprovedProposals);
+}
 
 public class ProposalModel
 {

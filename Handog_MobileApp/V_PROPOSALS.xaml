@@ -38,13 +38,30 @@
                             <Label Text="These are the proposals currently sent by volunteers." TextColor="Gray" FontAttributes="Italic" FontSize="12" Margin="0,-5,0,5"/>
                             <BoxView HeightRequest="1" BackgroundColor="#D3D3D3"/>
 
-                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" Margin="0,10,0,5">
-                                <Border BackgroundColor="#59CCD5" StrokeShape="RoundRectangle 15" Padding="15,6">
-                                    <Label Text="MY PROPOSALS" FontAttributes="Bold" TextColor="Black" FontSize="13"/>
-                                </Border>
-                                <Label Text="|" TextColor="Gray" FontSize="16" VerticalOptions="Center"/>
-                                <Label Text="ALL PROPOSALS" FontAttributes="Bold" TextColor="Gray" FontSize="13" VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
+                            <Border Margin="0,10,0,5" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
+                                <Grid ColumnDefinitions="*, *, *">
+                                    <Border x:Name="TabMyProposals" Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="White">
+                                        <Label Text="My Proposals" FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="MyProposalsTab_Tapped"/>
+                                        </Border.GestureRecognizers>
+                                    </Border>
+
+                                    <Border x:Name="TabAllProposals" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                                        <Label Text="All Proposals" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="AllProposalsTab_Tapped"/>
+                                        </Border.GestureRecognizers>
+                                    </Border>
+
+                                    <Border x:Name="TabApprovedProposals" Grid.Column="2" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                                        <Label Text="Approved" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="ApprovedProposalsTab_Tapped"/>
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                            </Border>
                         </VerticalStackLayout>
                     </CollectionView.Header>
 
@@ -84,66 +101,131 @@
             </Grid>
 
             <ScrollView x:Name="FormViewContainer" IsVisible="False" Padding="15,20">
+
                 <Border BackgroundColor="#FDFDFD" Stroke="#C0C0C0" StrokeThickness="1.5" StrokeShape="RoundRectangle 20" Padding="20">
+
                     <VerticalStackLayout Spacing="15">
+
                         <Label Text="Event Proposal" FontAttributes="Bold" FontSize="24" TextColor="#707070" HorizontalOptions="Center"/>
+
                         <Label Text="Fill in the details below. MCGI Organizers will review and connect for you" TextColor="#707070" FontAttributes="Italic" FontSize="13" HorizontalOptions="Center" HorizontalTextAlignment="Center" Margin="0,0,0,5"/>
+
                         <BoxView HeightRequest="1" BackgroundColor="#D3D3D3" Margin="0,0,0,5"/>
 
+
+
                         <Label Text="Event Type" FontAttributes="Bold" TextColor="#707070" FontSize="14"/>
+
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,5" BackgroundColor="White">
+
                             <VerticalStackLayout Spacing="2">
+
                                 <Label Text="What kind of event are you proposing?" TextColor="#888888" FontSize="12" FontAttributes="Bold"/>
+
                                 <Picker x:Name="EventTypePicker" Title="Select type..." TextColor="Black" FontSize="14">
+
                                     <Picker.ItemsSource>
+
                                         <x:Array Type="{x:Type x:String}">
-                                            <x:String>Health Related</x:String>
+
+                                            <x:String>Medical Mission</x:String>
+
                                             <x:String>Feeding Program</x:String>
-                                            <x:String>Literacy</x:String>
+
+                                            <x:String>Youth Activity</x:String>
+
+                                            <x:String>Spiritual Gathering</x:String>
+
+                                            <x:String>Environmental Care</x:String>
+
                                         </x:Array>
+
                                     </Picker.ItemsSource>
+
                                 </Picker>
+
                             </VerticalStackLayout>
+
                         </Border>
+
+
 
                         <Label Text="Event Details" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
 
+
+
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
+
                             <VerticalStackLayout Spacing="2">
+
                                 <Label Text="Title of the Proposed Event:" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
+
                                 <Entry x:Name="EventTitleEntry" Placeholder="e.g. Medical Support Request: Senior Citizens Drive" TextColor="Black" FontSize="13" Margin="0,-4"/>
+
                             </VerticalStackLayout>
+
                         </Border>
 
+
+
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
+
                             <VerticalStackLayout Spacing="2">
+
                                 <Label Text="Brief Description of the Event" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
+
                                 <Editor x:Name="EventDescriptionEditor" Placeholder="type here..." AutoSize="TextChanges" HeightRequest="60" TextColor="Black" FontSize="13" Margin="0,-4"/>
+
                             </VerticalStackLayout>
+
                         </Border>
 
+
+
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
+
                             <VerticalStackLayout Spacing="2">
+
                                 <Label Text="Estimated Number of Beneficiaries" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
+
                                 <Entry x:Name="BeneficiariesEntry" Placeholder="type here..." Keyboard="Numeric" TextColor="Black" FontSize="13" Margin="0,-4"/>
+
                             </VerticalStackLayout>
+
                         </Border>
+
+
 
                         <Label Text="Event Location" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
+
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
+
                             <VerticalStackLayout Spacing="2">
+
                                 <Label Text="Suggested Location" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
+
                                 <Entry x:Name="LocationEntry" Placeholder="type here..." TextColor="Black" FontSize="13" Margin="0,-4"/>
+
                             </VerticalStackLayout>
+
                         </Border>
 
+
+
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,5">
+
                             <Button Grid.Column="0" Text="SAVE DRAFT" BackgroundColor="#B0B0B0" TextColor="White" FontAttributes="Bold" CornerRadius="12" HeightRequest="45" Clicked="OnSaveDraftClicked"/>
+
                             <Button Grid.Column="1" Text="SUBMIT PROPOSAL" BackgroundColor="#59CCD5" TextColor="White" FontAttributes="Bold" CornerRadius="12" HeightRequest="45" Clicked="OnSubmitProposalClicked"/>
+
                         </Grid>
+
                     </VerticalStackLayout>
+
                 </Border>
+
             </ScrollView>
+
         </Grid>
 
         <Border Grid.Row="2" BackgroundColor="#59CCD5" StrokeShape="RoundRectangle 20,20,0,0" HeightRequest="65" StrokeThickness="0">

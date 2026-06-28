@@ -62,7 +62,7 @@ namespace Handog_MobileApp
                                 else
                                 {
                                     await DisplayAlert("Success", $"Logged in as {firstName} ({role})", "OK");
-                                    await Navigation.PushAsync(new V_HOME()); // Ensure V_HOME has a generic constructor or its own parameter if needed!
+                                    await Navigation.PushAsync(new V_HOME(loggedInAccountNum)); // Ensure V_HOME has a generic constructor or its own parameter if needed!
                                 }
                             }
                             else
