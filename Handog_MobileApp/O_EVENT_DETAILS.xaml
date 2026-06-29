@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Handog_MobileApp"
+             x:Class="Handog_MobileApp.O_EVENT_DETAILS"
+             BackgroundColor="#F4F6F8"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 48, 0, 16">
+            <Grid ColumnDefinitions="Auto, *" Padding="16, 0">
+                <ImageButton Grid.Column="0" Source="back_black.png" Command="{Binding GoBackCommand}" WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent"/>
+                <Label Grid.Column="1" Text="Event Details" TextColor="#1A1A1A" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Center" Margin="-24,0,0,0"/>
+            </Grid>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1" Padding="16">
+            <VerticalStackLayout Spacing="16">
+
+                <Border StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White" Padding="20">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding CurrentEvent.EventTitle}" FontSize="22" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                        <Label Text="{Binding CurrentEvent.OrganizerName, StringFormat='Organized by: {0}'}" TextColor="#00BAC7" FontAttributes="Bold" FontSize="12"/>
+
+                        <BoxView HeightRequest="1" Color="#EEEEEE" Margin="0,8"/>
+
+                        <Grid ColumnDefinitions="20, *" RowDefinitions="Auto, Auto, Auto" RowSpacing="8">
+                            <Label Grid.Row="0" Grid.Column="0" Text="📅" FontSize="12" VerticalOptions="Center"/>
+                            <Label Grid.Row="0" Grid.Column="1" TextColor="#555555" FontSize="13">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding CurrentEvent.EventDate}"/>
+                                        <Span Text=" at "/>
+                                        <Span Text="{Binding CurrentEvent.EventTime}"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <Label Grid.Row="1" Grid.Column="0" Text="📍" FontSize="12" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="0">
+                                <Label Text="{Binding CurrentEvent.EventVenue}" TextColor="#555555" FontAttributes="Bold" FontSize="13"/>
+                                <Label Text="{Binding CurrentEvent.EventAddress}" TextColor="#777777" FontSize="12"/>
+                            </VerticalStackLayout>
+
+                            <Label Grid.Row="2" Grid.Column="0" Text="📝" FontSize="12" VerticalOptions="Start" Margin="0,2,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding CurrentEvent.EventDetails}" TextColor="#555555" FontSize="13"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Registered Volunteers" FontAttributes="Bold" FontSize="16" TextColor="#1A1A1A" Margin="0,8,0,0"/>
+
+                <CollectionView ItemsSource="{Binding AttendeesList}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="No volunteers approved yet." TextColor="#999999" HorizontalOptions="Center" Margin="0,20"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,4" StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="White" Padding="12">
+                                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding VolunteerName}" FontAttributes="Bold" FontSize="14" TextColor="#1A1A1A"/>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Ellipse WidthRequest="8" HeightRequest="8" Fill="{Binding StatusColor}" VerticalOptions="Center"/>
+                                            <Label Text="{Binding AttendanceStatus}" FontSize="11" TextColor="#777777" VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <Button Grid.Column="1" Text="Confirm" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:EventDetailsViewModel}}, Path=ConfirmAttendanceCommand}" 
+                                            CommandParameter="{Binding RegistrationNum}" 
+                                            IsVisible="{Binding IsNotConfirmed}"
+                                            BackgroundColor="#00BAC7" TextColor="White" FontSize="11" FontAttributes="Bold" HeightRequest="30" CornerRadius="6" Padding="10,0"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="2" BackgroundColor="White" Padding="16" StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,-2" Radius="4" Opacity="0.05"/>
+            </Border.Shadow>
+            <Button Text="COMPLETE EVENT" Command="{Binding ConfirmEventCommand}" BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" CornerRadius="22" HeightRequest="44"/>
+        </Border>
+
+    </Grid>
+</ContentPage>
