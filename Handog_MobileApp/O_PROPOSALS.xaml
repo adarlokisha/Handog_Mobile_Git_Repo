@@ -52,7 +52,7 @@
             <Grid ColumnDefinitions="*, *, *, *">
                 <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateCommand}" CommandParameter="Home" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateCommand}" CommandParameter="Proposals" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="2" Source="events.png" Command="{Binding NavigateCommand}"  CommandParameter="Events"HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="2" Source="events.png" Command="{Binding NavigateCommand}"  CommandParameter="Events" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateCommand}" CommandParameter="Profile" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
             </Grid>
         </Border>
