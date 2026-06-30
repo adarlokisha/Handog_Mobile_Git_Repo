@@ -85,10 +85,7 @@
 	  <MauiXaml Update="Views\Volunteer\V_HOME.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="V_PROFILE.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="V_PROPOSALS.xaml">
+	  <MauiXaml Update="Views\Volunteer\V_PROPOSALS.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

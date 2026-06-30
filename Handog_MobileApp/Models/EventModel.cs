@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Handog_MobileApp.Models
 {
-    public class Event
+    public class EventModel
     {
         // Primary Key from your database
         public int EventNum { get; set; }
@@ -24,5 +24,13 @@ namespace Handog_MobileApp.Models
         // Maps to SQL INT types
         public int ExpectedParticipants { get; set; }
         public int VolunteerCapacity { get; set; }
+
+
+        public string Location { get; set; } = "Not Specified";
+        public string EventImage { get; set; } = "calendar_icon.png"; // Fallback asset name
+
+        // Helpers to format the data cleanly for your XAML CollectionView
+        public string FormattedDate => EventDate.ToString("MMMM dd, yyyy");
+        public string FormattedTime => $"{DateTime.Today.Add(StartTime):hh:mm tt} - {DateTime.Today.Add(EndTime):hh:mm tt}";
     }
 }

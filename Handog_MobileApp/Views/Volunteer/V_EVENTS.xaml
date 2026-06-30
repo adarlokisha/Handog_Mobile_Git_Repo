@@ -5,85 +5,76 @@
              x:Class="Handog_MobileApp.Views.Volunteer.V_EVENTS"
              NavigationPage.HasNavigationBar="False">
 
-    <ContentPage.BindingContext>
-        <vm:V_EventsViewModel />
-    </ContentPage.BindingContext>
+    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" BackgroundColor="#F5F5F5">
 
-    <Grid RowDefinitions="Auto, Auto, Auto, *, Auto">
-
-        <!-- HEADER BAR -->
         <Grid Grid.Row="0" BackgroundColor="#4DD0E1" Padding="15,10" ColumnDefinitions="Auto, *">
             <ImageButton Source="back_arrow.png" WidthRequest="25" HeightRequest="25" HorizontalOptions="Start"/>
             <Label Grid.Column="1" Text="Hi, Username!" FontAttributes="Bold" FontSize="18" TextColor="Black" HorizontalOptions="End" VerticalOptions="Center"/>
         </Grid>
 
-        <!-- TITLE AND ICON -->
         <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="5" Padding="0,20,0,10">
             <Image Source="calendar_icon.png" WidthRequest="70" HeightRequest="70"/>
             <Label Text="EVENTS" FontSize="32" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
         </VerticalStackLayout>
 
-        <!-- SEARCH & TABS -->
         <VerticalStackLayout Grid.Row="2" Padding="20,0" Spacing="15">
-            <!-- Search Bar -->
-            <Border StrokeShape="RoundRectangle 20" StrokeThickness="1" Stroke="#E0E0E0" Padding="10,2">
+            <Border StrokeShape="RoundRectangle 20" StrokeThickness="1" Stroke="#E0E0E0" Padding="10,2" BackgroundColor="White">
                 <Grid ColumnDefinitions="Auto, *">
                     <Image Source="search_icon.png" WidthRequest="18" HeightRequest="18" Margin="5,0"/>
                     <Entry Grid.Column="1" Placeholder="Search..." PlaceholderColor="Gray" TextColor="Black" FontSize="14"/>
                 </Grid>
             </Border>
 
-            <!-- Custom Tab Selection Filter -->
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                <Border StrokeShape="RoundRectangle 10" BackgroundColor="#4DD0E1" Padding="12,5">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="MyEvents"/>
-                    </Border.GestureRecognizers>
-                    <Label Text="MY EVENTS" TextColor="Black" FontAttributes="Bold" FontSize="12"/>
-                </Border>
+            <Border Margin="0,5,0,5" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
+                <Grid ColumnDefinitions="*, *">
 
-                <Label Text="|" TextColor="LightGray" VerticalOptions="Center"/>
+                    <Border x:Name="TabMyEvents" Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="#4DD0E1">
+                        <Label Text="My Events" FontAttributes="Bold" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="MyEvents" Tapped="MyEventsTab_Tapped"/>
+                        </Border.GestureRecognizers>
+                    </Border>
 
-                <Label Text="ALL EVENTS" TextColor="Black" FontAttributes="Bold" FontSize="12" VerticalOptions="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="AllEvents"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </HorizontalStackLayout>
+                    <Border x:Name="TabAllEvents" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                        <Label Text="All Events" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding FilterCommand}" CommandParameter="AllEvents" Tapped="AllEventsTab_Tapped"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                </Grid>
+            </Border>
         </VerticalStackLayout>
 
-        <!-- EVENTS COLLECTION -->
         <CollectionView Grid.Row="3" ItemsSource="{Binding DisplayedEvents}" Margin="20,15,20,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border StrokeShape="RoundRectangle 0" StrokeThickness="1" Stroke="#CCCCCC" Margin="0,0,0,12" HeightRequest="130">
+                    <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="#F8F8F8" Margin="0,0,0,12" HeightRequest="130">
                         <Grid ColumnDefinitions="*, 110">
 
-                            <!-- Info Panel -->
                             <VerticalStackLayout Padding="12" Spacing="2" VerticalOptions="Center">
                                 <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="18" TextColor="Black"/>
                                 <Label Text="{Binding FormattedDate, StringFormat='• DATE: {0}'}" FontSize="10" TextColor="Gray"/>
                                 <Label Text="{Binding FormattedTime, StringFormat='• TIME: {0}'}" FontSize="10" TextColor="Gray"/>
-                                <Label Text="{Binding EventDescription}" FontSize="10" TextColor="Gray"/>
+                                <Label Text="{Binding EventDescription}" FontSize="10" TextColor="Gray" MaxLines="2" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
 
-                            <!-- Image & Overlay Action Button -->
                             <Grid Grid.Column="1">
                                 <Image Source="{Binding EventImage}" Aspect="AspectFill"/>
                                 <BoxView BackgroundColor="#4DD0E1" Opacity="0.5"/>
 
                                 <Button Text="REGISTER" 
-                                    BackgroundColor="#F4D03F" 
-                                    TextColor="Black" 
-                                    FontAttributes="Bold" 
-                                    FontSize="11" 
-                                    CornerRadius="15"
-                                    HeightRequest="32"
-                                    WidthRequest="90"
-                                    HorizontalOptions="Center" 
-                                    VerticalOptions="Center"
-                                    Command="{Binding BindingContext.RegisterCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                    CommandParameter="{Binding .}"/>
+                                        BackgroundColor="#F4D03F" 
+                                        TextColor="Black" 
+                                        FontAttributes="Bold" 
+                                        FontSize="11" 
+                                        CornerRadius="15"
+                                        HeightRequest="32"
+                                        WidthRequest="90"
+                                        HorizontalOptions="Center" 
+                                        VerticalOptions="Center"
+                                        Command="{Binding BindingContext.RegisterCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}"/>
                             </Grid>
                         </Grid>
                     </Border>
@@ -91,13 +82,35 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- BOTTOM NAVIGATION BAR -->
-        <Border Grid.Row="4" BackgroundColor="#4DD0E1" StrokeShape="RoundRectangle 25,25,0,0" Padding="20,10" HeightRequest="65">
+        <Border Grid.Row="4" BackgroundColor="#4DD0E1" StrokeShape="RoundRectangle 25,25,0,0" Padding="20,10" HeightRequest="65" StrokeThickness="0">
             <Grid ColumnDefinitions="*, *, *, *">
-                <ImageButton Grid.Column="0" Source="home_nav.png" HorizontalOptions="Center" HeightRequest="35"/>
-                <ImageButton Grid.Column="1" Source="form_nav.png" HorizontalOptions="Center" HeightRequest="35"/>
-                <ImageButton Grid.Column="2" Source="calendar_nav_active.png" HorizontalOptions="Center" HeightRequest="35"/>
-                <ImageButton Grid.Column="3" Source="profile_nav.png" HorizontalOptions="Center" HeightRequest="35"/>
+                <ImageButton Grid.Column="0" 
+                             Source="home.png" 
+                             Command="{Binding NavigateToHomeCommand}"
+                             CommandParameter="{Binding Source={RelativeSource Self}}"
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center" 
+                             HeightRequest="24" 
+                             WidthRequest="24" 
+                             BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="1" 
+                             Source="proposals.png" 
+                             Command="{Binding NavigateToProposalsCommand}"
+                             CommandParameter="{Binding Source={RelativeSource Self}}"
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center" 
+                             HeightRequest="28" 
+                             WidthRequest="28" 
+                             BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="2" 
+                             Source="events.png" 
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center" 
+                             HeightRequest="26" 
+                             WidthRequest="26" 
+                             BackgroundColor="Transparent"/>
             </Grid>
         </Border>
 
