@@ -2,153 +2,60 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Handog_MobileApp.O_PROPOSALS"
-             Title="Organizer Proposals"
+             xmlns:vm="clr-namespace:Handog_MobileApp.ViewModel.Organizer"
              BackgroundColor="#F4F6F8"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto, *, Auto">
+    <Grid RowDefinitions="Auto, Auto, *, Auto">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 48, 0, 16">
-            <Grid ColumnDefinitions="Auto, *, Auto" Padding="16, 0">
-                <BoxView Grid.Column="0" WidthRequest="24" BackgroundColor="Transparent"/>
-
-                <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
-                    <Label Text="Hi," FontSize="14" TextColor="#1A1A1A" Opacity="0.7" VerticalOptions="Center"/>
-                    <Label x:Name="LblHeaderUsername" Text="Organizer!" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
-                </HorizontalStackLayout>
-            </Grid>
-
-            <VerticalStackLayout Padding="24, 16, 24, 0" HorizontalOptions="Center" Spacing="8">
-                <Image Source="proposals_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
-                <Label Text="PROPOSALS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
-            </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="0" Spacing="10" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 60, 0, 30">
+            <Image Source="proposals_black.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Center" />
+            <Label Text="PROPOSALS" TextColor="#1A1A1A" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1.5"/>
         </VerticalStackLayout>
 
-        <ScrollView Grid.Row="1" Padding="16, 20, 16, 24" VerticalScrollBarVisibility="Never">
-            <VerticalStackLayout Spacing="15">
-                <Label Text="We are in need of help!" TextColor="#1A1A1A" FontSize="22" FontAttributes="Bold"/>
-                <Label Text="These are the event proposals currently submitted by your volunteers." TextColor="#777777" FontSize="13" Margin="0,0,0,5" LineHeight="1.2"/>
+        <VerticalStackLayout Grid.Row="1" Padding="20, 30, 20, 10" Spacing="12">
+            <Label Text="We are in need of help!" FontSize="24" FontAttributes="Bold" TextColor="#1A1A1A"/>
+            <Label Text="These are the event proposals currently submitted by your volunteers." FontSize="15" TextColor="#777777" LineHeight="1.2"/>
+            <BoxView HeightRequest="1" Color="#DDDDDD" Margin="0, 15, 0, 10"/>
+            <Label Text="PENDING PROPOSALS" FontSize="13" FontAttributes="Bold" TextColor="#00BAC7"/>
+        </VerticalStackLayout>
 
-                <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" HorizontalOptions="Fill"/>
-                <Label Text="PENDING PROPOSALS" TextColor="#00BAC7" FontSize="12" FontAttributes="Bold" Margin="0,5"/>
-
-                <CollectionView x:Name="CollProposals" ItemsSource="{Binding ActiveProposalsCollection}" Margin="0,5">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White" Margin="0,0,0,14">
-                                <Border.Shadow>
-                                    <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
-                                </Border.Shadow>
-
-                                <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" Padding="16">
-                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding [ProposerName]}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="16"/>
-                                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="#F0F2F5" Margin="0,8"/>
-
-                                    <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="4" Margin="0,0,10,0">
-                                        <Label Text="{Binding [ProposalTitle]}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="14" />
-                                        <Label Text="{Binding [ProposalDetails]}" TextColor="#555555" FontSize="13" LineBreakMode="WordWrap"/>
-                                    </VerticalStackLayout>
-
-                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Spacing="12" VerticalOptions="Center">
-                                        <ImageButton Source="accept_icon.png" WidthRequest="36" HeightRequest="36" CommandParameter="{Binding .}" Clicked="OnAcceptProposalClicked" BackgroundColor="Transparent"/>
-                                        <ImageButton Source="red_cross.png" WidthRequest="36" HeightRequest="36" CommandParameter="{Binding .}" Clicked="OnRejectProposalClicked" BackgroundColor="Transparent"/>
-                                    </HorizontalStackLayout>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <Border Grid.Row="2" 
-                BackgroundColor="#FAD02C" 
-                StrokeShape="RoundRectangle 20,20,0,0" 
-                StrokeThickness="0" 
-                HeightRequest="60" 
-                Padding="12, 0">
+        <ContentView Grid.Row="2" Padding="15, 0, 15, 15">
+            <CollectionView ItemsSource="{Binding Proposals}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,8" StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White" Padding="20">
+                            <Border.Shadow>
+                                <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
+                            </Border.Shadow>
+                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label Text="{Binding ProposalTitle}" FontSize="16" FontAttributes="Bold" TextColor="#1A1A1A"/>
+                                    <Label Text="{Binding ProposerName, StringFormat='Requested by: {0}'}" FontSize="13" TextColor="#777777"/>
+                                </VerticalStackLayout>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                                    <ImageButton Source="check.png" WidthRequest="40" HeightRequest="40"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProposalsViewModel}}, Path=AcceptCommand}"
+                                                 CommandParameter="{Binding .}" BackgroundColor="Transparent"/>
+                                    <ImageButton Source="x.png" WidthRequest="40" HeightRequest="40"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProposalsViewModel}}, Path=RejectCommand}"
+                                                 CommandParameter="{Binding .}" BackgroundColor="Transparent"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ContentView>
+        
+        <Border Grid.Row="3" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 20,20,0,0" HeightRequest="60" Padding="0">
             <Grid ColumnDefinitions="*, *, *, *">
-                <ImageButton Grid.Column="0" Source="home.png" Clicked="HomeBtn_Clicked" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
-                <ImageButton Grid.Column="1" Source="proposals.png" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
-                <ImageButton Grid.Column="2" Source="events.png" Clicked="EventsBtn_Clicked" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
-                <ImageButton Grid.Column="3" Source="profile.png" Clicked="ProfileBtn_Clicked" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
+                <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateCommand}" CommandParameter="Home" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateCommand}" CommandParameter="Proposals" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="2" Source="events.png" Command="{Binding NavigateCommand}"  CommandParameter="Events" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateCommand}" CommandParameter="Profile" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
             </Grid>
         </Border>
 
-        <Grid x:Name="PopupCreateModal" Grid.RowSpan="3" IsVisible="False" BackgroundColor="#80000000" Padding="20,40">
-            <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White" Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
-                <ScrollView>
-                    <VerticalStackLayout Spacing="14">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="ORGANIZE EVENT 🔔" TextColor="#1A1A1A" FontSize="18" FontAttributes="Bold" VerticalOptions="Center"/>
-                            <Button Grid.Column="1" Text="X" TextColor="#777777" Clicked="OnCloseModalClicked" BackgroundColor="Transparent" FontSize="16" FontAttributes="Bold"/>
-                        </Grid>
-
-                        <BoxView HeightRequest="1" BackgroundColor="#E0E0E0" Margin="0,2"/>
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="EVENT TITLE *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                            <Entry x:Name="TxtTitle" TextColor="#1A1A1A" Placeholder="Enter title"/>
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="ORGANIZER FULL NAME *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                            <Entry x:Name="TxtOrgName" TextColor="#1A1A1A" IsReadOnly="True" BackgroundColor="#F9F9F9"/>
-                        </VerticalStackLayout>
-
-                        <Grid ColumnDefinitions="*, *">
-                            <VerticalStackLayout Spacing="4" Padding="0,0,5,0">
-                                <Label Text="EMAIL *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <Entry x:Name="TxtEmail" TextColor="#1A1A1A" IsReadOnly="True" BackgroundColor="#F9F9F9"/>
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1" Spacing="4" Padding="5,0,0,0">
-                                <Label Text="CONTACT NUMBER" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <Entry x:Name="TxtContact" TextColor="#1A1A1A" IsReadOnly="True" BackgroundColor="#F9F9F9"/>
-                            </VerticalStackLayout>
-                        </Grid>
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="ASSIGNED LOCALE *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                            <Entry x:Name="TxtLocaleDisplay" TextColor="#1A1A1A" IsReadOnly="True" BackgroundColor="#F9F9F9"/>
-                        </VerticalStackLayout>
-
-                        <Grid ColumnDefinitions="*, *, *">
-                            <VerticalStackLayout Spacing="4" Padding="0,0,4,0">
-                                <Label Text="DATE *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <DatePicker x:Name="PickerDate" TextColor="#1A1A1A" Format="yyyy-MM-dd"/>
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1" Spacing="4" Padding="2,0,2,0">
-                                <Label Text="START TIME *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <TimePicker x:Name="PickerStart" TextColor="#1A1A1A" Format="HH:mm"/>
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="2" Spacing="4" Padding="4,0,0,0">
-                                <Label Text="END TIME *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <TimePicker x:Name="PickerEnd" TextColor="#1A1A1A" Format="HH:mm"/>
-                            </VerticalStackLayout>
-                        </Grid>
-
-                        <Grid ColumnDefinitions="*, *">
-                            <VerticalStackLayout Spacing="4" Padding="0,0,5,0">
-                                <Label Text="EXPECTED PARTICIPANTS *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <Entry x:Name="TxtExpectedParts" TextColor="#1A1A1A" Keyboard="Numeric" Placeholder="0"/>
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1" Spacing="4" Padding="5,0,0,0">
-                                <Label Text="VOLUNTEER CAPACITY *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                                <Entry x:Name="TxtMaxVol" TextColor="#1A1A1A" Keyboard="Numeric" Placeholder="0"/>
-                            </VerticalStackLayout>
-                        </Grid>
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="EVENT DESCRIPTION / ANNOUNCEMENT *" TextColor="#777777" FontSize="11" FontAttributes="Bold"/>
-                            <Editor x:Name="TxtAnnouncement" TextColor="#1A1A1A" AutoSize="TextChanges" HeightRequest="80"/>
-                        </VerticalStackLayout>
-
-                        <Label x:Name="LblCreateError" TextColor="Red" FontSize="13" IsVisible="False" HorizontalOptions="Center"/>
-
-                        <Button Text="+ PUBLISH EVENT" BackgroundColor="#00BAC7" TextColor="White" Clicked="OnPublishEventClicked" FontAttributes="Bold" CornerRadius="6" HeightRequest="45" Margin="0,10,0,0"/>
-                    </VerticalStackLayout>
-                </ScrollView>
-            </Border>
-        </Grid>
     </Grid>
 </ContentPage>

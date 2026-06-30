@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Handog_MobileApp"
              x:Class="Handog_MobileApp.O_EVENTS"
              BackgroundColor="#F4F6F8"
              NavigationPage.HasNavigationBar="False">
@@ -9,10 +10,10 @@
 
         <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 48, 0, 16">
             <Grid ColumnDefinitions="Auto, *, Auto" Padding="16, 0">
-                <ImageButton Grid.Column="0" Source="back_black.png" Clicked="BackBtn_Clicked" WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent"/>
+                <ImageButton Grid.Column="0" Source="back_black.png" Command="{Binding BackCommand}" WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent"/>
                 <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
                     <Label Text="Hi," FontSize="14" TextColor="#1A1A1A" Opacity="0.7" VerticalOptions="Center"/>
-                    <Label x:Name="LblHeaderOrganizerName" Text="Organizer!" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label Text="{Binding OrganizerNameHeader}" TextColor="#1A1A1A" FontSize="15" FontAttributes="Bold" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </Grid>
 
@@ -21,153 +22,146 @@
                 <Label Text="EVENTS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
 
                 <Border StrokeShape="RoundRectangle 22" StrokeThickness="0" BackgroundColor="White" HeightRequest="44" WidthRequest="320" Margin="0,8,0,0">
-                    <SearchBar x:Name="EventSearchBar" Placeholder="Search events..." TextColor="#1A1A1A" TextChanged="EventSearchBar_TextChanged" BackgroundColor="Transparent"/>
+                    <SearchBar Text="{Binding SearchQuery}" Placeholder="Search events..." TextColor="#1A1A1A" BackgroundColor="Transparent"/>
                 </Border>
             </VerticalStackLayout>
         </VerticalStackLayout>
 
         <Grid Grid.Row="1" RowDefinitions="Auto, *">
+
             <Border Grid.Row="0" Margin="16,16,16,0" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
                 <Grid ColumnDefinitions="*, *, *">
-                    <Border x:Name="TabMyEvents" Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="White">
+                    <Border Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="{Binding MyEventsTabColor}">
                         <Label Text="My Events" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="MyEventsTab_Tapped"/>
+                            <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="MyEvents"/>
                         </Border.GestureRecognizers>
                     </Border>
-                    <Border x:Name="TabAllEvents" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                    <Border Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="{Binding AllEventsTabColor}">
                         <Label Text="All Events" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="AllEventsTab_Tapped"/>
+                            <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="AllEvents"/>
                         </Border.GestureRecognizers>
                     </Border>
-                    <Border x:Name="TabCompleted" Grid.Column="2" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                    <Border Grid.Column="2" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="{Binding CompletedTabColor}">
                         <Label Text="Completed" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="CompletedTab_Tapped"/>
+                            <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="Completed"/>
                         </Border.GestureRecognizers>
                     </Border>
                 </Grid>
             </Border>
 
-            <CollectionView x:Name="EventsCollectionView" Grid.Row="1" Margin="16,8,16,0" SelectionMode="None">
+            <CollectionView Grid.Row="1" Margin="16,8,16,0" SelectionMode="None" ItemsSource="{Binding GlobalEventsList}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="0,6" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
                             <Border.Shadow>
                                 <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
                             </Border.Shadow>
-                            <Grid ColumnDefinitions="*, 110" HeightRequest="140">
+                            <Grid ColumnDefinitions="*, Auto" HeightRequest="140" Padding="0">
                                 <VerticalStackLayout Grid.Column="0" Padding="14" Spacing="2" VerticalOptions="Center">
-                                    <Grid ColumnDefinitions="*, Auto">
-                                        <Label Grid.Column="0" Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation"/>
-                                        <ImageButton Grid.Column="1" Source="trash_red.png" WidthRequest="16" HeightRequest="16" IsVisible="{Binding IsMyEvent}" Clicked="DeleteEventBtn_Clicked" CommandParameter="{Binding .}" BackgroundColor="Transparent" Margin="4,0,0,0"/>
-                                    </Grid>
+                                    <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" LineBreakMode="TailTruncation"/>
                                     <Label Text="{Binding OrganizerName, StringFormat='Organizer: {0}'}" TextColor="#00BAC7" FontAttributes="Bold" FontSize="9"/>
                                     <VerticalStackLayout Spacing="1" Margin="0,2,0,0">
                                         <Label Text="{Binding EventVenue, StringFormat='• VENUE: {0}'}" TextColor="#777777" FontSize="10"/>
                                         <Label Text="{Binding EventTime, StringFormat='• TIME: {0}'}" TextColor="#777777" FontSize="10"/>
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
-                                <Grid Grid.Column="1">
-                                    <Image Source="image_a16d41.jpg" Aspect="AspectFill"/>
-                                    <Button Text="VIEW" Clicked="ViewEventDetailsBtn_Clicked" CommandParameter="{Binding .}" BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="11" CornerRadius="14" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="60" HeightRequest="28"/>
-                                </Grid>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Fill" HorizontalOptions="End" WidthRequest="80">
+                                    <ImageButton Source="x.png" 
+                                         WidthRequest="20" HeightRequest="20" 
+                                         IsVisible="{Binding IsMyEvent}"
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=DeleteEventCommand}" 
+                                         CommandParameter="{Binding .}" 
+                                         BackgroundColor="Transparent"
+                                         HorizontalOptions="End"
+                                         Margin="0,10,10,0"/>
+
+                                                        <Button Text="VIEW" 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=ViewEventDetailsCommand}" 
+                                    CommandParameter="{Binding .}" 
+                                    BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="11" 
+                                    CornerRadius="14" HorizontalOptions="Center" VerticalOptions="End" 
+                                    WidthRequest="60" HeightRequest="28" Margin="0,0,0,10"/>
+                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button Grid.Row="1" Text="+ ORGANIZE" Clicked="OpenOrganizePanelBtn_Clicked" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" CornerRadius="22" HeightRequest="44" WidthRequest="140" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,16"/>
+            <Button Grid.Row="1" Text="+ ORGANIZE" Command="{Binding TogglePanelCommand}" CommandParameter="OpenOrganize" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" CornerRadius="22" HeightRequest="44" WidthRequest="140" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,16"/>
         </Grid>
 
-        <Grid x:Name="PopupOrganizePanel" Grid.RowSpan="3" BackgroundColor="#80000000" IsVisible="False" Padding="20">
+        <Grid Grid.RowSpan="3" BackgroundColor="#80000000" IsVisible="{Binding IsOrganizePanelVisible}" Padding="20">
             <Border VerticalOptions="Center" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="20">
                 <ScrollView HeightRequest="500">
                     <VerticalStackLayout Spacing="15">
                         <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
                             <Label Text="Organize Event" FontSize="20" FontAttributes="Bold"/>
-                            <ImageButton Source="close_black.png" WidthRequest="24" HeightRequest="24" Clicked="CloseOrganizePanelBtn_Clicked" BackgroundColor="Transparent"/>
+                            <ImageButton Source="close_black.png" WidthRequest="24" HeightRequest="24" Command="{Binding TogglePanelCommand}" CommandParameter="CloseOrganize" BackgroundColor="Transparent"/>
                         </Grid>
 
                         <VerticalStackLayout Spacing="5">
                             <Label Text="ORGANIZER" FontSize="10" FontAttributes="Bold" TextColor="#777777"/>
-                            <Entry x:Name="EntryFormOrganizer" IsReadOnly="True" BackgroundColor="#F2F4F7"/>
+                            <Entry Text="{Binding FormOrganizer}" IsReadOnly="True" BackgroundColor="#F2F4F7"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Spacing="5">
                             <Label Text="EMAIL" FontSize="10" FontAttributes="Bold" TextColor="#777777"/>
-                            <Entry x:Name="EntryFormEmail" IsReadOnly="True" BackgroundColor="#F2F4F7"/>
+                            <Entry Text="{Binding FormEmail}" IsReadOnly="True" BackgroundColor="#F2F4F7"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="5">
                             <Label Text="CATEGORY *" FontSize="10" FontAttributes="Bold"/>
-                            <Picker x:Name="PickerCategory" Title="Select Category" ItemDisplayBinding="{Binding CategoryName}" />
+                            <Picker Title="Select Category" ItemsSource="{Binding CategoriesList}" ItemDisplayBinding="{Binding CategoryName}" SelectedItem="{Binding SelectedCategory}" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="5">
                             <Label Text="EVENT TITLE *" FontSize="10" FontAttributes="Bold"/>
-                            <Entry x:Name="EntryFormTitle" />
+                            <Entry Text="{Binding FormTitle}" />
                         </VerticalStackLayout>
 
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                             <VerticalStackLayout Grid.Column="0" Spacing="5">
                                 <Label Text="DATE *" FontSize="10" FontAttributes="Bold"/>
-                                <DatePicker x:Name="PickerFormDate" Format="yyyy-MM-dd"/>
+                                <DatePicker Date="{Binding FormDate}" Format="yyyy-MM-dd"/>
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" Spacing="5">
                                 <Label Text="CAPACITY *" FontSize="10" FontAttributes="Bold"/>
-                                <Entry x:Name="EntryFormCapacity" Keyboard="Numeric" Placeholder="e.g., 50"/>
+                                <Entry Text="{Binding FormCapacity}" Keyboard="Numeric" Placeholder="e.g., 50"/>
                             </VerticalStackLayout>
                         </Grid>
 
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                             <VerticalStackLayout Grid.Column="0" Spacing="5">
                                 <Label Text="START TIME *" FontSize="10" FontAttributes="Bold"/>
-                                <TimePicker x:Name="PickerStartTime" Format="HH:mm"/>
+                                <TimePicker Time="{Binding FormStartTime}" Format="HH:mm"/>
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" Spacing="5">
                                 <Label Text="END TIME *" FontSize="10" FontAttributes="Bold"/>
-                                <TimePicker x:Name="PickerEndTime" Format="HH:mm"/>
+                                <TimePicker Time="{Binding FormEndTime}" Format="HH:mm"/>
                             </VerticalStackLayout>
                         </Grid>
 
                         <VerticalStackLayout Spacing="5">
                             <Label Text="EVENT DESCRIPTION" FontSize="10" FontAttributes="Bold"/>
-                            <Editor x:Name="EditorFormDetails" HeightRequest="80"/>
+                            <Editor Text="{Binding FormDetails}" HeightRequest="80"/>
                         </VerticalStackLayout>
 
-                        <Button Text="PUBLISH EVENT" Clicked="PublishNewEventBtn_Clicked" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold"/>
+                        <Button Text="PUBLISH EVENT" Command="{Binding PublishEventCommand}" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </ScrollView>
-            </Border>
-        </Grid>
-        
-        <Grid x:Name="PopupDetailsPanel" Grid.RowSpan="3" BackgroundColor="#80000000" IsVisible="False" Padding="20">
-            <Border VerticalOptions="Center" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="20">
-                <VerticalStackLayout Spacing="12">
-                    <Label x:Name="PopupModalTitle" FontSize="20" FontAttributes="Bold"/>
-                    <Label x:Name="PopupModalOrganizer" TextColor="#00BAC7"/>
-                    <Label x:Name="PopupTxtVenue"/>
-                    <Label x:Name="PopupTxtAddress"/>
-                    <Label x:Name="PopupTxtDateTime"/>
-                    <Label x:Name="PopupTxtDetails"/>
-                    <CollectionView x:Name="AttendeesListView" HeightRequest="100"/>
-                    <VerticalStackLayout x:Name="ManagementActionPanel" Spacing="8">
-                        <Button x:Name="BtnConfirmAttendance" Text="✔ LOG ATTENDANCE" Clicked="ConfirmAttendanceBtn_Clicked" BackgroundColor="#00BAC7" TextColor="White"/>
-                        <Button x:Name="BtnCompleteEvent" Text="🛑 FINALISE EVENT" Clicked="ConfirmCompletionBtn_Clicked" BackgroundColor="#FAD02C"/>
-                    </VerticalStackLayout>
-                    <Button Text="Close" Clicked="CloseDetailsPanelBtn_Clicked" BackgroundColor="Transparent" TextColor="#777777"/>
-                </VerticalStackLayout>
             </Border>
         </Grid>
 
         <Border Grid.Row="2" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 20,20,0,0" HeightRequest="60" Padding="0">
             <Grid ColumnDefinitions="*, *, *, *">
-                <ImageButton Grid.Column="0" Source="home.png" Clicked="HomeBtn_Clicked" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="1" Source="proposals.png" Clicked="ProposalsBtn_Clicked" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateCommand}" CommandParameter="Home" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateCommand}" CommandParameter="Proposals" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <ImageButton Grid.Column="2" Source="events.png" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="3" Source="profile.png" Clicked="ProfileBtn_Clicked" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateCommand}" CommandParameter="Profile" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
             </Grid>
         </Border>
     </Grid>
