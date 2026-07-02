@@ -1,33 +1,33 @@
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\rpswa.dswa.cache.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.AssemblyInfoInputs.cache
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.AssemblyInfo.cs
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.csproj.CoreCompileInputs.cache
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.sourcelink.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\appsettings.Development.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\appsettings.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.staticwebassets.runtime.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.staticwebassets.endpoints.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.exe
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.deps.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.runtimeconfig.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.dll
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.pdb
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\rjimswa.dswa.cache.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\bundle\Handog_AdminWeb.styles.css
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\projectbundle\Handog_AdminWeb.bundle.scp.css
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.json.cache
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.development.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.dll
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\refint\Handog_AdminWeb.dll
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.pdb
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.genruntimeconfig.cache
-C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\ref\Handog_AdminWeb.dll
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\appsettings.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.staticwebassets.runtime.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.staticwebassets.endpoints.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.exe
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.deps.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.runtimeconfig.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.dll
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.pdb
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.AssemblyInfoInputs.cache
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.AssemblyInfo.cs
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.csproj.CoreCompileInputs.cache
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.sourcelink.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\bundle\Handog_AdminWeb.styles.css
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\scopedcss\projectbundle\Handog_AdminWeb.bundle.scp.css
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.dll
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\refint\Handog_AdminWeb.dll
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.pdb
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.genruntimeconfig.cache
+C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\ref\Handog_AdminWeb.dll

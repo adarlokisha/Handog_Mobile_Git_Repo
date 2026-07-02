@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Handog_MobileApp</name>
+    </assembly>
+    <members>
+        <member name="T:Handog_MobileApp.BaseViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="F:Handog_MobileApp.BaseViewModel.goHomeCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.BaseViewModel.GoHomeCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.BaseViewModel.GoHomeCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.BaseViewModel.GoHome"/>.</summary>
+        </member>
+        <member name="F:Handog_MobileApp.BaseViewModel.goProposalsCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.BaseViewModel.GoProposalsCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.BaseViewModel.GoProposalsCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.BaseViewModel.GoProposals"/>.</summary>
+        </member>
+        <member name="F:Handog_MobileApp.BaseViewModel.goEventsCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.BaseViewModel.GoEventsCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.BaseViewModel.GoEventsCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.BaseViewModel.GoEvents"/>.</summary>
+        </member>
+        <member name="F:Handog_MobileApp.BaseViewModel.goProfileCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.BaseViewModel.GoProfileCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.BaseViewModel.GoProfileCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.BaseViewModel.GoProfile"/>.</summary>
+        </member>
+        <member name="T:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.Proposals">
+            <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._proposals"/>
+        </member>
+        <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.HeaderUsername">
+            <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._headerUsername"/>
+        </member>
+        <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.loadDataCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadDataCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadDataCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadData"/>.</summary>
+        </member>
+        <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.rejectCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.RejectCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.RejectCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.Reject(Handog_MobileApp.Models.O_EventProposal)"/>.</summary>
+        </member>
+        <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.acceptCommand">
+            <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.AcceptCommand"/>.</summary>
+        </member>
+        <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.AcceptCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.Accept(Handog_MobileApp.Models.O_EventProposal)"/>.</summary>
+        </member>
+        <member name="M:Handog.web.Register.IdService.GenerateNextIdAsync(System.String,System.String,System.String)">
+            Generates an ID based on a prefix and the next auto-incrementing identity value.
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Proposals">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Proposals" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.HeaderUsername">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "HeaderUsername" generated properties.</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Proposals">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Proposals" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.HeaderUsername">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "HeaderUsername" generated properties.</summary>
+        </member>
+    </members>
+</doc>

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "bL0tdXCpUOY=",
+  "dgSpecHash": "QbeHDcSIgLo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\LENOVO\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Rance\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.2\\communitytoolkit.mvvm.8.4.2.nupkg.sha512"
+  ],
   "logs": []
 }

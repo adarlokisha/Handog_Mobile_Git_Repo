@@ -16,15 +16,16 @@
                       IgnoreSafeArea="True">
 
                     <VerticalStackLayout Grid.Row="0" Grid.Column="0" VerticalOptions="Center">
-                        <Label Text="Welcome back," 
-                               TextColor="#1A1A1A" 
-                               FontSize="14"
-                               Opacity="0.7"/>
-                        <Label Text="Username!" 
-                               TextColor="#1A1A1A" 
-                               FontSize="24" 
-                               FontAttributes="Bold" 
-                               Margin="0,2,0,0"/>
+                        <Label Text="Welcome," 
+                           TextColor="#1A1A1A" 
+                           FontSize="14"
+                           Opacity="0.7"/>  
+
+                        <Label x:Name="LblOrganizerName"
+                           TextColor="#1A1A1A" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           Margin="0,2,0,0"/>
                     </VerticalStackLayout>
 
                     <Image Grid.Row="0" Grid.Column="1" 
@@ -32,12 +33,10 @@
                            WidthRequest="24" HeightRequest="24" 
                            VerticalOptions="Center"
                            Margin="0,0,4,0"/>
-
                 </Grid>
 
                 <Grid HeightRequest="210" Margin="0,4,0,0">
                     <Image Source="o_greetingcard.png" Aspect="AspectFill"/>
-
                     <BoxView BackgroundColor="White" Opacity="0.12"/>
 
                     <VerticalStackLayout Padding="20" VerticalOptions="Center" Spacing="6">
@@ -53,6 +52,7 @@
                                Margin="0,2,40,12"/>
 
                         <Button Text="+ ORGANIZE EVENT" 
+                                Clicked="OrganizeEventBtn_Clicked"
                                 BackgroundColor="#00BAC7" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 
@@ -74,7 +74,8 @@
                                    TextColor="#1A1A1A" 
                                    FontAttributes="Bold" 
                                    FontSize="15"/>
-                            <Label Text="29 out of 34 attended your events!" 
+                            <Label x:Name="LblAttendanceSummary"
+                                   Text="0 out of 0 attended your events" 
                                    TextColor="#777777" 
                                    FontSize="12"/>
                         </VerticalStackLayout>
@@ -82,7 +83,8 @@
                         <Grid Grid.Column="1" WidthRequest="64" HeightRequest="64" HorizontalOptions="End">
                             <Ellipse Stroke="#F0F2F5" StrokeThickness="6" WidthRequest="60" HeightRequest="60"/>
                             <Ellipse Stroke="#FAD02C" StrokeThickness="6" StrokeDashArray="10, 2" WidthRequest="60" HeightRequest="60"/>
-                            <Label Text="92%" 
+                            <Label x:Name="LblAttendancePercentage"
+                                   Text="0%" 
                                    TextColor="#1A1A1A" 
                                    FontAttributes="Bold" 
                                    FontSize="14" 

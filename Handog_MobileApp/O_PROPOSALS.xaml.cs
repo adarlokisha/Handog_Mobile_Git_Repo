@@ -1,49 +1,26 @@
-using Microsoft.Maui.Controls;
-using System;
-using static Android.Provider.CalendarContract;
-using static Android.Provider.ContactsContract;
+using Handog_MobileApp.ViewModel.Organizer; // Ensure this matches your namespace
 
 namespace Handog_MobileApp
 {
     public partial class O_PROPOSALS : ContentPage
     {
-        public O_PROPOSALS()
+        // We declare the ViewModel here so we can access it if needed
+        private ProposalsViewModel _viewModel;
+
+        public O_PROPOSALS(int sessionAccountNum)
         {
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, false);
+
+            // Link the ViewModel to this Page
+            _viewModel = new ProposalsViewModel(sessionAccountNum);
+            BindingContext = _viewModel;
         }
 
-        private async void BackBtn_Clicked(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PopAsync();
-        }
-
-        private async void HomeBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_HOME());
-        }
-
-        private async void EventsBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_EVENTS());
-        }
-
-        private async void ProfileBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_PROFILE());
-        }
-
-        private async Task AnimateButton(ImageButton button)
-        {
-            if (button != null)
-            {
-                await button.ScaleTo(0.92, 50, Easing.Linear);
-                await button.ScaleTo(1.0, 50, Easing.Linear);
-            }
+            base.OnAppearing();
+            // Trigger the command to load data when the page appears
+            _viewModel.LoadDataCommand.Execute(null);
         }
     }
 }

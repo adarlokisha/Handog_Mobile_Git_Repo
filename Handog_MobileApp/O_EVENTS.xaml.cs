@@ -1,49 +1,32 @@
-using Microsoft.Maui.Animations;
 using Microsoft.Maui.Controls;
-using System;
 using System.Threading.Tasks;
+using Handog_MobileApp.Models;
 
 namespace Handog_MobileApp
 {
     public partial class O_EVENTS : ContentPage
     {
-        public O_EVENTS()
+        private readonly EventsViewModel _viewModel;
+
+        // We add the proposal here as an OPTIONAL parameter (defaults to null)
+        public O_EVENTS(int sessionAccountNum, O_EventProposal proposal = null)
         {
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, false);
-        }
-        private async void BackBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PopAsync();
-        }
 
-        private async void HomeBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_HOME());
-        }
-        private async void ProposalsBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_PROPOSALS());
-        }
+            _viewModel = new EventsViewModel(sessionAccountNum);
+            BindingContext = _viewModel;
 
-
-        private async void ProfileBtn_Clicked(object sender, EventArgs e)
-        {
-            await AnimateButton(sender as ImageButton);
-            await Navigation.PushAsync(new O_PROFILE());
-        }
-
-        private async Task AnimateButton(ImageButton button)
-        {
-            if (button != null)
+            // If a proposal was passed in, immediately load it into the form
+            if (proposal != null)
             {
-                // Quick 50ms compression scale down and return bounce
-                await button.ScaleTo(0.92, 50, Easing.Linear);
-                await button.ScaleTo(1.0, 50, Easing.Linear);
+                _viewModel.LoadProposalIntoForm(proposal);
             }
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.InitializeAsync();
         }
     }
 }
