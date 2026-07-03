@@ -1,22 +1,34 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
+<div style="display: flex; min-height: 100vh; font-family: 'Segoe UI', sans-serif; background-color: #F8F9FA;">
+
+    <aside style="width: 240px; background-color: #00BAC7; display: flex; flex-direction: column; align-items: stretch;">
         <NavMenu />
-    </div>
+    </aside>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <main style="flex: 1; display: flex; flex-direction: column;">
+        <header style="background-color: #FFFFFF; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #EAEAEA;">
+            <div style="display: flex; gap: 10px;">
+                <span style="background-color: #E9ECEF; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #495057; cursor: pointer;">Home</span>
+                <span style="padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: #495057; cursor: pointer;">Statistics</span>
+            </div>
 
-        <article class="content px-4">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <span class="bi bi-bell" style="font-size: 20px; color: #555555; cursor: pointer;"></span>
+                <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <span class="bi bi-person-circle" style="font-size: 26px; color: #333333;"></span>
+                    <span class="bi bi-chevron-down" style="font-size: 12px; color: #777777;"></span>
+                </div>
+            </div>
+        </header>
+
+        <div style="padding: 40px; display: flex; flex-direction: column; gap: 30px;">
             @Body
-        </article>
+        </div>
     </main>
 </div>
 
-<div id="blazor-error-ui">
+<div id="blazor-error-ui" style="display:none;">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>

@@ -1,0 +1,112 @@
+﻿@page "/admin/accounts"
+@rendermode InteractiveServer
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+
+        <div style="border: 2px solid #E0E0E0; width: 65px; height: 65px; border-radius: 14px; display: flex; justify-content: center; align-items: center; background-color: white; overflow: hidden; box-sizing: border-box; padding: 5px;">
+            <img src="images/accountIcon.png" alt="Account Management" style="width: 100%; height: 100%; object-fit: contain;" />
+        </div>
+
+        <h1 style="font-size: 28px; font-weight: bold; color: #212529; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Account Management</h1>
+    </div>
+
+    
+    <button style="background-color: #00BAC7; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 186, 199, 0.2);">
+        <span class="bi bi-plus-circle" style="font-size: 15px;"></span> Create New Account
+    </button>
+</div>
+
+<div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="font-size: 22px; font-weight: 600; color: #212529; margin: 0;">Account List</h2>
+        <span style="font-size: 14px; color: #212529; font-weight: 500;">Accounts: <strong style="font-size: 18px;">@AccountsList.Count</strong></span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px; font-size: 14px; color: #333333;">
+            <div>
+                Account Role:
+                <select style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
+                    <option>All roles</option>
+                    <option>Organizer</option>
+                    <option>Volunteer</option>
+                </select>
+            </div>
+
+            <div>
+                Account Filter:
+                <select style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
+                    <option>By Name</option>
+                    <option>By Email</option>
+                </select>
+            </div>
+
+            <button style="background-color: #00BAC7; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Filter</button>
+            <button style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Ban</button>
+        </div>
+
+        <div style="position: relative; width: 280px;">
+            <span class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888888; font-size: 14px;"></span>
+            <input type="text" placeholder="Search Accounts" style="width: 100%; padding: 7px 35px 7px 35px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
+            <span class="bi bi-x" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #888888; font-size: 18px; cursor: pointer;"></span>
+        </div>
+    </div>
+</div>
+
+<div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.01);">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+        <thead>
+            <tr style="background-color: #CFF4F6; color: #1A1A1A; border-bottom: 1px solid #BCE5E7;">
+                <th style="padding: 15px; width: 40px;"><input type="checkbox" /></th>
+                <th style="padding: 15px; font-weight: 600; color: #000000;">Email:</th>
+                <th style="padding: 15px; font-weight: 600; color: #000000;">Name:</th>
+                <th style="padding: 15px; font-weight: 600; color: #000000;">Contact Number:</th>
+                <th style="padding: 15px; font-weight: 600; color: #000000;">Role:</th>
+                <th style="padding: 15px; font-weight: 600; color: #000000;">Church ID:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in AccountsList)
+            {
+                <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(account.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(account.IsSelected ? "4px solid #00BAC7" : "none");">
+                    <td style="padding: 15px; vertical-align: top;">
+                        <input type="checkbox" @bind="account.IsSelected" />
+                    </td>
+                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Email</td>
+                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Name</td>
+                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.ContactNumber</td>
+                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Role</td>
+                    <td style="padding: 15px; color: #333333; vertical-align: top; position: relative;">
+                        @account.ChurchId
+                        @if (account.IsSelected)
+                        {
+                            <span class="bi bi-pencil-square" style="position: absolute; right: 15px; top: 15px; color: #888888; cursor: pointer; font-size: 16px;"></span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<AccountModel> AccountsList = new()
+    {
+        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" },
+        new AccountModel { Email = "juan.reyes@example.com", Name = "Juan Reyes", ContactNumber = "09271234567", Role = "Volunteer", ChurchId = "" },
+        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" },
+        new AccountModel { Email = "juan.reyes@example.com", Name = "Juan Reyes", ContactNumber = "09271234567", Role = "Volunteer", ChurchId = "", IsSelected = true },
+        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" }
+    };
+
+    public class AccountModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string ContactNumber { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string ChurchId { get; set; } = string.Empty;
+        public bool IsSelected { get; set; } = false;
+    }
+}

@@ -1,30 +1,22 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Handog_AdminWeb</a>
-    </div>
+﻿
+<div style="padding: 30px 20px 20px 20px; background-color: #00BAC7; display: flex; justify-content: center; align-items: center;">
+    <img src="/handogYellowLogo.png" alt="Handog" style="width: 110px; height: 110px; object-fit: contain;" />
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<nav style="display: flex; flex-direction: column; gap: 4px; background-color: #00BAC7; flex: 1;">
+    <NavLink href="admin/accounts" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-weight: 600; background-color: #CFF4F6; border-right: 4px solid #FAD02C; font-size: 14px;" ActiveClass="active-link">
+        <span class="bi bi-person-circle" style="font-size: 18px;"></span> Accounts
+    </NavLink>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    <NavLink href="admin/events" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-size: 14px; font-weight: 500;">
+        <span class="bi bi-calendar-check" style="font-size: 18px;"></span> Events
+    </NavLink>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+    <NavLink href="admin/pending" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-size: 14px; font-weight: 500;">
+        <span class="bi bi-exclamation-circle" style="font-size: 18px;"></span> Pending
+    </NavLink>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+    <a href="admin/login" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; margin-top: 20px; font-size: 14px; font-weight: 500;">
+        <span class="bi bi-box-arrow-left" style="font-size: 18px;"></span> Logout
+    </a>
+</nav>

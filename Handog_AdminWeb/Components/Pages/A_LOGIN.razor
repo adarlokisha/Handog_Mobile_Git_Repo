@@ -7,16 +7,15 @@
 <div class="login-screen-wrapper" style="width: 100vw; height: 100vh; display: flex; font-family: 'Segoe UI', sans-serif; background-color: #F8F9FA; margin: 0; padding: 0; overflow: hidden; position: fixed; top: 0; left: 0;">
 
     <div style="flex: 1.2; background-color: #1A1A1A; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
-        <img src="mobile-images/logo_teal.png" alt="Handog Admin" style="width: 220px; height: auto; margin-bottom: 24px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));" />
-        <h1 style="color: #FAD02C; font-weight: bold; margin: 0; font-size: 36px;">HANDOG</h1>
-        <p style="color: #777777; margin-top: 10px; font-size: 14px; text-align: center; max-width: 300px; line-height: 1.5;">Centralized Management Hub & Volunteer Operations Control Center</p>
+        <img src="mobile-images/logo_teal.png" alt="Handog Admin" style="width: 220px; height: auto; margin-bottom: 12px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.3));" />
+        <p style="color: #777777; margin-top: 0px; font-size: 14px; text-align: center; line-height: 1.5;">Centralized Management Hub & Volunteer Operations Control Center</p>
     </div>
 
     <div style="flex: 1; background-color: white; display: flex; justify-content: center; align-items: center; padding: 40px; box-shadow: -10px 0 30px rgba(0,0,0,0.05);">
         <div style="width: 100%; max-width: 360px;">
             <div style="margin-bottom: 35px;">
                 <h2 style="color: #1A1A1A; font-weight: bold; margin: 0; font-size: 24px;">Administrator Login</h2>
-                <p style="color: #777777; margin: 5px 0 0 0; font-size: 13px;">Enter system credentials to access master metrics dashboard.</p>
+                <p style="color: #777777; margin: 5px 0 0 0; font-size: 13px;">Enter system credentials to access the admin panel.</p>
             </div>
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
@@ -40,7 +39,7 @@
 
             <button @onclick="ProcessLoginVerification"
                     style="width: 100%; background-color: #FAD02C; color: #1A1A1A; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(250, 208, 44, 0.2);">
-                ACCESS COMMAND CENTER
+                LOGIN
             </button>
         </div>
     </div>
@@ -63,7 +62,7 @@
 
         if (InputUsername == "admin" && InputPassword == "Pass123")
         {
-            Navigation.NavigateTo("/admin/dashboard");
+            Navigation.NavigateTo("/admin/accounts");
         }
         else
         {

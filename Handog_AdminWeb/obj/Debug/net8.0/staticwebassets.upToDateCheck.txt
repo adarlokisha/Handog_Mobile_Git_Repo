@@ -1,4 +1,10 @@
 wwwroot\app.css
 wwwroot\bootstrap\bootstrap.min.css
 wwwroot\bootstrap\bootstrap.min.css.map
+wwwroot\bootstrap\images\accountIcon.png
+wwwroot\bootstrap\images\accountPageIcon.png
+wwwroot\bootstrap\images\eventPageIcon.png
+wwwroot\bootstrap\images\handogYellowLogo.png
+wwwroot\bootstrap\images\logoutIcon.png
+wwwroot\bootstrap\images\pendingPageIcon.png
 wwwroot\favicon.png
