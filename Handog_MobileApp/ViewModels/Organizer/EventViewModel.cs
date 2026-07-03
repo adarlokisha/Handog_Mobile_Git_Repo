@@ -69,6 +69,16 @@ namespace Handog_MobileApp
         private Color _completedTabColor = Colors.Transparent;
         public Color CompletedTabColor { get => _completedTabColor; set { _completedTabColor = value; OnPropertyChanged(); } }
 
+        // ---- Address ---- 
+
+        // --- Form Fields for Organizing ---
+        // (Add these next to FormTitle, FormDetails, etc.)
+        private string _formVenue;
+        public string FormVenue { get => _formVenue; set { _formVenue = value; OnPropertyChanged(); } }
+
+        private string _formAddress;
+        public string FormAddress { get => _formAddress; set { _formAddress = value; OnPropertyChanged(); } }
+
         // --- Collections ---
         public ObservableCollection<EventModel> GlobalEventsList { get; set; } = new ObservableCollection<EventModel>();
         public List<CategoryModel> CategoriesList { get; set; }
@@ -81,6 +91,7 @@ namespace Handog_MobileApp
         public ICommand NavigateCommand { get; }
         public ICommand ViewEventDetailsCommand { get; }
         public ICommand DeleteEventCommand { get; }
+
 
         public EventsViewModel(int sessionAccountNum)
         {
@@ -143,7 +154,13 @@ namespace Handog_MobileApp
                 using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
-                    string query = "SELECT Firstname, Lastname, Email, LocaleNum FROM ACCOUNT WHERE AccountNum = @AccNum";
+                    // JOIN the LOCALE table so we can grab the actual text of their default location
+                    string query = @"SELECT a.Firstname, a.Lastname, a.Email, a.LocaleNum, 
+                                    l.LocaleName, l.LocaleAddress 
+                             FROM ACCOUNT a
+                             LEFT JOIN LOCALE l ON a.LocaleNum = l.LocaleNum
+                             WHERE a.AccountNum = @AccNum";
+
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@AccNum", _currentAccountNum);
@@ -154,7 +171,11 @@ namespace Handog_MobileApp
                                 OrganizerNameHeader = $"{reader["Firstname"]}!";
                                 FormOrganizer = $"{reader["Firstname"]} {reader["Lastname"]}";
                                 FormEmail = reader["Email"].ToString();
-                                _userLocaleNum = Convert.ToInt32(reader["LocaleNum"]);
+                                _userLocaleNum = reader["LocaleNum"] != DBNull.Value ? Convert.ToInt32(reader["LocaleNum"]) : 0;
+
+                                // Preload the form fields! (The user can still delete/edit this text in the app)
+                                FormVenue = reader["LocaleName"]?.ToString();
+                                FormAddress = reader["LocaleAddress"]?.ToString();
                             }
                         }
                     }
@@ -171,11 +192,12 @@ namespace Handog_MobileApp
                 using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
-                    string baseSql = @"SELECT e.*, a.Firstname + ' ' + a.Lastname AS OrganizerName, l.LocaleName, l.LocaleAddress
-                                       FROM EVENT e 
-                                       INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum 
-                                       INNER JOIN LOCALE l ON e.LocaleNum = l.LocaleNum
-                                       WHERE (e.EventTitle LIKE @Search)";
+
+                    // FIX 1: Removed the LOCALE join. e.* already grabs EventVenue and EventAddress!
+                    string baseSql = @"SELECT e.*, a.Firstname + ' ' + a.Lastname AS OrganizerName
+                               FROM EVENT e 
+                               INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum 
+                               WHERE (e.EventTitle LIKE @Search)";
 
                     if (_activeTabMode == "MyEvents") baseSql += " AND e.OrganizerNum = @UserNum AND e.EventStatus != 'Completed'";
                     else if (_activeTabMode == "AllEvents") baseSql += " AND e.EventStatus != 'Completed'";
@@ -190,17 +212,35 @@ namespace Handog_MobileApp
                         {
                             while (await reader.ReadAsync())
                             {
+                                int catNum = reader["CategoryNum"] != DBNull.Value ? Convert.ToInt32(reader["CategoryNum"]) : 1;
+
+                                // FIX 2: Added a default case to the switch expression so the compiler is happy
+                                string imagePlaceholder = catNum switch
+                                {
+                                    1 => "mm.png",  // Medical Mission
+                                    2 => "fp.png",  // Feeding Program
+                                    3 => "ya.png",  // Youth Activity
+                                    4 => "sg.png",  // Spiritual Gathering
+                                    5 => "tp.png",  // Environmental Care
+                                    _ => "mm.png"   // Fallback image just in case
+                                };
+
                                 GlobalEventsList.Add(new EventModel
                                 {
                                     EventID = Convert.ToInt32(reader["EventNum"]),
                                     EventTitle = reader["EventTitle"].ToString(),
                                     OrganizerName = reader["OrganizerName"].ToString(),
-                                    EventVenue = reader["LocaleName"].ToString(),
-                                    EventAddress = reader["LocaleAddress"].ToString(),
+
+                                    // FIX 3: Read directly from your newly added columns in the EVENT table
+                                    EventVenue = reader["EventVenue"]?.ToString(),
+                                    EventAddress = reader["EventAddress"]?.ToString(),
+
                                     EventTime = reader["StartTime"].ToString(),
                                     EventDate = Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"),
                                     EventDetails = reader["EventDescription"].ToString(),
-                                    IsMyEvent = (Convert.ToInt32(reader["OrganizerNum"]) == _currentAccountNum)
+                                    IsMyEvent = (Convert.ToInt32(reader["OrganizerNum"]) == _currentAccountNum),
+
+                                    CategoryImage = imagePlaceholder
                                 });
                             }
                         }
@@ -212,9 +252,10 @@ namespace Handog_MobileApp
 
         private async Task ExecutePublishNewEvent()
         {
-            if (SelectedCategory == null || string.IsNullOrWhiteSpace(FormTitle))
+            // Updated validation to check for Venue instead of SelectedLocale
+            if (SelectedCategory == null || string.IsNullOrWhiteSpace(FormTitle) || string.IsNullOrWhiteSpace(FormVenue))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Title and Category are required.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "Title, Category, and Venue Name are required.", "OK");
                 return;
             }
 
@@ -224,26 +265,32 @@ namespace Handog_MobileApp
                 {
                     await conn.OpenAsync();
 
-                    // 1. Insert Event
                     string countSql = "SELECT ISNULL(MAX(EventNum), 0) + 1 FROM EVENT";
                     int nextId = (int)await new SqlCommand(countSql, conn).ExecuteScalarAsync();
                     string eventIdFormatted = "EV" + nextId.ToString("D3");
 
-                    string sql = @"INSERT INTO EVENT (Event_ID, OrganizerNum, CategoryNum, LocaleNum, EventTitle, EventDescription, EventDate, StartTime, EndTime, ExpectedParticipants, VolunteerCapacity, EventStatus) 
-                               VALUES (@ID, @Org, @Cat, @Loc, @Title, @Desc, @Date, @Start, @End, 0, @Cap, 'Published')";
+                    // Added EventVenue and EventAddress to the INSERT statement
+                    string sql = @"INSERT INTO EVENT (Event_ID, OrganizerNum, CategoryNum, LocaleNum, EventTitle, EventDescription, EventDate, StartTime, EndTime, ExpectedParticipants, VolunteerCapacity, EventStatus, EventVenue, EventAddress) 
+                           VALUES (@ID, @Org, @Cat, @Loc, @Title, @Desc, @Date, @Start, @End, 0, @Cap, 'Published', @Venue, @Address)";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@ID", eventIdFormatted);
                         cmd.Parameters.AddWithValue("@Org", _currentAccountNum);
                         cmd.Parameters.AddWithValue("@Cat", SelectedCategory.CategoryNum);
-                        cmd.Parameters.AddWithValue("@Loc", _userLocaleNum);
+                        cmd.Parameters.AddWithValue("@Loc", _userLocaleNum); // Keeps the original binding for analytics if you still want it
+
                         cmd.Parameters.AddWithValue("@Title", FormTitle);
                         cmd.Parameters.AddWithValue("@Desc", FormDetails ?? "");
                         cmd.Parameters.AddWithValue("@Date", FormDate);
                         cmd.Parameters.AddWithValue("@Start", FormStartTime);
                         cmd.Parameters.AddWithValue("@End", FormEndTime);
                         cmd.Parameters.AddWithValue("@Cap", int.TryParse(FormCapacity, out int cap) ? cap : 0);
+
+                        // Add the new text fields
+                        cmd.Parameters.AddWithValue("@Venue", FormVenue);
+                        cmd.Parameters.AddWithValue("@Address", FormAddress ?? "");
+
                         await cmd.ExecuteNonQueryAsync();
                     }
 

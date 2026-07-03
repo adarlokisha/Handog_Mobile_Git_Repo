@@ -1,4 +1,5 @@
 using Microsoft.Maui.Controls;
+using Handog_MobileApp.Models;
 
 namespace Handog_MobileApp
 {
