@@ -1,4 +1,4 @@
-namespace Handog_MobileApp
+﻿namespace Handog_MobileApp
 {
     public class EventModel
     {
