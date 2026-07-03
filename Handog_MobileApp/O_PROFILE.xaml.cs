@@ -34,12 +34,11 @@ namespace Handog_MobileApp
         {
             try
             {
-                // Using the global connection string so you don't have to copy/paste it everywhere
                 using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
 
-                    // 1. Fetch personal details from account entity mapping
+                    // 1. Fetch personal details
                     string profileSql = "SELECT Account_ID, Firstname, Lastname FROM ACCOUNT WHERE AccountNum = @AccNum";
                     using (SqlCommand cmd = new SqlCommand(profileSql, conn))
                     {
@@ -55,25 +54,28 @@ namespace Handog_MobileApp
                                 LblFullName.Text = $"{firstName} {lastName}".ToUpper();
                                 LblAccountID.Text = reader["Account_ID"].ToString();
                             }
-                            else
-                            {
-                                // If the query works but finds no data, you will see this alert.
-                                await DisplayAlert("Notice", "Profile data not found in database.", "OK");
-                            }
                         }
                     }
 
-                    // 2. Aggregate count metrics from EVENT table maps for organized events
+                    // 2. Count "Organized" (Total events ever created by this organizer)
                     string organizedCountSql = "SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccNum";
-                    using (SqlCommand cmd = new SqlCommand(organizedCountSql, conn))
+                    using (SqlCommand cmdOrg = new SqlCommand(organizedCountSql, conn))
                     {
-                        cmd.Parameters.AddWithValue("@AccNum", currentOrganizerAccountNum);
-                        int organizedCount = (int)await cmd.ExecuteScalarAsync();
+                        cmdOrg.Parameters.AddWithValue("@AccNum", currentOrganizerAccountNum);
+                        int organizedCount = (int)await cmdOrg.ExecuteScalarAsync();
                         LblCountOrganized.Text = organizedCount.ToString();
                     }
 
-                    // 3. Optional tracking placeholders for tracking standard metrics
-                    LblCountJoined.Text = "0";
+                    // 3. Count "Joined" (Total events successfully COMPLETED by this organizer)
+                    string joinedCountSql = "SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccNum AND EventStatus = 'Completed'";
+                    using (SqlCommand cmdJoined = new SqlCommand(joinedCountSql, conn))
+                    {
+                        cmdJoined.Parameters.AddWithValue("@AccNum", currentOrganizerAccountNum);
+                        int joinedCount = (int)await cmdJoined.ExecuteScalarAsync();
+                        LblCountJoined.Text = joinedCount.ToString();
+                    }
+
+                    // 4. Count "Absences" (Leaving this at 0, unless you want to track 'Cancelled' events here!)
                     LblCountAbsences.Text = "0";
                 }
             }

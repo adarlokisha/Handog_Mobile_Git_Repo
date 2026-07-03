@@ -13,5 +13,6 @@ namespace Handog_MobileApp.Models
         public string EventDescription { get; set; }
         public string Location { get; set; }
         public bool IsMyEvent { get; set; }
+        public string CategoryImage { get; set; }
     }
 }
