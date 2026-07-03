@@ -115,8 +115,8 @@
                         <Label Text="Category *" FontAttributes="Bold" TextColor="#707070" FontSize="14"/>
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,5" BackgroundColor="White">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="Select Category" TextColor="#888888" FontSize="12" FontAttributes="Bold"/>
-                                <Picker SelectedItem="{Binding SelectedCategory}" Title="Select type..." TextColor="Black" FontSize="14">
+                               
+                                <Picker SelectedItem="{Binding SelectedCategory}" Title="Select Event Category..." TextColor="Black" FontSize="14">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Medical Mission</x:String>
@@ -131,19 +131,17 @@
                         </Border>
 
                         <!-- Event Title Entry -->
-                        <Label Text="Event Title *" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
+                        <Label Text="Title of Proposed Event *" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="Title of the Proposed Event" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
-                                <Entry Text="{Binding ProposalTitle}" Placeholder="Enter title here..." TextColor="Black" FontSize="13" Margin="0,-4"/>
+                                <Entry Text="{Binding ProposalTitle}" Placeholder="e.g. Community Health and Wellness Drive" TextColor="Black" FontAttributes="Italic" FontSize="13" Margin="0,-4"/>
                             </VerticalStackLayout>
                         </Border>
 
                         <!-- Preferred Date Picker -->
-                        <Label Text="Date *" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
+                        <Label Text="Preferred Date *" FontAttributes="Bold" TextColor="#707070" FontSize="14" Margin="0,5,0,0"/>
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="Preferred Date" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
                                 <DatePicker Date="{Binding PreferredDate}" TextColor="Black" FontSize="13" Margin="0,-4"/>
                             </VerticalStackLayout>
                         </Border>
@@ -155,7 +153,6 @@
                                 <Label Text="Start Time *" FontAttributes="Bold" TextColor="#707070" FontSize="14"/>
                                 <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
                                     <VerticalStackLayout Spacing="2">
-                                        <Label Text="00:00" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
                                         <TimePicker Time="{Binding PreferredStartTime}" TextColor="Black" FontSize="13" Margin="0,-4"/>
                                     </VerticalStackLayout>
                                 </Border>
@@ -166,7 +163,6 @@
                                 <Label Text="End Time *" FontAttributes="Bold" TextColor="#707070" FontSize="14"/>
                                 <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
                                     <VerticalStackLayout Spacing="2">
-                                        <Label Text="00:00" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
                                         <TimePicker Time="{Binding PreferredEndTime}" TextColor="Black" FontSize="13" Margin="0,-4"/>
                                     </VerticalStackLayout>
                                 </Border>
@@ -178,7 +174,10 @@
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,6" BackgroundColor="White">
                             <VerticalStackLayout Spacing="2">
                                 <Label Text="Brief Description / Details of the Event" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
-                                <Editor Text="{Binding ProposalDetails}" Placeholder="Type here..." AutoSize="TextChanges" HeightRequest="80" TextColor="Black" FontSize="13" Margin="0,-4"/>
+                                <Editor Text="{Binding ProposalDetails}" 
+                                        Placeholder="e.g. Provide free health consultations, check-ups, 
+                                        and distribution of basic medicines to residents in Cabuyao." 
+                                        AutoSize="TextChanges" HeightRequest="80" TextColor="Black" FontAttributes="Italic" FontSize="13" Margin="0,-4"/>
                             </VerticalStackLayout>
                         </Border>
 

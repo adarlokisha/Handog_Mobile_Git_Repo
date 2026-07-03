@@ -153,6 +153,18 @@
                      VerticalOptions="Center"
                      HeightRequest="28" WidthRequest="28"
                      BackgroundColor="Transparent"/>
+
+                <!--- 
+                <ImageButton x:Name="ProfileBtn"
+                     Grid.Column="2" 
+                     Source="events.png" 
+                     Command="{Binding NavigateToProfileCommand}"
+                     CommandParameter="{x:Reference EventsBtn}"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center"
+                     HeightRequest="28" WidthRequest="28"
+                     BackgroundColor="Transparent"/> 
+                -->
             </Grid>
         </Border>
     </Grid>
