@@ -1,6 +1,8 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Maui.Controls;
 using System;
+using Handog_MobileApp.Views.Organizer;
+using Handog_MobileApp.Views.Volunteer; 
 
 namespace Handog_MobileApp
 { // <--- Change to opening bracket

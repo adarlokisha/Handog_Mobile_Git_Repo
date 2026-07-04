@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             x:Class="Handog_MobileApp.Views.Organizer.O_ATTENDANCE_SCANNER"
+             Title="Scan Attendance"
+             BackgroundColor="Black"
+             NavigationPage.HasNavigationBar="False">
+
+	<Grid>
+		<!-- The Live Camera Viewfinder -->
+		<zxing:CameraBarcodeReaderView x:Name="barcodeReader"
+                                       BarcodesDetected="BarcodesDetected"
+                                       IsDetecting="True" />
+
+		<!-- Top Header Overlay -->
+		<VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 48, 0, 16" VerticalOptions="Start">
+			<Grid ColumnDefinitions="Auto, *" Padding="16, 0">
+				<ImageButton Grid.Column="0" Source="back_black.png" Clicked="CloseScanner_Clicked" WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent"/>
+				<Label Grid.Column="1" Text="Scan Volunteer QR" TextColor="#1A1A1A" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Center" Margin="-24,0,0,0"/>
+			</Grid>
+		</VerticalStackLayout>
+
+		<!-- Aesthetic Framing Box -->
+		<Border Stroke="White" StrokeThickness="3" StrokeShape="RoundRectangle 16" BackgroundColor="Transparent" HeightRequest="250" WidthRequest="250" HorizontalOptions="Center" VerticalOptions="Center">
+			<Border.Shadow>
+				<Shadow Brush="Black" Radius="10" Opacity="0.5"/>
+			</Border.Shadow>
+		</Border>
+
+		<Label Text="Align QR code inside the box to automatically scan." TextColor="White" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,60" BackgroundColor="#80000000" Padding="12,6"/>
+	</Grid>
+</ContentPage>

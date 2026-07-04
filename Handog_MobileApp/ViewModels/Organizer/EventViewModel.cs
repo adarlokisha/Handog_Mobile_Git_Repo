@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Data.SqlClient;
 using Handog_MobileApp.Models;
+using Handog_MobileApp.Views.Organizer;
 
 namespace Handog_MobileApp
 {

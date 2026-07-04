@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Handog_MobileApp;
+using Handog_MobileApp.Views.Organizer;
 using Handog_MobileApp.Models;
 using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;

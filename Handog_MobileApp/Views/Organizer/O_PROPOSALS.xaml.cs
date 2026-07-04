@@ -1,6 +1,6 @@
 using Handog_MobileApp.ViewModel.Organizer; // Ensure this matches your namespace
 
-namespace Handog_MobileApp
+namespace Handog_MobileApp.Views.Organizer
 {
     public partial class O_PROPOSALS : ContentPage
     {

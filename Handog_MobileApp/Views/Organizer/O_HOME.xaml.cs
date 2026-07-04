@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 
-namespace Handog_MobileApp
+namespace Handog_MobileApp.Views.Organizer
 {
     public partial class O_HOME : ContentPage
     {

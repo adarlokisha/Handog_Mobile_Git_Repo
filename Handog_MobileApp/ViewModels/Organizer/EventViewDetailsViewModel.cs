@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Data.SqlClient;
+using Microsoft.Maui.ApplicationModel; // <-- ADDED FOR PERMISSIONS
 using Handog_MobileApp.Models;
+using Handog_MobileApp.Views.Organizer;
+using Handog_MobileApp.ViewModels.Organizer;
 
 namespace Handog_MobileApp
 {
@@ -26,6 +29,7 @@ namespace Handog_MobileApp
         public ICommand ConfirmAttendanceCommand { get; }
         public ICommand ConfirmEventCommand { get; }
         public ICommand GoBackCommand { get; }
+        public ICommand OpenScannerCommand { get; } // New command for the scanner
 
         public EventDetailsViewModel(EventModel selectedEvent)
         {
@@ -35,6 +39,37 @@ namespace Handog_MobileApp
             ConfirmAttendanceCommand = new Command<int>(async (regNum) => await ExecuteConfirmAttendance(regNum));
             ConfirmEventCommand = new Command(async () => await ExecuteConfirmEvent());
             GoBackCommand = new Command(async () => await Application.Current.MainPage.Navigation.PopAsync());
+            OpenScannerCommand = new Command(async () => await ExecuteOpenScanner());
+        }
+
+        private async Task ExecuteOpenScanner()
+        {
+            try
+            {
+                // 1. Check if we already have permission
+                PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+                // 2. If not, ask the user for permission right now
+                if (status != PermissionStatus.Granted)
+                {
+                    status = await Permissions.RequestAsync<Permissions.Camera>();
+                }
+
+                // 3. If they said yes, open the scanner!
+                if (status == PermissionStatus.Granted)
+                {
+                    await Application.Current.MainPage.Navigation.PushAsync(new O_ATTENDANCE_SCANNER(_eventNum, this));
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Permission Denied", "Camera access is required to scan QR codes.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                // If anything else fails, show an error instead of crashing to the home screen
+                await Application.Current.MainPage.DisplayAlert("Error", $"Could not open camera: {ex.Message}", "OK");
+            }
         }
 
         public async Task LoadAttendeesAsync()

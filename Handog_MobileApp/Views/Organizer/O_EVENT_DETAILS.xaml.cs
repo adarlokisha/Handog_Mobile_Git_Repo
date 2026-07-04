@@ -1,7 +1,7 @@
 using Microsoft.Maui.Controls;
 using Handog_MobileApp.Models;
 
-namespace Handog_MobileApp
+namespace Handog_MobileApp.Views.Organizer
 {
     public partial class O_EVENT_DETAILS : ContentPage
     {
