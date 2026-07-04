@@ -41,8 +41,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBX0RBU0hCT0FSRC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/LENOVO/Source/Repos/Handog_Mobile_Git_Repo/Handog_AdminWeb/Components/Pages/A_EVENTS.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBX0VWRU5UUy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/LENOVO/Source/Repos/Handog_Mobile_Git_Repo/Handog_AdminWeb/Components/Pages/A_LOGIN.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBX0xPR0lOLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/Source/Repos/Handog_Mobile_Git_Repo/Handog_AdminWeb/Components/Pages/A_PENDING.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBX1BFTkRJTkcucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/Source/Repos/Handog_Mobile_Git_Repo/Handog_AdminWeb/Components/Routes.razor]

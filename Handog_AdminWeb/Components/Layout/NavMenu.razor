@@ -1,22 +1,98 @@
-﻿
-<div style="padding: 30px 20px 20px 20px; background-color: #00BAC7; display: flex; justify-content: center; align-items: center;">
-    <img src="/handogYellowLogo.png" alt="Handog" style="width: 110px; height: 110px; object-fit: contain;" />
+﻿<div style="width: 250px; height: 100vh; background-color: #00BAC7; display: flex; flex-direction: column; box-sizing: border-box; position: fixed; left: 0; top: 0; border-right: 1px solid rgba(0,0,0,0.05);">
+
+    <div style="padding: 40px 20px 30px 20px; display: flex; justify-content: center; align-items: center;">
+        <img src="/bootstrap/images/handogYellowLogo.png" alt="Handog" style="width: 140px; height: auto; object-fit: contain;" />
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0px; flex: 1; padding-top: 10px;">
+
+        <NavLink href="admin/accounts" class="custom-nav-link" Match="NavLinkMatch.All">
+            <div class="nav-content">
+                <img src="/bootstrap/images/accountPageIcon.png" alt="Accounts" class="nav-icon" />
+                <span class="nav-text">Accounts</span>
+            </div>
+            <div class="active-indicator"></div>
+        </NavLink>
+
+        <NavLink href="admin/events" class="custom-nav-link">
+            <div class="nav-content">
+                <img src="/bootstrap/images/eventPageIcon.png" alt="Events" class="nav-icon" />
+                <span class="nav-text">Events</span>
+            </div>
+            <div class="active-indicator"></div>
+        </NavLink>
+
+        <NavLink href="admin/pending" class="custom-nav-link">
+            <div class="nav-content">
+                <img src="/bootstrap/images/pendingPageIcon.png" alt="Pending" class="nav-icon" />
+                <span class="nav-text">Pending</span>
+            </div>
+            <div class="active-indicator"></div>
+        </NavLink>
+
+        <NavLink href="admin/login" class="custom-nav-link" style="margin-top: auto; margin-bottom: 30px;">
+            <div class="nav-content">
+                <img src="/bootstrap/images/logoutIcon.png" alt="Logout" class="nav-icon" />
+                <span class="nav-text">Logout</span>
+            </div>
+        </NavLink>
+    </div>
 </div>
 
-<nav style="display: flex; flex-direction: column; gap: 4px; background-color: #00BAC7; flex: 1;">
-    <NavLink href="admin/accounts" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-weight: 600; background-color: #CFF4F6; border-right: 4px solid #FAD02C; font-size: 14px;" ActiveClass="active-link">
-        <span class="bi bi-person-circle" style="font-size: 18px;"></span> Accounts
-    </NavLink>
+<style>
+    /* Reset Blazor NavLink structure behavior */
+    .custom-nav-link {
+        display: block;
+        position: relative;
+        text-decoration: none;
+        color: #1A1A1A;
+        font-family: sans-serif;
+        transition: all 0.2s ease;
+    }
 
-    <NavLink href="admin/events" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-size: 14px; font-weight: 500;">
-        <span class="bi bi-calendar-check" style="font-size: 18px;"></span> Events
-    </NavLink>
+    /* Inside Layout contents alignment */
+    .nav-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 16px 35px;
+    }
 
-    <NavLink href="admin/pending" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; font-size: 14px; font-weight: 500;">
-        <span class="bi bi-exclamation-circle" style="font-size: 18px;"></span> Pending
-    </NavLink>
+    .nav-icon {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+        filter: brightness(0) cubic-bezier(0,0,0,1); /* Forces solid crisp dark icons */
+    }
 
-    <a href="admin/login" style="display: flex; align-items: center; gap: 15px; padding: 14px 30px; color: #1A1A1A; text-decoration: none; margin-top: 20px; font-size: 14px; font-weight: 500;">
-        <span class="bi bi-box-arrow-left" style="font-size: 18px;"></span> Logout
-    </a>
-</nav>
+    .nav-text {
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+
+    /* Active Highlight States matching wireframes */
+    .custom-nav-link.active {
+        background-color: rgba(255, 255, 255, 0.4) !important;
+    }
+
+    /* Golden/Yellow indicator line on the right edge */
+    .active-indicator {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 5px;
+        height: 100%;
+        background-color: #FFD700; /* Matching your active screen bar line */
+    }
+
+    .custom-nav-link.active .active-indicator {
+        display: block;
+    }
+
+    /* Clean subtle Hover Highlight effect */
+    .custom-nav-link:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+</style>

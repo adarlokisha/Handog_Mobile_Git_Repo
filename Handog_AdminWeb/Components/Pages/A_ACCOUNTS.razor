@@ -3,62 +3,56 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
     <div style="display: flex; align-items: center; gap: 15px;">
-
         <div style="border: 2px solid #E0E0E0; width: 65px; height: 65px; border-radius: 14px; display: flex; justify-content: center; align-items: center; background-color: white; overflow: hidden; box-sizing: border-box; padding: 5px;">
-            <img src="images/accountIcon.png" alt="Account Management" style="width: 100%; height: 100%; object-fit: contain;" />
+            <img src="/bootstrap/images/accountIcon.png" alt="Account Management" style="width: 100%; height: 100%; object-fit: contain;" />
         </div>
-
         <h1 style="font-size: 28px; font-weight: bold; color: #212529; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Account Management</h1>
     </div>
 
-    
     <button style="background-color: #00BAC7; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 186, 199, 0.2);">
-        <span class="bi bi-plus-circle" style="font-size: 15px;"></span> Create New Account
+        <img src="/bootstrap/images/whitePlusIcon.png" alt="Create" style="width: 16px; height: 16px; object-fit: contain;" />
+        <span>Create New Account</span>
     </button>
 </div>
 
 <div>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <h2 style="font-size: 22px; font-weight: 600; color: #212529; margin: 0;">Account List</h2>
-        <span style="font-size: 14px; color: #212529; font-weight: 500;">Accounts: <strong style="font-size: 18px;">@AccountsList.Count</strong></span>
+        <span style="font-size: 14px; color: #212529; font-weight: 500;">Accounts: <strong style="font-size: 18px;">@FilteredAccounts.Count</strong></span>
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
         <div style="display: flex; align-items: center; gap: 15px; font-size: 14px; color: #333333;">
             <div>
                 Account Role:
-                <select style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
-                    <option>All roles</option>
-                    <option>Organizer</option>
-                    <option>Volunteer</option>
+                <select @bind="SelectedRoleFilter" style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
+                    <option value="All">All roles</option>
+                    <option value="Organizer">Organizer</option>
+                    <option value="Volunteer">Volunteer</option>
                 </select>
             </div>
 
-            <div>
-                Account Filter:
-                <select style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
-                    <option>By Name</option>
-                    <option>By Email</option>
-                </select>
-            </div>
-
-            <button style="background-color: #00BAC7; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Filter</button>
-            <button style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Ban</button>
+            <button @onclick="ClearFilters" style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Clear Filter</button>
         </div>
 
-        <div style="position: relative; width: 280px;">
-            <span class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888888; font-size: 14px;"></span>
-            <input type="text" placeholder="Search Accounts" style="width: 100%; padding: 7px 35px 7px 35px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
-            <span class="bi bi-x" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #888888; font-size: 18px; cursor: pointer;"></span>
+        <div style="position: relative; width: 280px; display: flex; align-items: center;">
+            <img src="/bootstrap/images/searchIcon.png" alt="Search" style="position: absolute; left: 12px; width: 16px; height: 16px; object-fit: contain; pointer-events: none;" />
+            <input type="text" @bind-value="SearchQuery" @bind-value:event="oninput" placeholder="Search by name or email..." style="width: 100%; padding: 8px 35px 8px 38px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
+            @if (!string.IsNullOrEmpty(SearchQuery))
+            {
+                <img src="/bootstrap/images/clearIcon.png" alt="Clear" @onclick="() => SearchQuery = string.Empty" style="position: absolute; right: 12px; width: 14px; height: 14px; object-fit: contain; cursor: pointer;" />
+            }
         </div>
     </div>
 </div>
 
-<div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.01);">
+<div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.01); margin-top: 15px;">
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background-color: #CFF4F6; color: #1A1A1A; border-bottom: 1px solid #BCE5E7;">
-                <th style="padding: 15px; width: 40px;"><input type="checkbox" /></th>
+                <th style="padding: 15px; width: 40px;">
+                    <input type="checkbox" @bind="SelectAll" @bind:after="ToggleSelectAll" />
+                </th>
                 <th style="padding: 15px; font-weight: 600; color: #000000;">Email:</th>
                 <th style="padding: 15px; font-weight: 600; color: #000000;">Name:</th>
                 <th style="padding: 15px; font-weight: 600; color: #000000;">Contact Number:</th>
@@ -67,22 +61,77 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var account in AccountsList)
+            @foreach (var account in FilteredAccounts)
             {
                 <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(account.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(account.IsSelected ? "4px solid #00BAC7" : "none");">
-                    <td style="padding: 15px; vertical-align: top;">
-                        <input type="checkbox" @bind="account.IsSelected" />
+                    <td style="padding: 15px; vertical-align: middle;">
+                        <input type="checkbox" @bind="account.IsSelected" @bind:after="() => OnRowUnchecked(account)" />
                     </td>
-                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Email</td>
-                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Name</td>
-                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.ContactNumber</td>
-                    <td style="padding: 15px; color: #333333; vertical-align: top;">@account.Role</td>
-                    <td style="padding: 15px; color: #333333; vertical-align: top; position: relative;">
-                        @account.ChurchId
-                        @if (account.IsSelected)
+                    <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                        @if (account.IsEditing && account.IsSelected)
                         {
-                            <span class="bi bi-pencil-square" style="position: absolute; right: 15px; top: 15px; color: #888888; cursor: pointer; font-size: 16px;"></span>
+                            <input type="text" @bind="account.Email" style="width: 100%; padding: 4px;" />
                         }
+                        else
+                        {
+                            @account.Email
+                        }
+                    </td>
+                    <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                        @if (account.IsEditing && account.IsSelected)
+                        {
+                            <input type="text" @bind="account.Name" style="width: 100%; padding: 4px;" />
+                        }
+                        else
+                        {
+                            @account.Name
+                        }
+                    </td>
+                    <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                        @if (account.IsEditing && account.IsSelected)
+                        {
+                            <input type="text" @bind="account.ContactNumber" style="width: 100%; padding: 4px;" />
+                        }
+                        else
+                        {
+                            @account.ContactNumber
+                        }
+                    </td>
+                    <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                        @if (account.IsEditing && account.IsSelected)
+                        {
+                            <select @bind="account.Role" style="padding: 4px;">
+                                <option>Organizer</option>
+                                <option>Volunteer</option>
+                            </select>
+                        }
+                        else
+                        {
+                            @account.Role
+                        }
+                    </td>
+                    <td style="padding: 15px; color: #333333; vertical-align: middle; position: relative; padding-right: 50px;">
+                        @if (account.IsEditing && account.IsSelected)
+                        {
+                            <input type="text" @bind="account.ChurchId" style="width: 100%; padding: 4px;" />
+                        }
+                        else
+                        {
+                            @account.ChurchId
+                        }
+                        <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px;">
+                            @if (account.IsEditing && account.IsSelected)
+                            {
+                                <span class="bi bi-check-square-fill" style="color: #28a745; cursor: pointer; font-size: 18px;" @onclick="() => account.IsEditing = false"></span>
+                            }
+                            else
+                            {
+                                <img src="/bootstrap/images/editIcon.png"
+                                     alt="Edit"
+                                     style="width: 16px; height: 16px; object-fit: contain; @(account.IsSelected ? "cursor: pointer; opacity: 1;" : "cursor: not-allowed; opacity: 0.3;")"
+                                     @onclick="() => { if (account.IsSelected) account.IsEditing = true; }" />
+                            }
+                        </div>
                     </td>
                 </tr>
             }
@@ -91,14 +140,47 @@
 </div>
 
 @code {
+    private bool SelectAll { get; set; }
+    private string SearchQuery { get; set; } = string.Empty;
+    private string SelectedRoleFilter { get; set; } = "All";
+
     private List<AccountModel> AccountsList = new()
     {
-        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" },
-        new AccountModel { Email = "juan.reyes@example.com", Name = "Juan Reyes", ContactNumber = "09271234567", Role = "Volunteer", ChurchId = "" },
-        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" },
-        new AccountModel { Email = "juan.reyes@example.com", Name = "Juan Reyes", ContactNumber = "09271234567", Role = "Volunteer", ChurchId = "", IsSelected = true },
-        new AccountModel { Email = "maria.santos@example.com", Name = "Maria Santos", ContactNumber = "09271234567", Role = "Organizer", ChurchId = "CH12345679" }
+        new AccountModel { Email = "test1@handog.com", Name = "User One", ContactNumber = "09123456789", Role = "Organizer", ChurchId = "CH001" },
+        new AccountModel { Email = "test2@handog.com", Name = "User Two", ContactNumber = "09987654321", Role = "Volunteer", ChurchId = "CH002" }
     };
+
+    // Runtime computed property handles real-time dataset rendering
+    private List<AccountModel> FilteredAccounts => AccountsList
+        .Where(a => string.IsNullOrEmpty(SearchQuery) ||
+                    a.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    a.Email.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+        .Where(a => SelectedRoleFilter == "All" || a.Role == SelectedRoleFilter)
+        .ToList();
+
+    private void ToggleSelectAll()
+    {
+        foreach (var account in FilteredAccounts)
+        {
+            account.IsSelected = SelectAll;
+            if (!SelectAll) account.IsEditing = false;
+        }
+    }
+
+    private void OnRowUnchecked(AccountModel account)
+    {
+        if (!account.IsSelected)
+        {
+            account.IsEditing = false;
+            SelectAll = false;
+        }
+    }
+
+    private void ClearFilters()
+    {
+        SelectedRoleFilter = "All";
+        SearchQuery = string.Empty;
+    }
 
     public class AccountModel
     {
@@ -108,5 +190,6 @@
         public string Role { get; set; } = string.Empty;
         public string ChurchId { get; set; } = string.Empty;
         public bool IsSelected { get; set; } = false;
+        public bool IsEditing { get; set; } = false;
     }
 }

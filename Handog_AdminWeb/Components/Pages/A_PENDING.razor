@@ -1,0 +1,141 @@
+﻿@page "/admin/pending"
+@rendermode InteractiveServer
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div style="border: 2px solid #E0E0E0; width: 65px; height: 65px; border-radius: 14px; display: flex; justify-content: center; align-items: center; background-color: white; overflow: hidden; box-sizing: border-box; padding: 5px;">
+            <div style="width: 100%; height: 100%; border-radius: 8px; border: 2px solid #A0A0A0; display: flex; flex-direction: column; padding: 6px; box-sizing: border-box; justify-content: space-between; position: relative; background-color: #FAFAFA;">
+                <div style="width: 70%; height: 3px; background-color: #A0A0A0; border-radius: 2px;"></div>
+                <div style="width: 85%; height: 3px; background-color: #A0A0A0; border-radius: 2px;"></div>
+                <div style="width: 50%; height: 3px; background-color: #A0A0A0; border-radius: 2px;"></div>
+                <div style="position: absolute; right: -2px; bottom: -2px; background-color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; border: 2px solid #00BAC7;">
+                    <span style="color: #00BAC7; font-size: 11px; font-weight: bold; font-family: sans-serif; margin-top: -1px;">✓</span>
+                </div>
+            </div>
+        </div>
+        <h1 style="font-size: 28px; font-weight: bold; color: #212529; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Approval Management</h1>
+    </div>
+</div>
+
+<div style="margin-top: 30px;">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <h2 style="font-size: 20px; font-weight: bold; color: #212529; margin: 0; text-decoration: underline; text-underline-offset: 6px;">Pending Events</h2>
+            <span style="background-color: #FF5A5F; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold;">
+                @FilteredPendingEvents.Count
+            </span>
+        </div>
+
+        <!-- Layout Consistent Search Bar Matching HANDOG Admin Panel Wireframe.png System -->
+        <div style="position: relative; width: 280px; display: flex; align-items: center;">
+            <img src="/bootstrap/images/searchIcon.png" alt="Search" style="position: absolute; left: 12px; width: 16px; height: 16px; object-fit: contain; pointer-events: none;" />
+            <input type="text" @bind-value="SearchQuery" @bind-value:event="oninput" placeholder="Search by title or organizer..." style="width: 100%; padding: 8px 35px 8px 38px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
+            @if (!string.IsNullOrEmpty(SearchQuery))
+            {
+                <img src="/bootstrap/images/clearIcon.png" alt="Clear" @onclick="() => SearchQuery = string.Empty" style="position: absolute; right: 12px; width: 12px; height: 12px; object-fit: contain; cursor: pointer;" />
+            }
+        </div>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+        <div style="background-color: #E2FAFC; border-bottom: 1px solid #BCE5E7; padding: 12px 20px; font-size: 14px; font-weight: 500; color: #333333;">
+            Organizer's Pending Events
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+            <thead>
+                <tr style="background-color: #CFF4F6; color: #1A1A1A; border-bottom: 1px solid #BCE5E7;">
+                    <th style="padding: 15px; width: 45px; text-align: center; vertical-align: middle;">
+                        <input type="checkbox" @bind="SelectAll" @bind:after="ToggleSelectAll" style="cursor: pointer; transform: scale(1.1);" />
+                    </th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 12%;">Locale:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 20%;">Title:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Type:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Organizer:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 13%;">Date:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 12%;">Max Volunteers:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 13%; text-align: center;">Actions:</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ev in FilteredPendingEvents)
+                {
+                    <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(ev.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(ev.IsSelected ? "4px solid #00BAC7" : "none"); transition: background-color 0.2s ease;">
+                        <td style="padding: 15px; text-align: center; vertical-align: middle;">
+                            <input type="checkbox" @bind="ev.IsSelected" @bind:after="() => OnRowUnchecked(ev)" style="cursor: pointer; transform: scale(1.1);" />
+                        </td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle;">@ev.LocaleName</td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle; font-weight: 500;">@ev.Title</td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle;">@ev.Type</td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle;">@ev.Organizer</td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle;">@ev.DateString</td>
+                        <td style="padding: 22px 15px; color: #333333; vertical-align: middle; padding-left: 25px;">@ev.MaxVolunteers</td>
+                        <td style="padding: 15px; vertical-align: middle; text-align: center;">
+                            <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; width: 100%;">
+                                <button @onclick="() => ApproveEvent(ev)" disabled="@(!ev.IsSelected)" style="background-color: #00BAC7; color: white; border: none; width: 110px; padding: 6px 0; border-radius: 6px; font-weight: 600; font-size: 12px; transition: all 0.2s; @(ev.IsSelected ? "cursor: pointer; opacity: 1;" : "cursor: not-allowed; opacity: 0.4;")">Approve</button>
+                                <button @onclick="() => DenyEvent(ev)" disabled="@(!ev.IsSelected)" style="background-color: #FF5A5F; color: white; border: none; width: 110px; padding: 6px 0; border-radius: 6px; font-weight: 600; font-size: 12px; transition: all 0.2s; @(ev.IsSelected ? "cursor: pointer; opacity: 1;" : "cursor: not-allowed; opacity: 0.4;")">Deny</button>
+                                <button @onclick="() => ViewDetails(ev)" style="background-color: #E0E0E0; color: #333333; border: none; width: 110px; padding: 6px 0; border-radius: 6px; font-weight: 500; font-size: 12px; cursor: pointer;">View Details</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (!FilteredPendingEvents.Any())
+                {
+                    <tr>
+                        <td colspan="8" style="padding: 40px; text-align: center; color: #777777; font-style: italic; background-color: #FAFAFA;">
+                            No matching items found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private bool SelectAll { get; set; }
+    private string SearchQuery { get; set; } = string.Empty;
+
+    private List<PendingEventModel> PendingEventsList = new()
+    {
+        new PendingEventModel { LocaleName = "Pulo", Title = "Digital Literacy Seminar", Type = "Community Outreach", Organizer = "Maria Santos", DateString = "July 8, 2027", MaxVolunteers = 50 },
+        new PendingEventModel { LocaleName = "Biñan", Title = "Wellness for Elders", Type = "Medical Mission", Organizer = "Jose Dela Cruz", DateString = "August 15, 2027", MaxVolunteers = 25 }
+    };
+
+    private List<PendingEventModel> FilteredPendingEvents => PendingEventsList
+        .Where(e => !e.IsProcessed)
+        .Where(e => string.IsNullOrEmpty(SearchQuery) ||
+                    e.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    e.Organizer.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    private void ToggleSelectAll()
+    {
+        foreach (var ev in FilteredPendingEvents)
+        {
+            ev.IsSelected = SelectAll;
+        }
+    }
+
+    private void OnRowUnchecked(PendingEventModel ev)
+    {
+        if (!ev.IsSelected) SelectAll = false;
+    }
+
+    private void ApproveEvent(PendingEventModel ev) => ev.IsProcessed = true;
+    private void DenyEvent(PendingEventModel ev) => ev.IsProcessed = true;
+    private void ViewDetails(PendingEventModel ev) { }
+
+    public class PendingEventModel
+    {
+        public string LocaleName { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string Organizer { get; set; } = string.Empty;
+        public string DateString { get; set; } = string.Empty;
+        public int MaxVolunteers { get; set; }
+        public bool IsSelected { get; set; } = false;
+        public bool IsProcessed { get; set; } = false;
+    }
+}

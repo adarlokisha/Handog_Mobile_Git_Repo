@@ -49,3 +49,23 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+/* nav bar white responsive active page ndicator*/
+.nav-item-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 30px;
+    color: #1A1A1A !important;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    border-right: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.nav-item-link.active {
+    background-color: #CFF4F6 !important;
+    border-right: 4px solid #FAD02C !important;
+    font-weight: 600;
+}
