@@ -8,11 +8,24 @@ using Microsoft.Maui.Controls;
 using Microsoft.Data.SqlClient;
 using Handog_MobileApp.Models;
 using System.Linq;
+using Handog_MobileApp.Views.Volunteer;
 
 namespace Handog_MobileApp.ViewModels.Volunteer
 {
     public class V_EventsViewModel : INotifyPropertyChanged
     {
+
+        // Commands
+        public ICommand FilterCommand { get; }
+        public ICommand RegisterCommand { get; }
+        public ICommand UnregisterCommand { get; }
+        public ICommand ViewEventDetailsCommand { get; }
+        public ICommand CloseDetailsCommand { get; }
+        public ICommand NavigateToHomeCommand { get; }
+        public ICommand NavigateToEventsCommand { get; }
+        public ICommand NavigateToProposalsCommand { get; }
+        public ICommand NavigateToProfileCommand { get; }
+
         private int _loggedInAccountNum;
         private readonly INavigation _navigation;
         private string _activeTabMode = "AllEvents"; // Default view tracking
@@ -57,14 +70,6 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             }
         }
 
-        // Commands
-        public ICommand FilterCommand { get; }
-        public ICommand RegisterCommand { get; }
-        public ICommand UnregisterCommand { get; }
-        public ICommand ViewEventDetailsCommand { get; }
-        public ICommand CloseDetailsCommand { get; }
-        public ICommand NavigateToHomeCommand { get; }
-        public ICommand NavigateToProposalsCommand { get; }
 
         public V_EventsViewModel(INavigation navigation, int accountNum)
         {
@@ -80,7 +85,9 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             CloseDetailsCommand = new Command(ExecuteCloseDetails);
 
             NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
+            NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
             NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
+            NavigateToProfileCommand = new Command<object>(async (btn) => await ExecuteNavigateToProfile(btn));
         }
 
         public void SetUserSession(int accountNum)
@@ -267,10 +274,15 @@ namespace Handog_MobileApp.ViewModels.Volunteer
 
         private async Task AnimateButtonAsync(object buttonObj)
         {
-            if (buttonObj is ImageButton button)
+            if (buttonObj is ImageButton imgButton)
             {
-                await button.ScaleTo(0.92, 50, Easing.Linear);
-                await button.ScaleTo(1.0, 50, Easing.Linear);
+                await imgButton.ScaleTo(0.92, 50, Easing.Linear);
+                await imgButton.ScaleTo(1.0, 50, Easing.Linear);
+            }
+            else if (buttonObj is Button flatButton)
+            {
+                await flatButton.ScaleTo(0.92, 50, Easing.Linear);
+                await flatButton.ScaleTo(1.0, 50, Easing.Linear);
             }
         }
 
@@ -280,12 +292,23 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             await _navigation.PushAsync(new V_HOME(_loggedInAccountNum));
         }
 
+        private async Task ExecuteNavigateToEvents(object buttonObj)
+        {
+            await AnimateButtonAsync(buttonObj);
+            await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum)); 
+        }
+
         private async Task ExecuteNavigateToProposals(object buttonObj)
         {
             await AnimateButtonAsync(buttonObj);
             await _navigation.PushAsync(new V_PROPOSALS(_loggedInAccountNum));
         }
 
+        private async Task ExecuteNavigateToProfile(object buttonObj)
+        {
+            await AnimateButtonAsync(buttonObj);
+            await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

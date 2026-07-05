@@ -6,11 +6,27 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
 using Handog_MobileApp.Models;
+using Handog_MobileApp.Views.Volunteer;
+
 
 namespace Handog_MobileApp.ViewModels.Volunteer
 {
     public class V_ProposalsViewModel : INotifyPropertyChanged
     {
+        // Commands
+        public ICommand LoadProposalsCommand { get; }
+        public ICommand ShowAddFormCommand { get; }
+        public ICommand SaveDraftCommand { get; }
+        public ICommand SubmitProposalCommand { get; }
+        public ICommand CancelFormCommand { get; }
+
+        // Navigation Commands
+        public ICommand NavigateToHomeCommand { get; }
+        public ICommand NavigateToProposalsCommand { get; }
+        public ICommand NavigateToEventsCommand { get; }
+        public ICommand NavigateToProfileCommand { get; }
+
+
         private readonly int _loggedInAccountNum;
         private readonly INavigation _navigation;
 
@@ -75,17 +91,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             set { _proposalDetails = value; OnPropertyChanged(); }
         }
 
-        // Commands
-        public ICommand LoadProposalsCommand { get; }
-        public ICommand ShowAddFormCommand { get; }
-        public ICommand SaveDraftCommand { get; }
-        public ICommand SubmitProposalCommand { get; }
-        public ICommand CancelFormCommand { get; }
-
-        // Navigation Commands
-        public ICommand NavigateToHomeCommand { get; }
-        public ICommand NavigateToEventsCommand { get; }
-        public ICommand NavigateToProfileCommand { get; }
+        
 
         public event Action<string, string> ShowAlertRequested;
 
@@ -95,22 +101,28 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             _loggedInAccountNum = accountNum;
 
             LoadProposalsCommand = new Command(async () => await LoadProposalsFromDatabaseAsync());
-            ShowAddFormCommand = new Command(() => { IsListViewVisible = false; IsFormViewVisible = true; });
+            ShowAddFormCommand = new Command(() => { IsListViewVisible = true; IsFormViewVisible = false; });
             CancelFormCommand = new Command(() => { IsFormViewVisible = false; IsListViewVisible = true; });
             SaveDraftCommand = new Command(ExecuteSaveDraft);
             SubmitProposalCommand = new Command(async () => await ExecuteSubmitProposalAsync());
 
             NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
             NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
+            NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
             NavigateToProfileCommand = new Command<object>(async (btn) => await ExecuteNavigateToProfile(btn));
         }
 
         private async Task AnimateButtonAsync(object buttonObj)
         {
-            if (buttonObj is ImageButton button)
+            if (buttonObj is ImageButton imgButton)
             {
-                await button.ScaleTo(0.92, 50, Easing.Linear);
-                await button.ScaleTo(1.0, 50, Easing.Linear);
+                await imgButton.ScaleTo(0.92, 50, Easing.Linear);
+                await imgButton.ScaleTo(1.0, 50, Easing.Linear);
+            }
+            else if (buttonObj is Button flatButton)
+            {
+                await flatButton.ScaleTo(0.92, 50, Easing.Linear);
+                await flatButton.ScaleTo(1.0, 50, Easing.Linear);
             }
         }
 
@@ -123,13 +135,21 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         private async Task ExecuteNavigateToEvents(object buttonObj)
         {
             await AnimateButtonAsync(buttonObj);
-            await _navigation.PushAsync(new Handog_MobileApp.Views.Volunteer.V_EVENTS(_loggedInAccountNum));
+            await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum)); // Assuming V_EVENTS matches your page name
+        }
+
+        private async Task ExecuteNavigateToProposals(object buttonObj)
+        {
+            await AnimateButtonAsync(buttonObj);
+            await _navigation.PushAsync(new V_PROPOSALS(_loggedInAccountNum));
         }
 
         private async Task ExecuteNavigateToProfile(object buttonObj)
         {
             await AnimateButtonAsync(buttonObj);
+            await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
         }
+        
 
         // Add this property near your other private backing fields
         private string _currentTab = "MyProposals";
