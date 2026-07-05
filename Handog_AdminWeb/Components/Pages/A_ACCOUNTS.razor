@@ -11,10 +11,93 @@
         <h1 style="font-size: 28px; font-weight: bold; color: #212529; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Account Management</h1>
     </div>
 
-    <button style="background-color: #00BAC7; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 186, 199, 0.2);">
+    <!-- Trigger Button (Ensure this is linked to show the modal) -->
+    <button @onclick="ShowCreateAccountModal" style="background-color: #00BAC7; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 186, 199, 0.2);">
         <img src="/bootstrap/images/whitePlusIcon.png" alt="Create" style="width: 16px; height: 16px; object-fit: contain;" />
         <span>Create New Account</span>
     </button>
+
+    @if (IsCreateModalOpen)
+    {
+        <!-- Backdrop overlay covering the screen -->
+        <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4); display: flex; justify-content: center; align-items: center; z-index: 9999; font-family: 'Segoe UI', sans-serif;">
+
+            <!-- Main Popup Panel -->
+            <div style="background-color: white; border-radius: 12px; width: 100%; max-width: 860px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); box-sizing: border-box; position: relative;">
+
+                <!-- Header Group -->
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <button @onclick="CloseCreateAccountModal" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; padding: 0;">
+                        <img src="/bootstrap/images/backArrow.png" alt="Create" style="width: 32px; height: 32px; object-fit: contain;" />
+                    </button>
+                    <h1 style="font-size: 26px; font-weight: 800; color: #000000; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Create Account</h1>
+                </div>
+
+                <!-- Inner Form Content Border Container -->
+                <div style="border: 1px solid #1A1A1A; padding: 25px; border-radius: 4px; position: relative; box-sizing: border-box;">
+
+                    <h2 style="font-size: 18px; font-weight: 700; color: #777777; text-transform: uppercase; margin-top: 0; margin-bottom: 25px; border-bottom: 2px solid #777777; display: inline-block; padding-bottom: 2px;">Account Details</h2>
+
+                    <!-- 2-Column Split Layout Wrapper -->
+                    <div style="display: flex; gap: 40px; align-items: flex-start;">
+
+                        <!-- Left Column Fields -->
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">First Name:</label>
+                                <input type="text" @bind="NewAccount.FirstName" placeholder="First Name" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Last Name:</label>
+                                <input type="text" @bind="NewAccount.LastName" placeholder="Last Name" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Email:</label>
+                                <input type="email" @bind="NewAccount.Email" placeholder="Email" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Contact Num:</label>
+                                <input type="text" @bind="NewAccount.ContactNum" placeholder="Contact Number" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                            </div>
+                        </div>
+
+                        <!-- Right Column Fields -->
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Password:</label>
+                                <input type="password" @bind="NewAccount.Password" placeholder="Password" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Role:</label>
+                                <select @bind="NewAccount.Role" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px; background-color: white;">
+                                    <option value="Volunteer">Volunteer</option>
+                                    <option value="Organizer">Organizer</option>
+                                </select>
+                            </div>
+
+                            <!-- Dynamic Check: Hidden if Selected Role is Not Organizer -->
+                            @if (NewAccount.Role == "Organizer")
+                            {
+                                <div style="display: flex; align-items: center;">
+                                    <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Church ID:</label>
+                                    <input type="text" @bind="NewAccount.ChurchID" placeholder="Church ID" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+
+                    <!-- Submit Control Bar Grid -->
+                    <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                        <button @onclick="ExecuteCreateAccount" style="background-color: #2CD5E2; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;">
+                            Create
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 <div>
@@ -146,8 +229,11 @@
     private bool SelectAll { get; set; }
     private string SearchQuery { get; set; } = string.Empty;
     private string SelectedRoleFilter { get; set; } = "All";
-
     private List<AccountModel> AccountsList = new();
+
+    private bool IsCreateModalOpen { get; set; } = false;
+
+    private CreateAccountBindingModel NewAccount { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,6 +287,62 @@
         await command.ExecuteNonQueryAsync();
     }
 
+    private void ShowCreateAccountModal()
+    {
+        NewAccount = new CreateAccountBindingModel { Role = "Volunteer" };
+        IsCreateModalOpen = true;
+    }
+
+    private void CloseCreateAccountModal()
+    {
+        IsCreateModalOpen = false;
+    }
+
+    private async Task ExecuteCreateAccount()
+    {
+        if (NewAccount.Role != "Organizer")
+        {
+            NewAccount.ChurchID = string.Empty;
+        }
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // 1. Calculate the next available sequence number for this specific role
+        string prefix = NewAccount.Role == "Organizer" ? "ORG" : "VOL";
+        string countQuery = "SELECT COUNT(*) + 1 FROM ACCOUNT WHERE AccRole = @Role";
+
+        int nextSequence = 1;
+        using (var countCmd = new SqlCommand(countQuery, connection))
+        {
+            countCmd.Parameters.AddWithValue("@Role", NewAccount.Role);
+            nextSequence = (int)await countCmd.ExecuteScalarAsync();
+        }
+
+        // 2. Format it into your exact layout pattern (e.g., ORG00003 or VOL00021)
+        string generatedAccountId = $"{prefix}{nextSequence:D5}";
+
+        // 3. Run the updated INSERT statement containing Account_ID
+        string sqlQuery = @"
+        INSERT INTO ACCOUNT (Account_ID, Firstname, Lastname, Email, ContactNum, AccPassword, AccRole, AccountStatus, ChurchID, AbsenceCount)
+        VALUES (@AccountId, @First, @Last, @Email, @Contact, @Password, @Role, 'Active', @ChurchID, 0)";
+
+        using var command = new SqlCommand(sqlQuery, connection);
+        command.Parameters.AddWithValue("@AccountId", generatedAccountId); // ⬅️ Attached string sequence
+        command.Parameters.AddWithValue("@First", NewAccount.FirstName);
+        command.Parameters.AddWithValue("@Last", NewAccount.LastName);
+        command.Parameters.AddWithValue("@Email", NewAccount.Email);
+        command.Parameters.AddWithValue("@Contact", NewAccount.ContactNum);
+        command.Parameters.AddWithValue("@Password", NewAccount.Password);
+        command.Parameters.AddWithValue("@Role", NewAccount.Role);
+        command.Parameters.AddWithValue("@ChurchID", string.IsNullOrWhiteSpace(NewAccount.ChurchID) ? DBNull.Value : NewAccount.ChurchID);
+
+        await command.ExecuteNonQueryAsync();
+
+        IsCreateModalOpen = false;
+        await LoadAccountsFromDatabase();
+    }
+
     private List<AccountModel> FilteredAccounts => AccountsList
         .Where(a => string.IsNullOrEmpty(SearchQuery) ||
                     a.DisplayName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
@@ -242,5 +384,16 @@
         public string ChurchId { get; set; } = string.Empty;
         public bool IsSelected { get; set; } = false;
         public bool IsEditing { get; set; } = false;
+    }
+
+    public class CreateAccountBindingModel
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string ContactNum { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = "Volunteer";
+        public string ChurchID { get; set; } = string.Empty;
     }
 }

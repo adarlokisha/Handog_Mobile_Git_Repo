@@ -3,6 +3,7 @@ wwwroot\bootstrap\bootstrap.min.css
 wwwroot\bootstrap\bootstrap.min.css.map
 wwwroot\bootstrap\images\accountIcon.png
 wwwroot\bootstrap\images\accountPageIcon.png
+wwwroot\bootstrap\images\backArrow.png
 wwwroot\bootstrap\images\clearIcon.png
 wwwroot\bootstrap\images\editIcon.png
 wwwroot\bootstrap\images\eventIcon.png
