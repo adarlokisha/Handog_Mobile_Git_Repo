@@ -54,6 +54,10 @@
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.4.2, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[7.1.0-preview1.26124.5, )"
             }
           },
           "imports": [
