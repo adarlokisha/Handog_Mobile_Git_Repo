@@ -1,5 +1,7 @@
 ﻿@page "/admin/events"
 @rendermode InteractiveServer
+@using Microsoft.Data.SqlClient
+@using System.Data
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
     <div style="display: flex; align-items: center; gap: 15px;">
@@ -10,7 +12,6 @@
     </div>
 </div>
 
-<!-- LOCALE LIST SECTION -->
 <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -18,10 +19,12 @@
             <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #666666;">
                 <span>@FilteredLocales.Count Items</span>
                 <span style="color: #CCCCCC;">|</span>
-                <button style="background-color: #00BAC7; color: white; border: none; padding: 6px 14px; border-radius: 4px; font-weight: 500; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+
+                <button style="background-color: #00BAC7; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 186, 199, 0.15);">
                     <img src="/bootstrap/images/whitePlusIcon.png" alt="Add" style="width: 12px; height: 12px; object-fit: contain;" />
-                    Add Locale
+                    <span>Add Locale</span>
                 </button>
+
             </div>
         </div>
 
@@ -42,12 +45,9 @@
                     <th style="padding: 15px; width: 40px;">
                         <input type="checkbox" @bind="SelectAllLocales" @bind:after="ToggleSelectAllLocales" />
                     </th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Locale:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Organizer:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 20%;">Email:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 25%;">Address:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Type:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 10%;">Church ID:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">ID</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 35%;">Locale Name:</th>
+                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 50%;">Address:</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,81 +55,11 @@
                 {
                     <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(locale.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(locale.IsSelected ? "4px solid #00BAC7" : "none");">
                         <td style="padding: 15px; vertical-align: middle;">
-                            <input type="checkbox" @bind="locale.IsSelected" @bind:after="() => OnLocaleUnchecked(locale)" />
+                            <input type="checkbox" @bind="locale.IsSelected" />
                         </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.LocaleName" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.LocaleName
-                            }
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.Organizer" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.Organizer
-                            }
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.Email" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.Email
-                            }
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.Address" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.Address
-                            }
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.Type" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.Type
-                            }
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle; position: relative; padding-right: 50px;">
-                            @if (locale.IsEditing && locale.IsSelected)
-                            {
-                                <input type="text" @bind="locale.ChurchId" style="width: 100%; padding: 4px;" />
-                            }
-                            else
-                            {
-                                @locale.ChurchId
-                            }
-                            <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px;">
-                                @if (locale.IsEditing && locale.IsSelected)
-                                {
-                                    <span class="bi bi-check-square-fill" style="color: #28a745; cursor: pointer; font-size: 18px;" @onclick="() => locale.IsEditing = false"></span>
-                                }
-                                else
-                                {
-                                    <img src="/bootstrap/images/editIcon.png"
-                                         alt="Edit"
-                                         style="width: 16px; height: 16px; object-fit: contain; @(locale.IsSelected ? "cursor: pointer; opacity: 1;" : "cursor: not-allowed; opacity: 0.3;")"
-                                         @onclick="() => { if (locale.IsSelected) locale.IsEditing = true; }" />
-                                }
-                            </div>
-                        </td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">@locale.LocaleId</td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">@locale.LocaleName</td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">@locale.LocaleAddress</td>
                     </tr>
                 }
             </tbody>
@@ -137,9 +67,8 @@
     </div>
 </div>
 
-<!-- EVENT LIST SECTION -->
 <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: -5px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2 style="font-size: 24px; font-weight: 600; color: #212529; margin: 0;">Event List</h2>
         <span style="font-size: 14px; color: #212529; font-weight: 500;">Events: <strong style="font-size: 18px;">@FilteredEvents.Count</strong></span>
     </div>
@@ -148,60 +77,47 @@
         <div style="display: flex; align-items: center; gap: 15px; font-size: 14px; color: #333333;">
             <div>
                 Event Type:
-                <select @bind="SelectedEventType" style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px; background-color: white; color: #495057;">
+                <select @bind="SelectedEventType" style="margin-left: 5px; padding: 6px 35px 6px 12px; border: 1px solid #CCCCCC; border-radius: 4px;">
                     <option value="All">All Types</option>
-                    <option value="Community Outreach">Community Outreach</option>
                     <option value="Medical Mission">Medical Mission</option>
+                    <option value="Feeding Program">Feeding Program</option>
+                    <option value="Youth Activity">Youth Activity</option>
+                    <option value="Environmental ...">Environmental ...</option>
                 </select>
             </div>
-
-            <button @onclick="ClearEventFilters" style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Clear Filter</button>
+            <button @onclick="ClearEventFilters" style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; cursor: pointer;">Clear Filter</button>
         </div>
 
         <div style="position: relative; width: 280px; display: flex; align-items: center;">
             <img src="/bootstrap/images/searchIcon.png" alt="Search" style="position: absolute; left: 12px; width: 16px; height: 16px; object-fit: contain; pointer-events: none;" />
-            <input type="text" @bind-value="EventSearchQuery" @bind-value:event="oninput" placeholder="Search events by title..." style="width: 100%; padding: 8px 35px 8px 38px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
-            @if (!string.IsNullOrEmpty(EventSearchQuery))
-            {
-                <img src="/bootstrap/images/clearIcon.png" alt="Clear" @onclick="() => EventSearchQuery = string.Empty" style="position: absolute; right: 12px; width: 12px; height: 12px; object-fit: contain; cursor: pointer;" />
-            }
+            <input type="text" @bind-value="EventSearchQuery" @bind-value:event="oninput" placeholder="Search events by title..." style="width: 100%; padding: 8px 35px 8px 38px; border: 1px solid #CCCCCC; border-radius: 4px; font-size: 13px;" />
         </div>
     </div>
 
-    <div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.01);">
+    <div style="background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; overflow: hidden;">
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
                 <tr style="background-color: #CFF4F6; color: #1A1A1A; border-bottom: 1px solid #BCE5E7;">
-                    <th style="padding: 15px; width: 40px;">
-                        <input type="checkbox" @bind="SelectAllEvents" @bind:after="ToggleSelectAllEvents" />
-                    </th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Locale:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Organizer:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 20%;">Title:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 25%;">Venue:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 15%;">Type:</th>
-                    <th style="padding: 15px; font-weight: 600; color: #000000; width: 10%;">Volunteers:</th>
+                    <th style="padding: 15px; width: 40px;"><input type="checkbox" @bind="SelectAllEvents" @bind:after="ToggleSelectAllEvents" /></th>
+                    <th style="padding: 15px; font-weight: 600;">Locale:</th>
+                    <th style="padding: 15px; font-weight: 600;">Organizer:</th>
+                    <th style="padding: 15px; font-weight: 600;">Title:</th>
+                    <th style="padding: 15px; font-weight: 600;">Venue:</th>
+                    <th style="padding: 15px; font-weight: 600;">Type:</th>
+                    <th style="padding: 15px; font-weight: 600;">Volunteers:</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var ev in FilteredEvents)
                 {
-                    <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(ev.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(ev.IsSelected ? "4px solid #00BAC7" : "none");">
-                        <td style="padding: 15px; vertical-align: top;">
-                            <input type="checkbox" @bind="ev.IsSelected" @bind:after="() => OnEventUnchecked(ev)" />
-                        </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top;">@ev.LocaleName</td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top;">@ev.Organizer</td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top;">@ev.Title</td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top;">@ev.Venue</td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top;">@ev.Type</td>
-                        <td style="padding: 15px; color: #333333; vertical-align: top; position: relative;">
-                            @ev.VolunteersCount
-                            @if (ev.IsSelected)
-                            {
-                                <span class="bi bi-pencil-square" style="position: absolute; right: 15px; top: 15px; color: #888888; cursor: pointer; font-size: 16px;"></span>
-                            }
-                        </td>
+                    <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(ev.IsSelected ? "#E9ECEF" : "transparent");">
+                        <td style="padding: 15px;"><input type="checkbox" @bind="ev.IsSelected" /></td>
+                        <td style="padding: 15px;">@ev.LocaleName</td>
+                        <td style="padding: 15px;">@ev.OrganizerName</td>
+                        <td style="padding: 15px;">@ev.Title</td>
+                        <td style="padding: 15px;">@ev.Venue</td>
+                        <td style="padding: 15px;">@ev.CategoryName</td>
+                        <td style="padding: 15px;">@ev.VolunteerCapacity</td>
                     </tr>
                 }
             </tbody>
@@ -210,93 +126,97 @@
 </div>
 
 @code {
+    private readonly string _connectionString = "Server = tcp:handog-mobile-server.database.windows.net,1433;Initial Catalog = HandogMobileDB;Persist Security Info=False;User ID = handogmobileadmin;Password=password123!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+
     private bool SelectAllLocales { get; set; }
     private bool SelectAllEvents { get; set; }
-
     private string LocaleSearchQuery { get; set; } = string.Empty;
     private string EventSearchQuery { get; set; } = string.Empty;
     private string SelectedEventType { get; set; } = "All";
 
-    private List<LocaleModel> LocalesList = new()
-    {
-        new LocaleModel { LocaleName = "Pulo", Organizer = "Maria Santos", Email = "Digital Literacy Seminar", Address = "Niugan Covered Court, Brgy. Niugan", Type = "Community Outreach", ChurchId = "CH12345679" },
-        new LocaleModel { LocaleName = "Biñan", Organizer = "Juan Reyes", Email = "Wellness for Elders", Address = "Phase 1-C Clubhouse, Brgy. Malitlit", Type = "Medical Mission", ChurchId = "CH98765432" }
-    };
+    private List<LocaleDBModel> LocalesList = new();
+    private List<EventDBModel> EventsList = new();
 
-    private List<EventModel> EventsList = new()
+    protected override async Task OnInitializedAsync()
     {
-        new EventModel { LocaleName = "Pulo", Organizer = "Maria Santos", Title = "Digital Literacy Seminar", Venue = "Niugan Covered Court, Brgy. Niugan", Type = "Community Outreach", VolunteersCount = "45" },
-        new EventModel { LocaleName = "Biñan", Organizer = "Jose Dela Cruz", Title = "Wellness for Elders", Venue = "Phase 1-C Clubhouse, Brgy. Malitlit", Type = "Medical Mission", VolunteersCount = "23" },
-        new EventModel { LocaleName = "Pulo", Organizer = "Maria Santos", Title = "Digital Literacy Seminar", Venue = "Niugan Covered Court, Brgy. Niugan", Type = "Community Outreach", VolunteersCount = "115" },
-        new EventModel { LocaleName = "Pulo", Organizer = "Maria Santos", Title = "Digital Literacy Seminar", Venue = "Niugan Covered Court, Brgy. Niugan", Type = "Community Outreach", VolunteersCount = "46" }
-    };
+        await LoadData();
+    }
 
-    private List<LocaleModel> FilteredLocales => LocalesList
+    private async Task LoadData()
+    {
+        LocalesList.Clear();
+        EventsList.Clear();
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // 1. Fetch Locales
+        using var localeCmd = new SqlCommand("SELECT Locale_ID, LocaleName, LocaleAddress FROM LOCALE", connection);
+        using var locReader = await localeCmd.ExecuteReaderAsync();
+        while (await locReader.ReadAsync())
+        {
+            LocalesList.Add(new LocaleDBModel
+            {
+                LocaleId = locReader.GetString(0),
+                LocaleName = locReader.GetString(1),
+                LocaleAddress = locReader.GetString(2)
+            });
+        }
+        await locReader.CloseAsync();
+
+        // 2. Fetch Inner Joined Events
+        string eventSql = @"
+            SELECT L.LocaleName, A.Firstname, A.Lastname, E.EventTitle, E.EventVenue, C.CategoryName, E.VolunteerCapacity
+            FROM EVENT E
+            INNER JOIN LOCALE L ON E.LocaleNum = L.LocaleNum
+            INNER JOIN ACCOUNT A ON E.OrganizerNum = A.AccountNum
+            INNER JOIN EVENTCATEGORY C ON E.CategoryNum = C.CategoryNum";
+
+        using var eventCmd = new SqlCommand(eventSql, connection);
+        using var evReader = await eventCmd.ExecuteReaderAsync();
+        while (await evReader.ReadAsync())
+        {
+            EventsList.Add(new EventDBModel
+            {
+                LocaleName = evReader.GetString(0),
+                OrganizerName = $"{evReader.GetString(1)} {evReader.GetString(2)}",
+                Title = evReader.GetString(3),
+                Venue = evReader.IsDBNull(4) ? "No Venue" : evReader.GetString(4),
+                CategoryName = evReader.GetString(5),
+                VolunteerCapacity = evReader.GetInt32(6)
+            });
+        }
+    }
+
+    private List<LocaleDBModel> FilteredLocales => LocalesList
         .Where(l => string.IsNullOrEmpty(LocaleSearchQuery) || l.LocaleName.Contains(LocaleSearchQuery, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
-    private List<EventModel> FilteredEvents => EventsList
+    private List<EventDBModel> FilteredEvents => EventsList
         .Where(e => string.IsNullOrEmpty(EventSearchQuery) || e.Title.Contains(EventSearchQuery, StringComparison.OrdinalIgnoreCase))
-        .Where(e => SelectedEventType == "All" || e.Type == SelectedEventType)
+        .Where(e => SelectedEventType == "All" || e.CategoryName.Equals(SelectedEventType, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
-    private void ToggleSelectAllLocales()
-    {
-        foreach (var locale in FilteredLocales)
-        {
-            locale.IsSelected = SelectAllLocales;
-            if (!SelectAllLocales) locale.IsEditing = false;
-        }
-    }
+    private void ToggleSelectAllLocales() => FilteredLocales.ForEach(l => l.IsSelected = SelectAllLocales);
+    private void ToggleSelectAllEvents() => FilteredEvents.ForEach(e => e.IsSelected = SelectAllEvents);
+    private void ClearEventFilters() { SelectedEventType = "All"; EventSearchQuery = string.Empty; }
 
-    private void OnLocaleUnchecked(LocaleModel locale)
+    public class LocaleDBModel
     {
-        if (!locale.IsSelected)
-        {
-            locale.IsEditing = false;
-            SelectAllLocales = false;
-        }
-    }
-
-    private void ToggleSelectAllEvents()
-    {
-        foreach (var ev in FilteredEvents)
-        {
-            ev.IsSelected = SelectAllEvents;
-        }
-    }
-
-    private void OnEventUnchecked(EventModel ev)
-    {
-        if (!ev.IsSelected) SelectAllEvents = false;
-    }
-
-    private void ClearEventFilters()
-    {
-        SelectedEventType = "All";
-        EventSearchQuery = string.Empty;
-    }
-
-    public class LocaleModel
-    {
+        public string LocaleId { get; set; } = string.Empty;
         public string LocaleName { get; set; } = string.Empty;
-        public string Organizer { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty;
-        public string ChurchId { get; set; } = string.Empty;
+        public string LocaleAddress { get; set; } = string.Empty;
         public bool IsSelected { get; set; } = false;
-        public bool IsEditing { get; set; } = false;
     }
 
-    public class EventModel
+    public class EventDBModel
     {
         public string LocaleName { get; set; } = string.Empty;
-        public string Organizer { get; set; } = string.Empty;
+        public string OrganizerName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Venue { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty;
-        public string VolunteersCount { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
+        public int VolunteerCapacity { get; set; }
         public bool IsSelected { get; set; } = false;
     }
 }

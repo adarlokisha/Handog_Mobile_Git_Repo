@@ -1,5 +1,7 @@
 ﻿@page "/admin/accounts"
 @rendermode InteractiveServer
+@using Microsoft.Data.SqlClient
+@using System.Data
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
     <div style="display: flex; align-items: center; gap: 15px;">
@@ -31,7 +33,6 @@
                     <option value="Volunteer">Volunteer</option>
                 </select>
             </div>
-
             <button @onclick="ClearFilters" style="background-color: #FF5A5F; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;">Clear Filter</button>
         </div>
 
@@ -80,11 +81,11 @@
                     <td style="padding: 15px; color: #333333; vertical-align: middle;">
                         @if (account.IsEditing && account.IsSelected)
                         {
-                            <input type="text" @bind="account.Name" style="width: 100%; padding: 4px;" />
+                            <input type="text" @bind="account.DisplayName" style="width: 100%; padding: 4px;" />
                         }
                         else
                         {
-                            @account.Name
+                            @account.DisplayName
                         }
                     </td>
                     <td style="padding: 15px; color: #333333; vertical-align: middle;">
@@ -122,7 +123,7 @@
                         <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px;">
                             @if (account.IsEditing && account.IsSelected)
                             {
-                                <span class="bi bi-check-square-fill" style="color: #28a745; cursor: pointer; font-size: 18px;" @onclick="() => account.IsEditing = false"></span>
+                                <span class="bi bi-check-square-fill" style="color: #28a745; cursor: pointer; font-size: 18px;" @onclick="() => SaveAccountChanges(account)"></span>
                             }
                             else
                             {
@@ -140,22 +141,71 @@
 </div>
 
 @code {
+    private readonly string _connectionString = "Server = tcp:handog-mobile-server.database.windows.net,1433;Initial Catalog = HandogMobileDB;Persist Security Info=False;User ID = handogmobileadmin;Password=password123!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+
     private bool SelectAll { get; set; }
     private string SearchQuery { get; set; } = string.Empty;
     private string SelectedRoleFilter { get; set; } = "All";
 
-    private List<AccountModel> AccountsList = new()
-    {
-        new AccountModel { Email = "test1@handog.com", Name = "User One", ContactNumber = "09123456789", Role = "Organizer", ChurchId = "CH001" },
-        new AccountModel { Email = "test2@handog.com", Name = "User Two", ContactNumber = "09987654321", Role = "Volunteer", ChurchId = "CH002" }
-    };
+    private List<AccountModel> AccountsList = new();
 
-    // Runtime computed property handles real-time dataset rendering
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAccountsFromDatabase();
+    }
+
+    private async Task LoadAccountsFromDatabase()
+    {
+        AccountsList.Clear();
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("SELECT AccountNum, Email, Firstname, Lastname, ContactNum, AccRole, ChurchID FROM ACCOUNT", connection);
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            AccountsList.Add(new AccountModel
+            {
+                AccountNum = reader.GetInt32(0),
+                Email = reader.GetString(1),
+                DisplayName = $"{reader.GetString(2)} {reader.GetString(3)}",
+                ContactNumber = reader.GetString(4),
+                Role = reader.GetString(5),
+                ChurchId = reader.IsDBNull(6) ? "NULL" : reader.GetString(6)
+            });
+        }
+    }
+
+    private async Task SaveAccountChanges(AccountModel account)
+    {
+        account.IsEditing = false;
+        var nameParts = account.DisplayName.Split(' ', 2);
+        string firstName = nameParts.Length > 0 ? nameParts[0] : account.DisplayName;
+        string lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand(@"
+            UPDATE ACCOUNT
+            SET Email = @Email, Firstname = @First, Lastname = @Last, ContactNum = @Contact, AccRole = @Role, ChurchID = @Church
+            WHERE AccountNum = @Num", connection);
+
+        command.Parameters.AddWithValue("@Email", account.Email);
+        command.Parameters.AddWithValue("@First", firstName);
+        command.Parameters.AddWithValue("@Last", lastName);
+        command.Parameters.AddWithValue("@Contact", account.ContactNumber);
+        command.Parameters.AddWithValue("@Role", account.Role);
+        command.Parameters.AddWithValue("@Church", account.ChurchId == "NULL" ? DBNull.Value : account.ChurchId);
+        command.Parameters.AddWithValue("@Num", account.AccountNum);
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
+
     private List<AccountModel> FilteredAccounts => AccountsList
         .Where(a => string.IsNullOrEmpty(SearchQuery) ||
-                    a.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    a.DisplayName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
                     a.Email.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
-        .Where(a => SelectedRoleFilter == "All" || a.Role == SelectedRoleFilter)
+        .Where(a => SelectedRoleFilter == "All" || a.Role.Equals(SelectedRoleFilter, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
     private void ToggleSelectAll()
@@ -184,8 +234,9 @@
 
     public class AccountModel
     {
+        public int AccountNum { get; set; }
         public string Email { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
         public string ContactNumber { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string ChurchId { get; set; } = string.Empty;
