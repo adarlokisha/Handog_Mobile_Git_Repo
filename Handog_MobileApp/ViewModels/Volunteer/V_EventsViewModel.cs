@@ -199,10 +199,11 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                     string shortTimeToken = DateTime.Now.ToString("HHmmss");
                     string regIdFormatted = "R" + shortTimeToken;
 
+                    // FIX: Changed 'Registered' to 'Approved' so they instantly show up for the Organizer
                     string registerSql = @"INSERT INTO EVENTREGISTRATION 
                                    (Registration_ID, EventNum, AccountNum, RegistrationDate, RegistrationStatus, AttendanceStatus) 
                                    VALUES 
-                                   (@RegID, @EvtNum, @AccNum, GETDATE(), 'Registered', 'Pending')";
+                                   (@RegID, @EvtNum, @AccNum, GETDATE(), 'Approved', 'Pending')";
 
                     using (SqlCommand registerCmd = new SqlCommand(registerSql, conn))
                     {

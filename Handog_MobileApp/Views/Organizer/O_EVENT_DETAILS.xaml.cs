@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Maui.Controls;
 using Handog_MobileApp.Models;
 
@@ -7,21 +8,21 @@ namespace Handog_MobileApp.Views.Organizer
     {
         private readonly EventDetailsViewModel _viewModel;
 
-        // This correctly catches the EventModel sent from the main events page
         public O_EVENT_DETAILS(EventModel selectedEvent)
         {
             InitializeComponent();
 
-            // Link the specific event data into the ViewModel engine
+            // Connect the XAML to the ViewModel
             _viewModel = new EventDetailsViewModel(selectedEvent);
             BindingContext = _viewModel;
         }
 
+        // This method automatically runs right as the page appears on the screen
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            // Fetch the volunteers the moment this page slides onto the screen
+            // This grabs the attendees from the database and magically populates your CollectionView table!
             await _viewModel.LoadAttendeesAsync();
         }
     }

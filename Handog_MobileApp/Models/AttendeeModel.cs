@@ -1,6 +1,4 @@
-using Microsoft.Maui.Graphics; // Put this at the very top of the file
-
-namespace Handog_MobileApp
+namespace Handog_MobileApp.Models
 {
     public class AttendeeModel
     {
@@ -10,14 +8,11 @@ namespace Handog_MobileApp
         public string RegistrationDate { get; set; }
         public string AttendanceStatus { get; set; }
 
-        // --- ADD THESE TWO UI HELPERS: ---
+        // --- Dynamic UI Properties ---
+        // If they are 'Present', the dot turns Green. Otherwise, it stays Yellow.
+        public string StatusColor => AttendanceStatus == "Present" ? "#00C853" : "#FFC107";
 
-        // If they are Present, turn the dot Teal. If not, turn it Orange.
-        public Color StatusColor => AttendanceStatus == "Present"
-            ? Color.FromArgb("#00BAC7")
-            : Color.FromArgb("#FFA500");
-
-        // If status is "Present", return FALSE (hiding the confirm button).
+        // This hides the manual "Confirm" button in the table if they are already marked Present
         public bool IsNotConfirmed => AttendanceStatus != "Present";
     }
 }
