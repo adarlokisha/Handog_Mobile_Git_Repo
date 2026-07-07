@@ -7,24 +7,14 @@
     <Grid RowDefinitions="Auto, *, Auto" BackgroundColor="#F5F5F5">
 
         <!-- Top Navigation Header -->
-        <Grid Grid.Row="0" BackgroundColor="#59CCD5" HeightRequest="60" Padding="15,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <ImageButton Grid.Column="0" 
-                         Source="back_black.png" 
-                         HeightRequest="30" 
-                         WidthRequest="30" 
-                         HorizontalOptions="Start" 
-                         VerticalOptions="Center"
-                         Clicked="OnBackButtonClicked"/>
-
-            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
-                <Label Text="Hi, " FontSize="18" TextColor="Black" VerticalOptions="Center"/>
-                <Label Text="Username!" FontAttributes="Bold" FontSize="18" TextColor="Black" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
+        <Grid Grid.Row="0" BackgroundColor="#59CCD5" HeightRequest="60" Padding="15,0" ColumnDefinitions="*">
+            <Label Grid.Column="0"
+                   Text="{Binding HeaderUsername, StringFormat='Hi, {0}'}" 
+                   FontSize="18" 
+                   TextColor="Black" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="End" 
+                   VerticalOptions="Center"/>
         </Grid>
 
         <!-- Main Body Content Area -->
@@ -115,7 +105,6 @@
                         <Label Text="Category *" FontAttributes="Bold" TextColor="#707070" FontSize="14"/>
                         <Border Stroke="#C0C0C0" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,5" BackgroundColor="White">
                             <VerticalStackLayout Spacing="2">
-                               
                                 <Picker SelectedItem="{Binding SelectedCategory}" Title="Select Event Category..." TextColor="Black" FontSize="14">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
@@ -175,8 +164,7 @@
                             <VerticalStackLayout Spacing="2">
                                 <Label Text="Brief Description / Details of the Event" TextColor="#707070" FontAttributes="Bold" FontSize="12"/>
                                 <Editor Text="{Binding ProposalDetails}" 
-                                        Placeholder="e.g. Provide free health consultations, check-ups, 
-                                        and distribution of basic medicines to residents in Cabuyao." 
+                                        Placeholder="e.g. Provide free health consultations, check-ups, and distribution of basic medicines to residents." 
                                         AutoSize="TextChanges" HeightRequest="80" TextColor="Black" FontAttributes="Italic" FontSize="13" Margin="0,-4"/>
                             </VerticalStackLayout>
                         </Border>
@@ -193,13 +181,12 @@
 
         <!-- Bottom Tab Navigation Bar Container -->
         <Border Grid.Row="2" 
-            BackgroundColor="#00BAC7" 
-            StrokeShape="RoundRectangle 20,20,0,0" 
-            StrokeThickness="0" 
-            HeightRequest="60"
-            Padding="12, 0">
+                BackgroundColor="#00BAC7" 
+                StrokeShape="RoundRectangle 20,20,0,0" 
+                StrokeThickness="0" 
+                HeightRequest="60"
+                Padding="12, 0">
             <Grid ColumnDefinitions="*, *, *, *">
-
                 <ImageButton x:Name="HomeBtn"
                              Grid.Column="0" 
                              Source="home.png" 
@@ -211,38 +198,35 @@
                              BackgroundColor="Transparent"/>
 
                 <ImageButton x:Name="ProposalsBtn"
-                     Grid.Column="1" 
-                     Source="proposals.png" 
-                     Command="{Binding NavigateToProposalsCommand}"
-                     CommandParameter="{x:Reference ProposalsBtn}"
-                     HorizontalOptions="Center" 
-                     VerticalOptions="Center"
-                     HeightRequest="24" WidthRequest="24"
-                     BackgroundColor="Transparent"/>
+                             Grid.Column="1" 
+                             Source="proposals.png" 
+                             Command="{Binding NavigateToProposalsCommand}"
+                             CommandParameter="{x:Reference ProposalsBtn}"
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center"
+                             HeightRequest="24" WidthRequest="24"
+                             BackgroundColor="Transparent"/>
 
                 <ImageButton x:Name="EventsBtn"
-             Grid.Column="2" 
-             Source="events.png" 
-             Command="{Binding NavigateToEventsCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
+                             Grid.Column="2" 
+                             Source="events.png" 
+                             Command="{Binding NavigateToEventsCommand}"
+                             CommandParameter="{x:Reference EventsBtn}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             HeightRequest="28" WidthRequest="28"
+                             BackgroundColor="Transparent"/>
 
                 <ImageButton x:Name="ProfileBtn"
-             Grid.Column="3" 
-             Source="profile.png" 
-             Command="{Binding NavigateToProfileCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
+                             Grid.Column="3" 
+                             Source="profile.png" 
+                             Command="{Binding NavigateToProfileCommand}"
+                             CommandParameter="{x:Reference ProfileBtn}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             HeightRequest="28" WidthRequest="28"
+                             BackgroundColor="Transparent"/>
             </Grid>
         </Border>
-
     </Grid>
 </ContentPage>

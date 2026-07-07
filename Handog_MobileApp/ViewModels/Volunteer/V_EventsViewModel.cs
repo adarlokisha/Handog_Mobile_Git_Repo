@@ -14,7 +14,6 @@ namespace Handog_MobileApp.ViewModels.Volunteer
 {
     public class V_EventsViewModel : INotifyPropertyChanged
     {
-
         // Commands
         public ICommand FilterCommand { get; }
         public ICommand RegisterCommand { get; }
@@ -34,6 +33,10 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         public ObservableCollection<EventModel> DisplayedEvents { get; } = new();
 
         // --- Layout Screen View States ---
+        private string _volunteerNameHeader;
+        // Basis derived natively from the organizer profile header assignment rules
+        public string VolunteerNameHeader { get => _volunteerNameHeader; set { _volunteerNameHeader = value; OnPropertyChanged(); } }
+
         private bool _isListViewVisible = true;
         public bool IsListViewVisible
         {
@@ -70,7 +73,6 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             }
         }
 
-
         public V_EventsViewModel(INavigation navigation, int accountNum)
         {
             _navigation = navigation;
@@ -93,7 +95,41 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         public void SetUserSession(int accountNum)
         {
             _loggedInAccountNum = accountNum;
-            _ = LoadEventsFromDatabaseAsync();
+            _ = InitializeAsync();
+        }
+
+        public async Task InitializeAsync()
+        {
+            await SetVolunteerIdentityHeader();
+            await LoadEventsFromDatabaseAsync();
+        }
+
+        private async Task SetVolunteerIdentityHeader()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+                    string query = @"SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccNum";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AccNum", _loggedInAccountNum);
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                VolunteerNameHeader = $"{reader["Firstname"]}!";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Identity Header Error: {ex.Message}");
+            }
         }
 
         private async Task ExecuteFilterAsync(string filterType)
@@ -112,12 +148,10 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                 {
                     await conn.OpenAsync();
 
-                    string query = @"SELECT e.EventNum, e.EventTitle, e.EventDescription, e.EventDate, e.StartTime,
-                                            l.LocaleName, l.LocaleAddress,
-                                            a.Firstname + ' ' + a.Lastname AS OrganizerName
+                    // REMOVED the redundant LOCALE join to read directly from the modified columns inside EVENT matching the architecture update
+                    string query = @"SELECT e.*, a.Firstname + ' ' + a.Lastname AS OrganizerName
                                      FROM EVENT e
                                      INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum
-                                     INNER JOIN LOCALE l ON e.LocaleNum = l.LocaleNum
                                      WHERE e.EventStatus = 'Published'";
 
                     if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -145,22 +179,34 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                             while (await reader.ReadAsync())
                             {
                                 int currentEventId = Convert.ToInt32(reader["EventNum"]);
-
-                                // FIXED FUNCTIONALITY REQUIREMENT: 
-                                // Direct strict contextual assignment logic depending on active view mode tab selection string.
                                 bool registeredState = (_activeTabMode == "MyEvents");
+
+                                int catNum = reader["CategoryNum"] != DBNull.Value ? Convert.ToInt32(reader["CategoryNum"]) : 1;
+                                string imagePlaceholder = catNum switch
+                                {
+                                    1 => "mm.png",  // Medical Mission
+                                    2 => "fp.png",  // Feeding Program
+                                    3 => "ya.png",  // Youth Activity
+                                    4 => "sg.png",  // Spiritual Gathering
+                                    5 => "tp.png",  // Environmental Care
+                                    _ => "mm.png"   // Fallback image
+                                };
 
                                 DisplayedEvents.Add(new EventModel
                                 {
                                     EventID = currentEventId,
                                     EventTitle = reader["EventTitle"]?.ToString() ?? "New Event",
                                     EventDetails = reader["EventDescription"]?.ToString() ?? "",
-                                    EventVenue = reader["LocaleName"]?.ToString() ?? "",
-                                    EventAddress = reader["LocaleAddress"]?.ToString() ?? "TBD",
+
+                                    // Modified to target structural properties directly from table metrics
+                                    EventVenue = reader["EventVenue"]?.ToString() ?? "",
+                                    EventAddress = reader["EventAddress"]?.ToString() ?? "TBD",
+
                                     OrganizerName = reader["OrganizerName"]?.ToString() ?? "Anonymous",
                                     EventDate = Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"),
                                     EventTime = reader["StartTime"]?.ToString() ?? "",
-                                    IsMyEvent = registeredState
+                                    IsMyEvent = registeredState,
+                                    CategoryImage = imagePlaceholder
                                 });
                             }
                         }
@@ -199,7 +245,6 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                     string shortTimeToken = DateTime.Now.ToString("HHmmss");
                     string regIdFormatted = "R" + shortTimeToken;
 
-                    // FIX: Changed 'Registered' to 'Approved' so they instantly show up for the Organizer
                     string registerSql = @"INSERT INTO EVENTREGISTRATION 
                                    (Registration_ID, EventNum, AccountNum, RegistrationDate, RegistrationStatus, AttendanceStatus) 
                                    VALUES 
@@ -255,10 +300,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             }
         }
 
-        // Inline State Controls
         private void ExecuteViewDetails(EventModel selectedEvent)
         {
-            // Only allow viewing full details template form parameters if item is flags verified inside 'My Events' subset 
             if (selectedEvent == null || !selectedEvent.IsMyEvent) return;
 
             SelectedEventTarget = selectedEvent;
@@ -296,7 +339,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         private async Task ExecuteNavigateToEvents(object buttonObj)
         {
             await AnimateButtonAsync(buttonObj);
-            await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum)); 
+            await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum));
         }
 
         private async Task ExecuteNavigateToProposals(object buttonObj)
@@ -310,6 +353,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             await AnimateButtonAsync(buttonObj);
             await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
