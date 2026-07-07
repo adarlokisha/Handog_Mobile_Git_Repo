@@ -51,14 +51,17 @@
                                TextColor="#444444" 
                                FontSize="12" 
                                Margin="0,2,40,12"/>
-                        <Button Text="+ JOIN EVENT" 
+                        <Button x:Name="JoinEventBtn"
+                                Text="+ JOIN EVENT" 
                                 BackgroundColor="#00BAC7" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 
                                 HeightRequest="38"
                                 HorizontalOptions="Start"
                                 Padding="16,0"
-                                FontSize="12"/>
+                                FontSize="12"
+                                Command="{Binding NavigateToEventsCommand}"
+                                CommandParameter="{x:Reference JoinEventBtn}"/>
                     </VerticalStackLayout>
                 </Grid>
 
@@ -127,12 +130,15 @@
                 Padding="12, 0">
             <Grid ColumnDefinitions="*, *, *, *">
 
-                <ImageButton Grid.Column="0" 
+                <ImageButton x:Name="HomeBtn"
+                             Grid.Column="0" 
                              Source="home.png" 
+                             Command="{Binding NavigateToHomeCommand}"
+                             CommandParameter="{x:Reference HomeBtn}"        
                              HorizontalOptions="Center" 
                              VerticalOptions="Center"
                              HeightRequest="24" WidthRequest="24"
-                             BackgroundColor="Transparent"/>
+                             BackgroundColor="Transparent"/>                
 
                 <ImageButton x:Name="ProposalsBtn"
                              Grid.Column="1" 
@@ -154,17 +160,17 @@
                      HeightRequest="28" WidthRequest="28"
                      BackgroundColor="Transparent"/>
 
-                <!--- 
+                
                 <ImageButton x:Name="ProfileBtn"
-                     Grid.Column="2" 
-                     Source="events.png" 
+                     Grid.Column="3" 
+                     Source="profile.png" 
                      Command="{Binding NavigateToProfileCommand}"
-                     CommandParameter="{x:Reference EventsBtn}"
+                     CommandParameter="{x:Reference ProfileBtn}"
                      HorizontalOptions="Center"
                      VerticalOptions="Center"
                      HeightRequest="28" WidthRequest="28"
                      BackgroundColor="Transparent"/> 
-                -->
+                
             </Grid>
         </Border>
     </Grid>

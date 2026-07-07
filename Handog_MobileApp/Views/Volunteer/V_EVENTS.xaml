@@ -15,8 +15,8 @@
 
         <!-- Dynamic Page Brand Indicator -->
         <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="5" Padding="0,20,0,10">
-            <Image Source="calendar_icon.png" WidthRequest="70" HeightRequest="70"/>
-            <Label Text="EVENTS" FontSize="32" FontAttributes="Bold" TextColor="Black" HorizontalOptions="Center"/>
+            <Image Source="events_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
+            <Label Text="EVENTS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
         </VerticalStackLayout>
 
         <!-- Filters Section Container -->
@@ -194,11 +194,55 @@
         </Grid>
 
         <!-- Bottom Tab Footer Layout Navigation Bar -->
-        <Border Grid.Row="4" BackgroundColor="#4DD0E1" StrokeShape="RoundRectangle 25,25,0,0" Padding="20,10" HeightRequest="65" StrokeThickness="0">
+        <Border Grid.Row="4" 
+        BackgroundColor="#00BAC7" 
+        StrokeShape="RoundRectangle 20,20,0,0" 
+        StrokeThickness="0" 
+        HeightRequest="60"
+        Padding="12, 0">
             <Grid ColumnDefinitions="*, *, *, *">
-                <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateToHomeCommand}" CommandParameter="{Binding Source={RelativeSource Self}}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
-                <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateToProposalsCommand}" CommandParameter="{Binding Source={RelativeSource Self}}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
-                <ImageButton Grid.Column="2" Source="events.png" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="26" WidthRequest="26" BackgroundColor="Transparent"/>
+
+                <ImageButton x:Name="HomeBtn"
+                             Grid.Column="0" 
+                             Source="home.png" 
+                             Command="{Binding NavigateToHomeCommand}"
+                             CommandParameter="{x:Reference HomeBtn}"        
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center"
+                             HeightRequest="24" WidthRequest="24"
+                             BackgroundColor="Transparent"/>
+                
+                <ImageButton x:Name="ProposalsBtn"
+                             Grid.Column="1" 
+                             Source="proposals.png" 
+                             Command="{Binding NavigateToProposalsCommand}"
+                             CommandParameter="{x:Reference ProposalsBtn}"
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center"
+                             HeightRequest="24" WidthRequest="24"
+                             BackgroundColor="Transparent"/>
+
+                <ImageButton x:Name="EventsBtn"
+                             Grid.Column="2" 
+                             Source="events.png" 
+                             Command="{Binding NavigateToEventsCommand}"
+                             CommandParameter="{x:Reference EventsBtn}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             HeightRequest="28" WidthRequest="28"
+                             BackgroundColor="Transparent"/>
+
+
+                <ImageButton x:Name="ProfileBtn"
+                             Grid.Column="3" 
+                             Source="profile.png" 
+                             Command="{Binding NavigateToProfileCommand}"
+                             CommandParameter="{x:Reference ProfileBtn}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             HeightRequest="28" WidthRequest="28"
+                             BackgroundColor="Transparent"/>
+
             </Grid>
         </Border>
     </Grid>

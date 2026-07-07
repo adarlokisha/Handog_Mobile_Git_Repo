@@ -5,12 +5,18 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
 using Microsoft.Maui.Controls;
+using Handog_MobileApp.Views.Volunteer;
 
 
 namespace Handog_MobileApp.ViewModels;
 
 public class V_HomeViewModel : INotifyPropertyChanged
 {
+    public ICommand NavigateToHomeCommand { get; }
+    public ICommand NavigateToEventsCommand { get; }
+    public ICommand NavigateToProposalsCommand { get; }
+    public ICommand NavigateToProfileCommand { get; }
+
     private readonly int _loggedInAccountNum;
     private readonly INavigation _navigation;
 
@@ -35,16 +41,16 @@ public class V_HomeViewModel : INotifyPropertyChanged
         set { _participationPercentage = value; OnPropertyChanged(); }
     }
 
-    public ICommand NavigateToProposalsCommand { get; }
-    public ICommand NavigateToEventsCommand { get; }
-
+    
     public V_HomeViewModel(INavigation navigation, int accountNum)
     {
         _navigation = navigation;
         _loggedInAccountNum = accountNum;
 
-        NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
+        NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
         NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
+        NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
+        NavigateToProfileCommand = new Command<object>(async (btn) => await ExecuteNavigateToProfile(btn));
     }
 
     public async Task InitializeAsync()
@@ -57,55 +63,87 @@ public class V_HomeViewModel : INotifyPropertyChanged
             {
                 await conn.OpenAsync();
 
-                string query = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccountNum";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                // 1. Fetch user's first name
+                string nameQuery = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccountNum";
+                using (SqlCommand cmdName = new SqlCommand(nameQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@AccountNum", _loggedInAccountNum);
-                    var result = await cmd.ExecuteScalarAsync();
-
-                    if (result != null)
+                    cmdName.Parameters.AddWithValue("@AccountNum", _loggedInAccountNum);
+                    var nameResult = await cmdName.ExecuteScalarAsync();
+                    if (nameResult != null)
                     {
-                        WelcomeName = result.ToString();
+                        WelcomeName = nameResult.ToString();
+                    }
+                }
 
-                        // Dynamically update dashboard metrics fields
-                        int joined = 29;
-                        int total = 34;
-                        double rate = Math.Round((double)joined / total * 100);
+                // 2. Query actual registration stats using the schema criteria
+                string metricsQuery = @"
+                SELECT 
+                    (SELECT COUNT(*) FROM EVENT) AS TotalEvents,
+                    (SELECT COUNT(*) FROM EVENTREGISTRATION WHERE AccountNum = @AccountNum) AS JoinedEvents";
 
-                        ParticipationText = $"You've joined {joined} out of {total} events!";
-                        ParticipationPercentage = $"{rate}%";
+                using (SqlCommand cmdMetrics = new SqlCommand(metricsQuery, conn))
+                {
+                    cmdMetrics.Parameters.AddWithValue("@AccountNum", _loggedInAccountNum);
+                    using (SqlDataReader reader = await cmdMetrics.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            int total = reader["TotalEvents"] != DBNull.Value ? Convert.ToInt32(reader["TotalEvents"]) : 0;
+                            int joined = reader["JoinedEvents"] != DBNull.Value ? Convert.ToInt32(reader["JoinedEvents"]) : 0;
+
+                            // 3. Calculate participation rate safely (prevent division by zero)
+                            double rate = total > 0 ? Math.Round((double)joined / total * 100) : 0;
+
+                            // Update databound property values
+                            ParticipationText = $"You've joined {joined} out of {total} events!";
+                            ParticipationPercentage = $"{rate}%";
+                        }
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert("Database Error", ex.Message, "OK");
+            await Application.Current.MainPage.DisplayAlert("Database Error", $"Could not load home data: {ex.Message}", "OK");
         }
     }
 
-    private async Task ExecuteNavigateToProposals(object buttonObj)
+    private async Task AnimateButtonAsync(object buttonObj)
     {
-        if (buttonObj is ImageButton button)
+        if (buttonObj is ImageButton imgButton)
         {
-            await button.ScaleTo(0.92, 50, Easing.Linear);
-            await button.ScaleTo(1.0, 50, Easing.Linear);
+            await imgButton.ScaleTo(0.92, 50, Easing.Linear);
+            await imgButton.ScaleTo(1.0, 50, Easing.Linear);
         }
+        else if (buttonObj is Button flatButton)
+        {
+            await flatButton.ScaleTo(0.92, 50, Easing.Linear);
+            await flatButton.ScaleTo(1.0, 50, Easing.Linear);
+        }
+    }
 
-        await _navigation.PushAsync(new V_PROPOSALS(_loggedInAccountNum));
+    private async Task ExecuteNavigateToHome(object buttonObj)
+    {
+        await AnimateButtonAsync(buttonObj);
+        await _navigation.PushAsync(new V_HOME(_loggedInAccountNum));
     }
 
     private async Task ExecuteNavigateToEvents(object buttonObj)
     {
-        if (buttonObj is ImageButton button)
-        {
-            await button.ScaleTo(0.92, 50, Easing.Linear);
-            await button.ScaleTo(1.0, 50, Easing.Linear);
-        }
+        await AnimateButtonAsync(buttonObj);
+        await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum)); // Assuming V_EVENTS matches your page name
+    }
 
-        // Redirects control flow forward while carrying forward matching contextual states
-        // Replace V_EVENTS with your exact class name if named differently (e.g., V_HOME_EVENTS)
-        await _navigation.PushAsync(new Handog_MobileApp.Views.Volunteer.V_EVENTS(_loggedInAccountNum));
+    private async Task ExecuteNavigateToProposals(object buttonObj)
+    {
+        await AnimateButtonAsync(buttonObj);
+        await _navigation.PushAsync(new V_PROPOSALS(_loggedInAccountNum));
+    }
+
+    private async Task ExecuteNavigateToProfile(object buttonObj)
+    {
+        await AnimateButtonAsync(buttonObj);
+        await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
