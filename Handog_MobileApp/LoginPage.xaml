@@ -1,28 +1,86 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Handog_MobileApp.LoginPage"
-             Title="LoginPage">
-    
+             x:Class="Handog_MobileApp.LoginPage">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#64B5F6" Offset="0.0" />
+            <GradientStop Color="#FFFFFF" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
     <ScrollView>
         <VerticalStackLayout Padding="30,0" Spacing="25" VerticalOptions="Center">
 
-            <Label Text="Login Button"/>
-            <Label Text="Sign in to your account."/>
+            <Image Source="login_logo.png"
+                   HeightRequest="100"
+                   WidthRequest="300"
+                   HorizontalOptions="Center"
+                   Aspect="AspectFit"/>
+            
+            <Frame BorderColor="Gray"
+                   CornerRadius="12"
+                   Padding="20"
+                   HasShadow="True">
 
-            <Entry x:Name="EmailEntry"
-               Placeholder="Email Address"
-               Keyboard="Email"/>
+                <VerticalStackLayout Spacing="15">
 
-            <Entry x:Name="PasswordEntry"
-               Placeholder="Password"
-               IsPassword="True"/>
+                    <Entry x:Name="EmailEntry"
+                           Placeholder="Email Address"
+                           Keyboard="Email" />
+
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="Password"
+                           IsPassword="True" />
+
+                    <Grid ColumnDefinitions="Auto,*">
+
+                        <HorizontalStackLayout Grid.Column="0">
+                            <CheckBox CheckedChanged="OnShowPasswordChecked"
+                                      Color="#64B5F6" />
+                            <Label Text="Show Password"
+                                   VerticalOptions="Center"
+                                   TextColor="Black" />
+                        </HorizontalStackLayout>
+
+                        <Label Text="Forgot Password"
+                               TextColor="Blue"
+                               TextDecorations="Underline"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End"
+                               Grid.Column="1">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnForgotPasswordTapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
 
             <Button x:Name="LoginBtn"
-                    Text="Login" 
+                    Text="LOGIN"
+                    FontSize="Body"
+                    TextColor="White"
                     Clicked="OnLogin_Clicked"
                     HorizontalOptions="Fill"
-                    BackgroundColor="Teal"/>
+                    CornerRadius="25"
+                    BackgroundColor="#64B5F6"/>
+
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Label Text="Don’t have an account? " />
+                <Label Text="Sign Up"
+           TextColor="Blue"
+           TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSignUpTapped"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
 
 
         </VerticalStackLayout>

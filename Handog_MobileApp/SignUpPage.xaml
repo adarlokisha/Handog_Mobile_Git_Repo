@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Handog_MobileApp.SignUpPage"
+             Title="SignUpPage">
+
+
+    <VerticalStackLayout>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="30" Spacing="20">
+
+                <!-- Logo -->
+                <Image Source="login_logo.png"
+                   HeightRequest="100"
+                   WidthRequest="250"
+                   HorizontalOptions="Center"
+                   Aspect="AspectFit"/>
+
+                <!-- Title -->
+                <Label Text="Get Started"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Black" />
+
+                <Label Text="Let's get started by filling out the form below."
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   TextColor="Gray" />
+
+                <Label Text="Are you here to volunteer (volunteer), to organize (organizer)?"
+                       HorizontalOptions="Center"
+                       FontAttributes="Bold"/>
+
+                <!-- Role Selection -->
+                <VerticalStackLayout Spacing="15">
+
+                    <!-- Volunteer -->
+                    <Frame x:Name="VolunteerFrame"
+                       BorderColor="LightGray"
+                       CornerRadius="12"
+                       Padding="15">
+                        <VerticalStackLayout>
+                            <Label Text="Volunteer"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="Blue"/>
+                            <Label Text="I want to volunteer and contribute my time and skills to a great cause."
+                               FontSize="14"
+                               TextColor="Black"/>
+                        </VerticalStackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnVolunteerTapped"/>
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                    <!-- Organizer -->
+                    <Frame x:Name="OrganizerFrame"
+                       BorderColor="LightGray"
+                       CornerRadius="12"
+                       Padding="15">
+                        <VerticalStackLayout>
+                            <Label Text="Organizer"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="Blue"/>
+                            <Label Text="I want to organize and manage initiatives to create positive change."
+                               FontSize="14"
+                               TextColor="Black"/>
+                        </VerticalStackLayout>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnOrganizerTapped"/>
+                        </Frame.GestureRecognizers>
+                    </Frame>
+
+                </VerticalStackLayout>
+
+                <!-- Continue Button -->
+                <Button Text="CONTINUE"
+                    Clicked="OnContinueClicked"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#64B5F6">
+                </Button>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </VerticalStackLayout>
+
+</ContentPage>
