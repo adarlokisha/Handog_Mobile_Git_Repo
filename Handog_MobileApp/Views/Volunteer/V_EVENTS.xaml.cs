@@ -1,54 +1,54 @@
 using System;
-using Microsoft.Maui.Controls;
 using Handog_MobileApp.ViewModels.Volunteer;
+using Microsoft.Maui.Controls;
 
 namespace Handog_MobileApp.Views.Volunteer
 {
     public partial class V_EVENTS : ContentPage
     {
         private readonly V_EventsViewModel _viewModel;
+        private readonly int _sessionAccountNum;
 
-        public V_EVENTS(int accountNum)
+        // Define your custom accent color globally inside the class
+        private readonly Color _accentColor = Color.FromHex("#4DD0E1");
+
+        public V_EVENTS(int sessionAccountNum)
         {
             InitializeComponent();
-            _viewModel = new V_EventsViewModel(Navigation, accountNum);
-            _viewModel.ShowAlertRequested += OnViewModelShowAlertRequested;
+
+            _sessionAccountNum = sessionAccountNum;
+            _viewModel = new V_EventsViewModel(Navigation, sessionAccountNum);
             BindingContext = _viewModel;
+
+            _viewModel.ShowAlertRequested += OnShowAlertRequested;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-            // ISSUE 1 FIX: Match initial highlight states to the actual default 'AllEvents' criteria load selection
-            SetTabActive(TabAllEvents);
-            _viewModel.FilterCommand.Execute("AllEvents");
+            _viewModel.SetUserSession(_sessionAccountNum);
         }
 
-        private async void OnViewModelShowAlertRequested(string title, string message)
+        private async void OnShowAlertRequested(string title, string message)
         {
             await DisplayAlert(title, message, "OK");
         }
 
-        private void SetTabActive(Border activeBorder)
-        {
-            if (TabMyEvents == null || TabAllEvents == null) return;
-
-            TabMyEvents.BackgroundColor = Colors.Transparent;
-            TabAllEvents.BackgroundColor = Colors.Transparent;
-
-            activeBorder.BackgroundColor = Color.FromArgb("#4DD0E1");
-        }
-
         private void MyEventsTab_Tapped(object sender, EventArgs e)
         {
-            SetTabActive(TabMyEvents);
+            // Explicitly set the background color to your custom hex color
+            TabMyEvents.BackgroundColor = _accentColor;
+            TabAllEvents.BackgroundColor = Colors.Transparent;
+
             _viewModel.FilterCommand.Execute("MyEvents");
         }
 
         private void AllEventsTab_Tapped(object sender, EventArgs e)
         {
-            SetTabActive(TabAllEvents);
+            // Explicitly set the background color to your custom hex color
+            TabAllEvents.BackgroundColor = _accentColor;
+            TabMyEvents.BackgroundColor = Colors.Transparent;
+
             _viewModel.FilterCommand.Execute("AllEvents");
         }
     }

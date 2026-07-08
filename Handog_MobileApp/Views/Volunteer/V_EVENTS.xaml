@@ -2,17 +2,24 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Handog_MobileApp.ViewModels.Volunteer"
+             xmlns:models="clr-namespace:Handog_MobileApp.Models"
              x:Class="Handog_MobileApp.Views.Volunteer.V_EVENTS"
+             x:Name="thisPage"
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" BackgroundColor="#F5F5F5">
 
         <!-- Top Header Navigation -->
-        <Grid Grid.Row="0" BackgroundColor="#4DD0E1" Padding="15,10" ColumnDefinitions="Auto, *">
-            <ImageButton Source="back_arrow.png" WidthRequest="25" HeightRequest="25" HorizontalOptions="Start"/>
-            <Label Grid.Column="1" Text="Hi, Volunteer!" FontAttributes="Bold" FontSize="18" TextColor="Black" HorizontalOptions="End" VerticalOptions="Center"/>
+        <Grid Grid.Row="0" BackgroundColor="#4DD0E1" Padding="15,10" ColumnDefinitions="*">
+            <Label Grid.Column="0" 
+                   Text="{Binding VolunteerNameHeader, StringFormat='Hi, {0}'}" 
+                   FontAttributes="Bold" 
+                   FontSize="18" 
+                   TextColor="Black" 
+                   HorizontalOptions="End" 
+                   VerticalOptions="Center"/>
         </Grid>
-
+        
         <!-- Dynamic Page Brand Indicator -->
         <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="5" Padding="0,20,0,10">
             <Image Source="events_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
@@ -42,7 +49,7 @@
                         </Border.GestureRecognizers>
                     </Border>
 
-                    <Border x:Name="TabAllEvents" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                    <Border x:Name="TabAllEvents" Grid.Column="1" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="#4DD0E1">
                         <Label Text="All Events" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="AllEventsTab_Tapped"/>
@@ -58,63 +65,71 @@
             <!-- VIEW COMPONENT A: Events Collection List Layout View -->
             <CollectionView IsVisible="{Binding IsListViewVisible}" ItemsSource="{Binding DisplayedEvents}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <!-- FIXED: Removed the TapGestureRecognizer from here so clicking the box does nothing -->
+                    <DataTemplate x:DataType="models:EventModel">
                         <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="#F8F8F8" Margin="0,0,0,12" HeightRequest="130">
-                            <Grid ColumnDefinitions="*, 110">
+                            <Grid ColumnDefinitions="*, *">
 
-                                <VerticalStackLayout Padding="12" Spacing="2" VerticalOptions="Center">
-                                    <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="18" TextColor="Black"/>
-                                    <Label Text="{Binding EventDate, StringFormat='• DATE: {0}'}" FontSize="10" TextColor="Gray"/>
-                                    <Label Text="{Binding EventTime, StringFormat='• TIME: {0}'}" FontSize="10" TextColor="Gray"/>
-                                    <Label Text="{Binding EventDetails}" FontSize="10" TextColor="Gray" MaxLines="2" LineBreakMode="TailTruncation"/>
+                                <!-- Left Side: Data Stack Description details -->
+                                <VerticalStackLayout Grid.Column="0" Padding="12" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation"/>
+
+                                    <VerticalStackLayout Spacing="2" Margin="0,4">
+                                        <Label Text="{Binding EventVenue, StringFormat='• {0}'}" TextColor="#777777" FontSize="11" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding EventDate, StringFormat='• {0}'}" TextColor="#777777" FontSize="11"/>
+                                        <Label Text="{Binding EventTime, StringFormat='• {0}'}" TextColor="#777777" FontSize="11"/>
+                                    </VerticalStackLayout>
+
+                                    <Label Text="{Binding EventDetails}" FontSize="11" TextColor="#777777" MaxLines="2" LineBreakMode="TailTruncation"/>
                                 </VerticalStackLayout>
 
-                                <!-- Action Bar Block -->
-                                <Grid Grid.Column="1">
-                                    <BoxView BackgroundColor="#4DD0E1" Opacity="0.15"/>
+                                <!-- Right Side: Layered Action Layout Panel matching Organizer aspect view -->
+                                <Grid Grid.Column="1" Padding="0">
+                                    <!-- Background Category Image -->
+                                    <Image Source="{Binding CategoryImage}" Aspect="AspectFill" />
 
-                                    <!-- REGISTER: Only shows up if IsMyEvent is False -->
+                                    <!-- REGISTER BUTTON: Hidden by default, only appears if IsMyEvent is False -->
                                     <Button Text="REGISTER" 
+                                            IsVisible="False"
                                             BackgroundColor="#F4D03F" 
                                             TextColor="Black" 
                                             FontAttributes="Bold" 
                                             FontSize="11" 
-                                            CornerRadius="15"
-                                            HeightRequest="32"
-                                            WidthRequest="90"
-                                            HorizontalOptions="Center" 
+                                            CornerRadius="16"
+                                            HeightRequest="36"
+                                            WidthRequest="110"
+                                            HorizontalOptions="Center"
                                             VerticalOptions="Center"
-                                            Command="{Binding BindingContext.RegisterCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                            Command="{Binding BindingContext.RegisterCommand, Source={x:Reference thisPage}}"
                                             CommandParameter="{Binding .}">
                                         <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="True">
-                                                <Setter Property="IsVisible" Value="False"/>
-                                            </DataTrigger>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="False">
                                                 <Setter Property="IsVisible" Value="True"/>
                                             </DataTrigger>
                                         </Button.Triggers>
                                     </Button>
 
-                                    <!-- View Details button on My Events tab -->
-                                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" 
-                                                         Spacing="6" IsVisible="{Binding IsMyEvent}">
-                                        
-                                        <!-- NEW: VIEW DETAILS BUTTON -->
-                                        <Button Text="DETAILS" 
-                                                BackgroundColor="#59CCD5" 
-                                                TextColor="White" 
-                                                FontAttributes="Bold" 
-                                                FontSize="10" 
-                                                CornerRadius="15"
-                                                HeightRequest="32"
-                                                WidthRequest="95"
-                                                Command="{Binding BindingContext.ViewEventDetailsCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                CommandParameter="{Binding .}"/>
-                                    </VerticalStackLayout>
-
+                                    <!-- VIEW DETAILS BUTTON: Hidden by default, only appears if IsMyEvent is True -->
+                                    <Button Text="VIEW DETAILS" 
+                                            IsVisible="False"
+                                            BackgroundColor="#F4D03F" 
+                                            TextColor="Black" 
+                                            FontAttributes="Bold" 
+                                            FontSize="11" 
+                                            CornerRadius="16"
+                                            HeightRequest="36"
+                                            WidthRequest="110"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            Command="{Binding BindingContext.ViewEventDetailsCommand, Source={x:Reference thisPage}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="True">
+                                                <Setter Property="IsVisible" Value="True"/>
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
                                 </Grid>
+
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -195,11 +210,11 @@
 
         <!-- Bottom Tab Footer Layout Navigation Bar -->
         <Border Grid.Row="4" 
-        BackgroundColor="#00BAC7" 
-        StrokeShape="RoundRectangle 20,20,0,0" 
-        StrokeThickness="0" 
-        HeightRequest="60"
-        Padding="12, 0">
+                BackgroundColor="#00BAC7" 
+                StrokeShape="RoundRectangle 20,20,0,0" 
+                StrokeThickness="0" 
+                HeightRequest="60"
+                Padding="12, 0">
             <Grid ColumnDefinitions="*, *, *, *">
 
                 <ImageButton x:Name="HomeBtn"
@@ -211,7 +226,7 @@
                              VerticalOptions="Center"
                              HeightRequest="24" WidthRequest="24"
                              BackgroundColor="Transparent"/>
-                
+
                 <ImageButton x:Name="ProposalsBtn"
                              Grid.Column="1" 
                              Source="proposals.png" 
@@ -231,7 +246,6 @@
                              VerticalOptions="Center"
                              HeightRequest="28" WidthRequest="28"
                              BackgroundColor="Transparent"/>
-
 
                 <ImageButton x:Name="ProfileBtn"
                              Grid.Column="3" 
