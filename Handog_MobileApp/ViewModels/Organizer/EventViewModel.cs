@@ -19,6 +19,9 @@ namespace Handog_MobileApp
         // --- UI State Properties ---
         private int _linkedProposalNum = 0;
 
+        // EventNum currently being edited/resubmitted. 0 means we are creating a brand new event.
+        private int _editingEventNum = 0;
+
         private string _organizerNameHeader;
         public string OrganizerNameHeader { get => _organizerNameHeader; set { _organizerNameHeader = value; OnPropertyChanged(); } }
 
@@ -92,6 +95,7 @@ namespace Handog_MobileApp
         public ICommand NavigateCommand { get; }
         public ICommand ViewEventDetailsCommand { get; }
         public ICommand DeleteEventCommand { get; }
+        public ICommand EditEventCommand { get; }
 
 
         public EventsViewModel(int sessionAccountNum)
@@ -110,6 +114,7 @@ namespace Handog_MobileApp
             ViewEventDetailsCommand = new Command<EventModel>(async (selectedEvent) => await Application.Current.MainPage.Navigation.PushAsync(new O_EVENT_DETAILS(selectedEvent)));
 
             DeleteEventCommand = new Command<EventModel>(async (evt) => await ExecuteDeleteEvent(evt));
+            EditEventCommand = new Command<EventModel>(async (evt) => await ExecuteEditEvent(evt));
         }
         public void LoadProposalIntoForm(O_EventProposal proposal)
         {
@@ -241,6 +246,9 @@ namespace Handog_MobileApp
                                     EventDetails = reader["EventDescription"].ToString(),
                                     IsMyEvent = (Convert.ToInt32(reader["OrganizerNum"]) == _currentAccountNum),
 
+                                    EventStatus = reader["EventStatus"]?.ToString(),
+                                    RejectionReason = reader["RejectionReason"] != DBNull.Value ? reader["RejectionReason"].ToString() : null,
+
                                     CategoryImage = imagePlaceholder
                                 });
                             }
@@ -260,6 +268,13 @@ namespace Handog_MobileApp
                 return;
             }
 
+            // Editing a rejected event takes a different (UPDATE) path than creating a new one.
+            if (_editingEventNum > 0)
+            {
+                await ExecuteResubmitEvent();
+                return;
+            }
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
@@ -270,9 +285,9 @@ namespace Handog_MobileApp
                     int nextId = (int)await new SqlCommand(countSql, conn).ExecuteScalarAsync();
                     string eventIdFormatted = "EV" + nextId.ToString("D3");
 
-                    // Added EventVenue and EventAddress to the INSERT statement
-                    string sql = @"INSERT INTO EVENT (Event_ID, OrganizerNum, CategoryNum, LocaleNum, EventTitle, EventDescription, EventDate, StartTime, EndTime, ExpectedParticipants, VolunteerCapacity, EventStatus, EventVenue, EventAddress) 
-                           VALUES (@ID, @Org, @Cat, @Loc, @Title, @Desc, @Date, @Start, @End, 0, @Cap, 'Published', @Venue, @Address)";
+                    // New events start as 'Pending' and must be approved by an admin before going live.
+                    string sql = @"INSERT INTO EVENT (Event_ID, OrganizerNum, CategoryNum, LocaleNum, EventTitle, EventDescription, EventDate, StartTime, EndTime, ExpectedParticipants, VolunteerCapacity, EventStatus, EventVenue, EventAddress)
+                           VALUES (@ID, @Org, @Cat, @Loc, @Title, @Desc, @Date, @Start, @End, 0, @Cap, 'Pending', @Venue, @Address)";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -306,11 +321,107 @@ namespace Handog_MobileApp
                 }
 
                 _linkedProposalNum = 0; // Reset
+                ClearForm();
                 IsOrganizePanelVisible = false;
                 await SyncEventRegistryDataset();
-                await Application.Current.MainPage.DisplayAlert("Success", "Event published!", "OK");
+                await Application.Current.MainPage.DisplayAlert("Success", "Event submitted for admin approval.", "OK");
             }
             catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+        }
+
+        // Loads a previously-rejected event back into the Organize panel so the organizer can amend and resubmit it.
+        private async Task ExecuteEditEvent(EventModel evt)
+        {
+            if (evt == null || !evt.CanEdit) return;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+                    string sql = @"SELECT CategoryNum, EventTitle, EventDescription, EventDate, StartTime, EndTime, VolunteerCapacity, EventVenue, EventAddress
+                                   FROM EVENT WHERE EventNum = @Num";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Num", evt.EventID);
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                int catNum = reader["CategoryNum"] != DBNull.Value ? Convert.ToInt32(reader["CategoryNum"]) : 0;
+                                SelectedCategory = CategoriesList.FirstOrDefault(c => c.CategoryNum == catNum);
+
+                                FormTitle = reader["EventTitle"]?.ToString();
+                                FormDetails = reader["EventDescription"] != DBNull.Value ? reader["EventDescription"].ToString() : string.Empty;
+                                FormDate = reader["EventDate"] != DBNull.Value ? Convert.ToDateTime(reader["EventDate"]) : DateTime.Today;
+                                FormStartTime = reader["StartTime"] != DBNull.Value ? (TimeSpan)reader["StartTime"] : TimeSpan.Zero;
+                                FormEndTime = reader["EndTime"] != DBNull.Value ? (TimeSpan)reader["EndTime"] : TimeSpan.Zero;
+                                FormCapacity = reader["VolunteerCapacity"] != DBNull.Value ? reader["VolunteerCapacity"].ToString() : "0";
+                                FormVenue = reader["EventVenue"]?.ToString();
+                                FormAddress = reader["EventAddress"] != DBNull.Value ? reader["EventAddress"].ToString() : string.Empty;
+                            }
+                        }
+                    }
+                }
+
+                _editingEventNum = evt.EventID;
+                IsOrganizePanelVisible = true;
+            }
+            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+        }
+
+        // Saves edits to a rejected event and sends it back to 'Pending' for another admin review.
+        private async Task ExecuteResubmitEvent()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+
+                    string sql = @"UPDATE EVENT
+                                   SET CategoryNum = @Cat, EventTitle = @Title, EventDescription = @Desc,
+                                       EventDate = @Date, StartTime = @Start, EndTime = @End,
+                                       VolunteerCapacity = @Cap, EventVenue = @Venue, EventAddress = @Address,
+                                       EventStatus = 'Pending', RejectionReason = NULL
+                                   WHERE EventNum = @Num";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Cat", SelectedCategory.CategoryNum);
+                        cmd.Parameters.AddWithValue("@Title", FormTitle);
+                        cmd.Parameters.AddWithValue("@Desc", FormDetails ?? "");
+                        cmd.Parameters.AddWithValue("@Date", FormDate);
+                        cmd.Parameters.AddWithValue("@Start", FormStartTime);
+                        cmd.Parameters.AddWithValue("@End", FormEndTime);
+                        cmd.Parameters.AddWithValue("@Cap", int.TryParse(FormCapacity, out int cap) ? cap : 0);
+                        cmd.Parameters.AddWithValue("@Venue", FormVenue);
+                        cmd.Parameters.AddWithValue("@Address", FormAddress ?? "");
+                        cmd.Parameters.AddWithValue("@Num", _editingEventNum);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                _editingEventNum = 0;
+                ClearForm();
+                IsOrganizePanelVisible = false;
+                await SyncEventRegistryDataset();
+                await Application.Current.MainPage.DisplayAlert("Success", "Event resubmitted for admin approval.", "OK");
+            }
+            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+        }
+
+        // Resets the Organize panel fields (keeps the preloaded organizer identity intact).
+        private void ClearForm()
+        {
+            _editingEventNum = 0;
+            FormTitle = string.Empty;
+            FormDetails = string.Empty;
+            FormCapacity = string.Empty;
+            FormDate = DateTime.Today;
+            FormStartTime = TimeSpan.Zero;
+            FormEndTime = TimeSpan.Zero;
+            SelectedCategory = null;
         }
 
         private async Task ExecuteSwitchTab(string tab)
@@ -346,8 +457,17 @@ namespace Handog_MobileApp
 
         private void ExecuteTogglePanel(string action)
         {
-            if (action == "OpenOrganize") IsOrganizePanelVisible = true;
-            else if (action == "CloseOrganize") IsOrganizePanelVisible = false;
+            if (action == "OpenOrganize")
+            {
+                // "+ ORGANIZE" always opens a fresh create form, never an in-progress edit.
+                ClearForm();
+                IsOrganizePanelVisible = true;
+            }
+            else if (action == "CloseOrganize")
+            {
+                _editingEventNum = 0;
+                IsOrganizePanelVisible = false;
+            }
         }
 
         private async Task ExecuteNavigation(string dest)

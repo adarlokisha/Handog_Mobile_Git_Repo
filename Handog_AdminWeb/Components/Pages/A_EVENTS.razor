@@ -50,7 +50,13 @@
                 </div>
 
                 <div style="border: 1px solid #1A1A1A; padding: 25px; border-radius: 4px; position: relative; box-sizing: border-box;">
-                    <h2 style="font-size: 18px; font-weight: 700; color: #777777; text-transform: uppercase; margin-top: 0; margin-bottom: 25px; border-bottom: 2px solid #777777; display: inline-block; padding-bottom: 2px;">Locale Details</h2>
+                    <h2 style="font-size: 18px; font-weight: 700; color: #777777; text-transform: uppercase; margin-top: 0; margin-bottom: 8px; border-bottom: 2px solid #777777; display: inline-block; padding-bottom: 2px;">Locale Details</h2>
+                    <p style="font-size: 12px; color: #777777; margin: 0 0 20px 0;">Only <strong>Locale Name</strong> and <strong>Address</strong> are required. Leave the organizer fields blank to create an empty locale you can assign an organizer to later.</p>
+
+                    @if (!string.IsNullOrEmpty(LocaleValidationError))
+                    {
+                        <p style="color: #FF5A5F; font-size: 13px; font-weight: 600; margin: 0 0 15px 0;">@LocaleValidationError</p>
+                    }
 
                     <div style="display: flex; gap: 40px; align-items: flex-start;">
                         <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
@@ -59,22 +65,22 @@
                                 <input type="text" @bind="NewLocale.LocaleName" placeholder="e.g., Pulo" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
                             </div>
                             <div style="display: flex; align-items: center;">
-                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">First Name:</label>
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">First Name: <span style="color:#999; font-weight:500;">(optional)</span></label>
                                 <input type="text" @bind="NewLocale.OrgFirstname" placeholder="First Name" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
                             </div>
                             <div style="display: flex; align-items: center;">
-                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Last Name:</label>
+                                <label style="width: 140px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Last Name: <span style="color:#999; font-weight:500;">(optional)</span></label>
                                 <input type="text" @bind="NewLocale.OrgLastname" placeholder="Last Name" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
                             </div>
                         </div>
 
                         <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
                             <div style="display: flex; align-items: center;">
-                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Email:</label>
+                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Email: <span style="color:#999; font-weight:500;">(optional)</span></label>
                                 <input type="email" @bind="NewLocale.OrgEmail" placeholder="organizer@example.com" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
                             </div>
                             <div style="display: flex; align-items: center;">
-                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Church ID:</label>
+                                <label style="width: 120px; font-size: 13px; font-weight: 800; color: #000000; text-transform: uppercase;">Church ID: <span style="color:#999; font-weight:500;">(optional)</span></label>
                                 <input type="text" @bind="NewLocale.ChurchId" placeholder="CHXXXXID" style="flex: 1; padding: 10px 14px; border: 1px solid #1A1A1A; border-radius: 12px; font-size: 14px;" />
                             </div>
                             <div style="display: flex; align-items: center;">
@@ -255,6 +261,7 @@
 
     private bool IsCreateLocaleModalOpen { get; set; } = false;
     private CreateLocaleBindingModel NewLocale { get; set; } = new();
+    private string LocaleValidationError { get; set; } = string.Empty;
 
     private List<LocaleUIModel> LocalesList = new();
     private List<EventDBModel> EventsList = new();
@@ -327,6 +334,7 @@
     private void ShowCreateLocaleModal()
     {
         NewLocale = new CreateLocaleBindingModel();
+        LocaleValidationError = string.Empty;
         IsCreateLocaleModalOpen = true;
     }
 
@@ -334,6 +342,18 @@
 
     private async Task ExecuteCreateLocale()
     {
+        LocaleValidationError = string.Empty;
+
+        // Locale Name and Address are the only required fields.
+        if (string.IsNullOrWhiteSpace(NewLocale.LocaleName) || string.IsNullOrWhiteSpace(NewLocale.LocaleAddress))
+        {
+            LocaleValidationError = "Locale Name and Address are required.";
+            return;
+        }
+
+        // An organizer is only created if enough of their details were entered.
+        bool createOrganizer = !string.IsNullOrWhiteSpace(NewLocale.OrgEmail) && !string.IsNullOrWhiteSpace(NewLocale.OrgFirstname);
+
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
@@ -359,29 +379,32 @@
             generatedLocaleNum = Convert.ToInt32(await locCmd.ExecuteScalarAsync());
         }
 
-        // 2. Generate the corresponding designated Organizer Account entry
-        string countQuery = "SELECT COUNT(*) + 1 FROM ACCOUNT WHERE AccRole = 'Organizer'";
-        int nextOrgSequence = 1;
-        using (var countCmd = new SqlCommand(countQuery, connection))
+        // 2. Optionally generate the designated Organizer Account (skipped for a bare, pre-populated locale)
+        if (createOrganizer)
         {
-            nextOrgSequence = (int)await countCmd.ExecuteScalarAsync();
-        }
-        string generatedAccountId = $"ORG{nextOrgSequence:D5}";
+            string countQuery = "SELECT COUNT(*) + 1 FROM ACCOUNT WHERE AccRole = 'Organizer'";
+            int nextOrgSequence = 1;
+            using (var countCmd = new SqlCommand(countQuery, connection))
+            {
+                nextOrgSequence = (int)await countCmd.ExecuteScalarAsync();
+            }
+            string generatedAccountId = $"ORG{nextOrgSequence:D5}";
 
-        // Removed explicit ContactNum and AccPassword configurations to prevent missing values exceptions
-        string insertAccountSql = @"
-            INSERT INTO ACCOUNT (Account_ID, Firstname, Lastname, Email, AccPassword, ContactNum, AccRole, AccountStatus, ChurchID, LocaleNum, AbsenceCount)
-            VALUES (@AccountId, @First, @Last, @Email, 'PendingSet123!', '00000000000', 'Organizer', 'Active', @ChurchID, @LocaleNum, 0)";
+            // Removed explicit ContactNum and AccPassword configurations to prevent missing values exceptions
+            string insertAccountSql = @"
+                INSERT INTO ACCOUNT (Account_ID, Firstname, Lastname, Email, AccPassword, ContactNum, AccRole, AccountStatus, ChurchID, LocaleNum, AbsenceCount)
+                VALUES (@AccountId, @First, @Last, @Email, 'PendingSet123!', '00000000000', 'Organizer', 'Active', @ChurchID, @LocaleNum, 0)";
 
-        using (var accCmd = new SqlCommand(insertAccountSql, connection))
-        {
-            accCmd.Parameters.AddWithValue("@AccountId", generatedAccountId);
-            accCmd.Parameters.AddWithValue("@First", NewLocale.OrgFirstname);
-            accCmd.Parameters.AddWithValue("@Last", NewLocale.OrgLastname);
-            accCmd.Parameters.AddWithValue("@Email", NewLocale.OrgEmail);
-            accCmd.Parameters.AddWithValue("@ChurchID", string.IsNullOrWhiteSpace(NewLocale.ChurchId) ? DBNull.Value : NewLocale.ChurchId);
-            accCmd.Parameters.AddWithValue("@LocaleNum", generatedLocaleNum);
-            await accCmd.ExecuteNonQueryAsync();
+            using (var accCmd = new SqlCommand(insertAccountSql, connection))
+            {
+                accCmd.Parameters.AddWithValue("@AccountId", generatedAccountId);
+                accCmd.Parameters.AddWithValue("@First", NewLocale.OrgFirstname);
+                accCmd.Parameters.AddWithValue("@Last", NewLocale.OrgLastname);
+                accCmd.Parameters.AddWithValue("@Email", NewLocale.OrgEmail);
+                accCmd.Parameters.AddWithValue("@ChurchID", string.IsNullOrWhiteSpace(NewLocale.ChurchId) ? DBNull.Value : NewLocale.ChurchId);
+                accCmd.Parameters.AddWithValue("@LocaleNum", generatedLocaleNum);
+                await accCmd.ExecuteNonQueryAsync();
+            }
         }
 
         IsCreateLocaleModalOpen = false;
