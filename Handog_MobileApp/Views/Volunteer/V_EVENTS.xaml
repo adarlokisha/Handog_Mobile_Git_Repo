@@ -28,16 +28,8 @@
 
         <!-- Filters Section Container -->
         <VerticalStackLayout Grid.Row="2" Padding="20,0" Spacing="15">
-            <Border StrokeShape="RoundRectangle 20" StrokeThickness="1" Stroke="#E0E0E0" Padding="10,2" BackgroundColor="White">
-                <Grid ColumnDefinitions="Auto, *">
-                    <Image Source="search_icon.png" WidthRequest="18" HeightRequest="18" Margin="5,0"/>
-                    <Entry Grid.Column="1" 
-                           Placeholder="Search..." 
-                           PlaceholderColor="Gray" 
-                           TextColor="Black" 
-                           FontSize="14"
-                           Text="{Binding SearchQuery, Mode=TwoWay}"/>
-                </Grid>
+            <Border StrokeShape="RoundRectangle 22" StrokeThickness="0" BackgroundColor="White" HeightRequest="44" WidthRequest="350" Margin="0,8,0,0">
+                <SearchBar Text="{Binding SearchQuery}" Placeholder="Search events..." TextColor="#1A1A1A" BackgroundColor="Transparent"/>
             </Border>
 
             <Border Margin="0,5,0,5" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
