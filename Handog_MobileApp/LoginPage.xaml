@@ -1,52 +1,85 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Handog_MobileApp.LoginPage">
+             x:Class="Handog_MobileApp.LoginPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
 
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#64B5F6" Offset="0.0" />
-            <GradientStop Color="#FFFFFF" Offset="1.0" />
+            <GradientStop Color="#4DD0E1" Offset="0.0" />
+            <GradientStop Color="White" Offset="0.4" />
         </LinearGradientBrush>
     </ContentPage.Background>
 
     <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25" VerticalOptions="Center">
+        <VerticalStackLayout Padding="25,30" Spacing="20" VerticalOptions="Center">
 
             <Image Source="login_logo.png"
-                   HeightRequest="100"
-                   WidthRequest="300"
+                   HeightRequest="120"
+                   WidthRequest="280"
                    HorizontalOptions="Center"
-                   Aspect="AspectFit"/>
-            
-            <Frame BorderColor="Gray"
-                   CornerRadius="12"
-                   Padding="20"
-                   HasShadow="True">
+                   Aspect="AspectFit"
+                   Margin="0,0,0,5"/>
+
+            <Border StrokeThickness="0"
+                    Background="White"
+                    Padding="20,25" 
+                    Margin="15,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.1" />
+                </Border.Shadow>
 
                 <VerticalStackLayout Spacing="15">
 
-                    <Entry x:Name="EmailEntry"
-                           Placeholder="Email Address"
-                           Keyboard="Email" />
+                    <Border BackgroundColor="#EBEBEB"
+                            StrokeThickness="0"
+                            HeightRequest="45">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="EmailEntry"
+                               Placeholder="Email Address"
+                               Keyboard="Email"
+                               BackgroundColor="Transparent"
+                               PlaceholderColor="#A0A0A0"
+                               TextColor="#333333"
+                               Margin="10,0" />
+                    </Border>
 
-                    <Entry x:Name="PasswordEntry"
-                           Placeholder="Password"
-                           IsPassword="True" />
+                    <Border BackgroundColor="#EBEBEB"
+                            StrokeThickness="0"
+                            HeightRequest="45">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="PasswordEntry"
+                               Placeholder="Password"
+                               IsPassword="True"
+                               BackgroundColor="Transparent"
+                               PlaceholderColor="#A0A0A0"
+                               TextColor="#333333"
+                               Margin="10,0" />
+                    </Border>
 
-                    <Grid ColumnDefinitions="Auto,*">
-
-                        <HorizontalStackLayout Grid.Column="0">
+                    <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,5">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="5">
                             <CheckBox CheckedChanged="OnShowPasswordChecked"
-                                      Color="#64B5F6" />
+                                      Color="#333333" 
+                                      VerticalOptions="Center"/>
                             <Label Text="Show Password"
                                    VerticalOptions="Center"
-                                   TextColor="Black" />
+                                   FontSize="12"
+                                   TextColor="#555555" />
                         </HorizontalStackLayout>
 
                         <Label Text="Forgot Password"
-                               TextColor="Blue"
+                               TextColor="#555555"
                                TextDecorations="Underline"
+                               FontSize="12"
                                VerticalOptions="Center"
                                HorizontalOptions="End"
                                Grid.Column="1">
@@ -54,36 +87,45 @@
                                 <TapGestureRecognizer Tapped="OnForgotPasswordTapped"/>
                             </Label.GestureRecognizers>
                         </Label>
-
                     </Grid>
 
+                    <Button x:Name="LoginBtn"
+                            Text="LOGIN"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="White"
+                            Clicked="OnLogin_Clicked"
+                            HorizontalOptions="Fill"
+                            HeightRequest="50"
+                            CornerRadius="25">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#26C6DA" Offset="0.0" />
+                                <GradientStop Color="#DCE775" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
-            <Button x:Name="LoginBtn"
-                    Text="LOGIN"
-                    FontSize="Body"
-                    TextColor="White"
-                    Clicked="OnLogin_Clicked"
-                    HorizontalOptions="Fill"
-                    CornerRadius="25"
-                    BackgroundColor="#64B5F6"/>
-
-
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Label Text="Don’t have an account? " />
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="2" Margin="0,15,0,0">
+                <Label Text="Don’t have an account?" 
+                       TextColor="#555555" 
+                       FontSize="13"
+                       HorizontalOptions="Center"/>
                 <Label Text="Sign Up"
-           TextColor="Blue"
-           TextDecorations="Underline">
+                       TextColor="#4FC3F7"
+                       TextDecorations="Underline"
+                       FontSize="13"
+                       HorizontalOptions="Center">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnSignUpTapped"/>
                     </Label.GestureRecognizers>
                 </Label>
-            </HorizontalStackLayout>
-
-
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
-    
+
 </ContentPage>

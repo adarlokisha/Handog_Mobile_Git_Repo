@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Handog_MobileApp.Views.Organizer;
 using Microsoft.Data.SqlClient;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Handog_MobileApp.Views.Organizer;
 
 namespace Handog_MobileApp.ViewModels.Organizer
 {
@@ -14,9 +11,8 @@ namespace Handog_MobileApp.ViewModels.Organizer
     {
         private readonly int _currentOrganizerAccountNum;
         private readonly INavigation _navigation;
-        private readonly Page _page;
+        private readonly Microsoft.Maui.Controls.Page _page;
 
-        // Observable properties - XAML will bind to these automatically
         [ObservableProperty]
         private string headerUsername = "Organizer!";
 
@@ -35,25 +31,29 @@ namespace Handog_MobileApp.ViewModels.Organizer
         [ObservableProperty]
         private int countAbsences = 0;
 
-        // This property will hold our REST API link for GoQR
         [ObservableProperty]
-        private string qrCodeImageUrl = "qr_placeholder_wireframe.png"; // Default placeholder
+        private string qrCodeImageUrl = "qr_placeholder_wireframe.png";
 
-        public ProfileViewModel(int accountNum, INavigation navigation, Page page)
+        // --- NEW PROFILE IMAGE PROPERTIES ---
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasProfileImage))]
+        [NotifyPropertyChangedFor(nameof(HasNoProfileImage))]
+        private string profileImageUrl;
+
+        // These booleans control which UI element shows in the XAML Grid
+        public bool HasProfileImage => !string.IsNullOrEmpty(ProfileImageUrl);
+        public bool HasNoProfileImage => string.IsNullOrEmpty(ProfileImageUrl);
+
+        public ProfileViewModel(int accountNum, INavigation navigation, Microsoft.Maui.Controls.Page page)
         {
             _currentOrganizerAccountNum = accountNum;
             _navigation = navigation;
             _page = page;
         }
 
-        // Method to fetch data, called when the page appears
         public async Task LoadProfileDataAsync()
         {
-            if (_currentOrganizerAccountNum == 0)
-            {
-                await _page.DisplayAlert("Error", "Account ID missing. The profile cannot load.", "OK");
-                return;
-            }
+            if (_currentOrganizerAccountNum == 0) return;
 
             try
             {
@@ -61,8 +61,8 @@ namespace Handog_MobileApp.ViewModels.Organizer
                 {
                     await conn.OpenAsync();
 
-                    // 1. Fetch personal details
-                    string profileSql = "SELECT Account_ID, Firstname, Lastname FROM ACCOUNT WHERE AccountNum = @AccNum";
+                    // 1. Fetch personal details AND the profile picture URL
+                    string profileSql = "SELECT Account_ID, Firstname, Lastname, ProfilePicUrl FROM ACCOUNT WHERE AccountNum = @AccNum";
                     using (SqlCommand cmd = new SqlCommand(profileSql, conn))
                     {
                         cmd.Parameters.AddWithValue("@AccNum", _currentOrganizerAccountNum);
@@ -73,13 +73,13 @@ namespace Handog_MobileApp.ViewModels.Organizer
                                 string firstName = reader["Firstname"].ToString();
                                 string lastName = reader["Lastname"].ToString();
 
-                                // Automatically updates XAML UI via Data Binding
                                 HeaderUsername = $"{firstName}!";
                                 FullName = $"{firstName} {lastName}".ToUpper();
                                 AccountId = reader["Account_ID"].ToString();
 
-                                // --- REST API INTEGRATION ---
-                                // Dynamically generate the GoQR Image URL using the fetched AccountId
+                                // Load existing image if they have one
+                                ProfileImageUrl = reader["ProfilePicUrl"]?.ToString();
+
                                 QrCodeImageUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={AccountId}";
                             }
                         }
@@ -101,7 +101,6 @@ namespace Handog_MobileApp.ViewModels.Organizer
                         CountJoined = (int)await cmdJoined.ExecuteScalarAsync();
                     }
 
-                    // 4. Count "Absences"
                     CountAbsences = 0;
                 }
             }
@@ -111,30 +110,83 @@ namespace Handog_MobileApp.ViewModels.Organizer
             }
         }
 
-        // RelayCommands automatically wire up to Button Commands in XAML
+        // --- NEW CLOUDINARY UPLOAD LOGIC ---
         [RelayCommand]
-        private async Task GoBackAsync()
+        private async Task UploadProfilePictureAsync()
         {
-            await _navigation.PopAsync();
+            try
+            {
+                // 1. Pick the photo
+                var photo = await MediaPicker.Default.PickPhotoAsync();
+                if (photo == null) return;
+
+                using var stream = await photo.OpenReadAsync();
+
+                // 2. Prepare C#'s built-in HttpClient
+                using var client = new HttpClient();
+                using var content = new MultipartFormDataContent();
+
+                // 3. THE FIX: Stop C# from adding hidden headers!
+                var presetContent = new StringContent("effpkvoa");
+                presetContent.Headers.ContentType = null; // Forcefully strip the header
+                content.Add(presetContent, "\"upload_preset\""); // Wrap the name in quotes to be safe
+
+                // 4. Add the file stream
+                var fileContent = new StreamContent(stream);
+                content.Add(fileContent, "\"file\"", $"\"{photo.FileName}\"");
+
+                // 5. POST directly to your exact Cloudinary URL
+                string uploadUrl = "https://api.cloudinary.com/v1_1/ahewabql/image/upload";
+                var response = await client.PostAsync(uploadUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    // 6. Quickly parse the JSON response to grab the secure URL
+                    using var jsonDoc = System.Text.Json.JsonDocument.Parse(jsonString);
+                    string newImageUrl = jsonDoc.RootElement.GetProperty("secure_url").GetString();
+
+                    // 7. Update your SQL Database
+                    using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                    {
+                        await conn.OpenAsync();
+                        string sql = "UPDATE ACCOUNT SET ProfilePicUrl = @url WHERE AccountNum = @AccNum";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@url", newImageUrl);
+                            cmd.Parameters.AddWithValue("@AccNum", _currentOrganizerAccountNum);
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    // 8. Instantly update the UI!
+                    ProfileImageUrl = newImageUrl;
+                }
+                else
+                {
+                    // If it fails, read the exact error message from Cloudinary
+                    string errorText = await response.Content.ReadAsStringAsync();
+                    await _page.DisplayAlert("Upload Error", $"Cloudinary refused the upload: {errorText}", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _page.DisplayAlert("Error", $"Could not upload image: {ex.Message}", "OK");
+            }
         }
 
         [RelayCommand]
-        private async Task GoHomeAsync()
-        {
-            await _navigation.PushAsync(new O_HOME(_currentOrganizerAccountNum));
-        }
+        private async Task GoBackAsync() => await _navigation.PopAsync();
 
         [RelayCommand]
-        private async Task GoProposalsAsync()
-        {
-            await _navigation.PushAsync(new O_PROPOSALS(_currentOrganizerAccountNum));
-        }
+        private async Task GoHomeAsync() => await _navigation.PushAsync(new O_HOME(_currentOrganizerAccountNum));
 
         [RelayCommand]
-        private async Task GoEventsAsync()
-        {
-            await _navigation.PushAsync(new O_EVENTS(_currentOrganizerAccountNum));
-        }
+        private async Task GoProposalsAsync() => await _navigation.PushAsync(new O_PROPOSALS(_currentOrganizerAccountNum));
+
+        [RelayCommand]
+        private async Task GoEventsAsync() => await _navigation.PushAsync(new O_EVENTS(_currentOrganizerAccountNum));
 
         [RelayCommand]
         private async Task LogoutAsync()
