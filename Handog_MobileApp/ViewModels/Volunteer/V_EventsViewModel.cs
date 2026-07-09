@@ -148,11 +148,14 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                 {
                     await conn.OpenAsync();
 
-                    // REMOVED the redundant LOCALE join to read directly from the modified columns inside EVENT matching the architecture update
-                    string query = @"SELECT e.*, a.Firstname + ' ' + a.Lastname AS OrganizerName
-                                     FROM EVENT e
-                                     INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum
-                                     WHERE e.EventStatus = 'Published'";
+                    // 1. Modified query to detect registration status dynamically per row using a LEFT JOIN
+                    string query = @"SELECT e.*, 
+                                    a.Firstname + ' ' + a.Lastname AS OrganizerName,
+                                    CASE WHEN er.Registration_ID IS NOT NULL THEN 1 ELSE 0 END AS IsRegistered
+                             FROM EVENT e
+                             INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum
+                             LEFT JOIN EVENTREGISTRATION er ON e.EventNum = er.EventNum AND er.AccountNum = @UserNum
+                             WHERE e.EventStatus = 'Published'";
 
                     if (!string.IsNullOrWhiteSpace(SearchQuery))
                     {
@@ -161,35 +164,40 @@ namespace Handog_MobileApp.ViewModels.Volunteer
 
                     if (_activeTabMode == "MyEvents")
                     {
-                        query += @" AND e.EventNum IN (
-                                    SELECT EventNum FROM EVENTREGISTRATION WHERE AccountNum = @UserNum
-                                   )";
+                        query += " AND er.Registration_ID IS NOT NULL";
                     }
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        // Always add UserNum parameter since it's needed for the LEFT JOIN status check
+                        cmd.Parameters.AddWithValue("@UserNum", _loggedInAccountNum);
+
                         if (!string.IsNullOrWhiteSpace(SearchQuery))
                             cmd.Parameters.AddWithValue("@Search", $"%{SearchQuery}%");
-
-                        if (_activeTabMode == "MyEvents")
-                            cmd.Parameters.AddWithValue("@UserNum", _loggedInAccountNum);
 
                         using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
+                                // Inside your SqlDataReader while loop:
                                 int currentEventId = Convert.ToInt32(reader["EventNum"]);
-                                bool registeredState = (_activeTabMode == "MyEvents");
 
+                                // Force IsMyEvent to False when on All Events tab so XAML DataTrigger shows the "REGISTER" button
+                                bool registeredState = false;
+
+                                if (_activeTabMode == "MyEvents")
+                                {
+                                    registeredState = true; // Shows "VIEW DETAILS" instead
+                                }
                                 int catNum = reader["CategoryNum"] != DBNull.Value ? Convert.ToInt32(reader["CategoryNum"]) : 1;
                                 string imagePlaceholder = catNum switch
                                 {
-                                    1 => "mm.png",  // Medical Mission
-                                    2 => "fp.png",  // Feeding Program
-                                    3 => "ya.png",  // Youth Activity
-                                    4 => "sg.png",  // Spiritual Gathering
-                                    5 => "tp.png",  // Environmental Care
-                                    _ => "mm.png"   // Fallback image
+                                    1 => "mm.png",
+                                    2 => "fp.png",
+                                    3 => "ya.png",
+                                    4 => "sg.png",
+                                    5 => "tp.png",
+                                    _ => "mm.png"
                                 };
 
                                 DisplayedEvents.Add(new EventModel
@@ -197,15 +205,12 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                                     EventID = currentEventId,
                                     EventTitle = reader["EventTitle"]?.ToString() ?? "New Event",
                                     EventDetails = reader["EventDescription"]?.ToString() ?? "",
-
-                                    // Modified to target structural properties directly from table metrics
                                     EventVenue = reader["EventVenue"]?.ToString() ?? "",
                                     EventAddress = reader["EventAddress"]?.ToString() ?? "TBD",
-
                                     OrganizerName = reader["OrganizerName"]?.ToString() ?? "Anonymous",
                                     EventDate = Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"),
                                     EventTime = reader["StartTime"]?.ToString() ?? "",
-                                    IsMyEvent = registeredState,
+                                    IsMyEvent = registeredState, // Now evaluates correctly!
                                     CategoryImage = imagePlaceholder
                                 });
                             }
