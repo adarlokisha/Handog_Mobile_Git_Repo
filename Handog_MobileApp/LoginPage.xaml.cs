@@ -1,11 +1,12 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 using System;
 using Handog_MobileApp.Views.Organizer;
-using Handog_MobileApp.Views.Volunteer; 
+using Handog_MobileApp.Views.Volunteer;
 
 namespace Handog_MobileApp
-{ // <--- Change to opening bracket
+{
     public partial class LoginPage : ContentPage
     {
         private readonly string _connectionString =
@@ -17,9 +18,22 @@ namespace Handog_MobileApp
             "TrustServerCertificate=False;" +
             "Connection Timeout = 30;";
 
+        private const string SavedEmailKey = "UserEmail";
+
         public LoginPage()
         {
             InitializeComponent();
+
+            LoadSavedEmail();
+        }
+
+        private void LoadSavedEmail()
+        {
+            if (Preferences.Default.ContainsKey(SavedEmailKey))
+            {
+                string savedEmail = Preferences.Default.Get(SavedEmailKey, string.Empty);
+                EmailEntry.Text = savedEmail;
+            }
         }
 
         private async void OnLogin_Clicked(object sender, EventArgs e)
@@ -56,6 +70,8 @@ namespace Handog_MobileApp
                                 string role = reader["AccRole"].ToString();
                                 string firstName = reader["Firstname"].ToString();
 
+                                Preferences.Default.Set(SavedEmailKey, email);
+
                                 if (role.Equals("Organizer", StringComparison.OrdinalIgnoreCase))
                                 {
                                     await DisplayAlert("Success", $"Logged in as {firstName} ({role})", "OK");
@@ -64,7 +80,7 @@ namespace Handog_MobileApp
                                 else
                                 {
                                     await DisplayAlert("Success", $"Logged in as {firstName} ({role})", "OK");
-                                    await Navigation.PushAsync(new V_HOME(loggedInAccountNum)); // Ensure V_HOME has a generic constructor or its own parameter if needed!
+                                    await Navigation.PushAsync(new V_HOME(loggedInAccountNum));
                                 }
                             }
                             else
@@ -80,5 +96,20 @@ namespace Handog_MobileApp
                 await DisplayAlert("Database Connection Error", ex.Message, "OK");
             }
         }
+
+        private void OnShowPasswordChecked(object sender, CheckedChangedEventArgs e)
+        {
+            PasswordEntry.IsPassword = !e.Value;
+        }
+
+        private async void OnForgotPasswordTapped(object sender, EventArgs e)
+        {
+            //await Navigation.PushAsync(new ForgotPasswordPage());
+        }
+
+        private async void OnSignUpTapped(object sender, EventArgs e)
+        {
+            //await Navigation.PushAsync(new SignUpPage());
+        }
     }
-} // <--- Change to closing bracket
+}

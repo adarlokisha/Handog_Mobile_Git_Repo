@@ -91,7 +91,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             set { _proposalDetails = value; OnPropertyChanged(); }
         }
 
-        
+
 
         public event Action<string, string> ShowAlertRequested;
 
@@ -105,6 +105,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             CancelFormCommand = new Command(() => { IsFormViewVisible = false; IsListViewVisible = true; });
             SaveDraftCommand = new Command(ExecuteSaveDraft);
             SubmitProposalCommand = new Command(async () => await ExecuteSubmitProposalAsync());
+
 
             NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
             NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
@@ -149,7 +150,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             await AnimateButtonAsync(buttonObj);
             await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
         }
-        
+
 
         // Add this property near your other private backing fields
         private string _currentTab = "MyProposals";
@@ -299,6 +300,46 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    
+
+    // 1. Add backing field near your other fields
+private string _headerUsername = "...";
+
+        // 2. Add public UI tracking property
+        public string HeaderUsername
+        {
+            get => _headerUsername;
+            set { _headerUsername = value; OnPropertyChanged(); }
+        }
+
+        // 3. Add database retrieval method
+        public async Task LoadHeaderUsernameAsync()
+        {
+            if (_loggedInAccountNum == 0) return;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+                    string sql = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccNum";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AccNum", _loggedInAccountNum);
+                        object result = await cmd.ExecuteScalarAsync();
+                        if (result != null && result != DBNull.Value)
+                        {
+                            HeaderUsername = $"{result}!";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed loading header layout greeting: {ex.Message}");
+            }
         }
     }
 }
