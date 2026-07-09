@@ -68,7 +68,12 @@
                                         WidthRequest="24" HeightRequest="24" CornerRadius="4" Padding="0"
                                         HorizontalOptions="Start" Margin="0,0,0,4"/>
 
-                                    <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation"/>
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation" VerticalOptions="Center"/>
+                                        <Border StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="{Binding StatusBadgeColor}" Padding="6,2" VerticalOptions="Center">
+                                            <Label Text="{Binding StatusLabel}" TextColor="{Binding StatusTextColor}" FontSize="9" FontAttributes="Bold"/>
+                                        </Border>
+                                    </HorizontalStackLayout>
 
                                     <VerticalStackLayout Spacing="2" Margin="0,6,0,6">
                                         <Label Text="{Binding EventVenue, StringFormat='• {0}'}" TextColor="#777777" FontSize="12" LineBreakMode="TailTruncation"/>
@@ -77,6 +82,16 @@
                                     </VerticalStackLayout>
 
                                     <Label Text="{Binding EventDetails}" TextColor="#777777" FontSize="12" LineBreakMode="TailTruncation" MaxLines="2"/>
+
+                                    <!-- Shown only when the admin has rejected this event -->
+                                    <Label Text="{Binding RejectionReason, StringFormat='Reason: {0}'}" IsVisible="{Binding HasRejectionReason}" TextColor="#FF5A5F" FontSize="11" FontAttributes="Italic" Margin="0,4,0,0" LineBreakMode="WordWrap"/>
+
+                                    <Button Text="EDIT &amp; RESUBMIT"
+                                        IsVisible="{Binding CanEdit}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=EditEventCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#FF5A5F" TextColor="White" FontAttributes="Bold" FontSize="11"
+                                        CornerRadius="14" HeightRequest="32" Padding="12,0" HorizontalOptions="Start" Margin="0,6,0,0"/>
                                 </VerticalStackLayout>
 
                                 <Grid Grid.Column="1" Padding="0">
@@ -166,7 +181,7 @@
                             <Editor Text="{Binding FormDetails}" HeightRequest="80"/>
                         </VerticalStackLayout>
 
-                        <Button Text="PUBLISH EVENT" Command="{Binding PublishEventCommand}" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold"/>
+                        <Button Text="SUBMIT FOR APPROVAL" Command="{Binding PublishEventCommand}" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold"/>
                     </VerticalStackLayout>
                 </ScrollView>
             </Border>
