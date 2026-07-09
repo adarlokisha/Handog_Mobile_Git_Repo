@@ -1258,23 +1258,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Windows 11\\.nuget\\packages\\": {},
+    "C:\\Users\\Rance\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\handogexample\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+      "projectUniqueName": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
       "projectName": "Handog_AdminWeb",
-      "projectPath": "C:\\handogexample\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
-      "packagesPath": "C:\\Users\\Windows 11\\.nuget\\packages\\",
-      "outputPath": "C:\\handogexample\\Handog_AdminWeb\\obj\\",
+      "projectPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+      "packagesPath": "C:\\Users\\Rance\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Windows 11\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Rance\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
