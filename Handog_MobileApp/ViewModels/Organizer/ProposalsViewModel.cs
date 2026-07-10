@@ -64,11 +64,10 @@ namespace Handog_MobileApp.ViewModel.Organizer
                 var list = new List<O_EventProposal>();
                 using var conn = new SqlConnection(AppConfig.DbConnectionString);
                 string sql = @"SELECT p.ProposalNum, p.Proposal_ID, p.CategoryNum, p.ProposalTitle, p.ProposalDetails, 
-                                      p.PreferredDate, p.PreferredStartTime, p.PreferredEndTime, 
-                                      a.Firstname + ' ' + a.Lastname as ProposerName
-                               FROM EVENTPROPOSAL p
-                               JOIN ACCOUNT a ON p.AccountNum = a.AccountNum
-                               WHERE p.ProposalStatus = 'Pending'";
+                      p.PreferredDate, p.PreferredStartTime, p.PreferredEndTime, p.ProposalStatus,
+                      a.Firstname + ' ' + a.Lastname as ProposerName
+               FROM EVENTPROPOSAL p
+               JOIN ACCOUNT a ON p.AccountNum = a.AccountNum";
 
                 await conn.OpenAsync();
                 using var cmd = new SqlCommand(sql, conn);
@@ -122,11 +121,23 @@ namespace Handog_MobileApp.ViewModel.Organizer
         {
             try
             {
+                // 1. Update the database status first
+                using var conn = new SqlConnection(AppConfig.DbConnectionString);
+                await conn.OpenAsync();
+                string sql = "UPDATE EVENTPROPOSAL SET ProposalStatus = 'Approved' WHERE ProposalNum = @ProposalNum";
+                using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@ProposalNum", p.ProposalNum);
+                await cmd.ExecuteNonQueryAsync();
+
+                // 2. Remove it from the current UI list (Optional: leave this out if you want it to stay in the list)
+                // Proposals.Remove(p);
+
+                // 3. Navigate to the Events page
                 await Application.Current.MainPage.Navigation.PushAsync(new O_EVENTS(_currentAccountNum, p));
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Navigation Error", ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Error", $"Could not accept: {ex.Message}", "OK");
             }
         }
 
