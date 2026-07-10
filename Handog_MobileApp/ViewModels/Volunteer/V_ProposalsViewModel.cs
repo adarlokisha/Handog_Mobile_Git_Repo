@@ -101,8 +101,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             _loggedInAccountNum = accountNum;
 
             LoadProposalsCommand = new Command(async () => await LoadProposalsFromDatabaseAsync());
-            ShowAddFormCommand = new Command(() => { IsListViewVisible = true; IsFormViewVisible = false; });
-            CancelFormCommand = new Command(() => { IsFormViewVisible = false; IsListViewVisible = true; });
+            ShowAddFormCommand = new Command(() => { IsListViewVisible = true; IsFormViewVisible = true; });
+            CancelFormCommand = new Command(() => { IsFormViewVisible = false; IsListViewVisible = false; });
             SaveDraftCommand = new Command(ExecuteSaveDraft);
             SubmitProposalCommand = new Command(async () => await ExecuteSubmitProposalAsync());
 

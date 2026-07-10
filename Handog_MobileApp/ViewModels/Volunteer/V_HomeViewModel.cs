@@ -1,17 +1,22 @@
-﻿using System;
+﻿using Handog_MobileApp.Services; // Ensure your NotificationService is accessible here
+using Handog_MobileApp.Views.Volunteer;
+using Microsoft.Maui.Controls;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
-using Microsoft.Maui.Controls;
-using Handog_MobileApp.Views.Volunteer;
-
 
 namespace Handog_MobileApp.ViewModels;
 
-public class V_HomeViewModel : INotifyPropertyChanged
+public class V_HomeViewModel : NotificationViewModel
 {
+    // Services
+    // Note: If NotificationViewModel already instantiates a service named _notificationService,
+    // you can safely use it here by changing its access modifier to protected in the base class.
+
+    // Page navigation commands specific to the Volunteer Hub
     public ICommand NavigateToHomeCommand { get; }
     public ICommand NavigateToEventsCommand { get; }
     public ICommand NavigateToProposalsCommand { get; }
@@ -20,6 +25,7 @@ public class V_HomeViewModel : INotifyPropertyChanged
     private readonly int _loggedInAccountNum;
     private readonly INavigation _navigation;
 
+    // View dashboard properties
     private string _welcomeName = "Volunteer";
     public string WelcomeName
     {
@@ -41,12 +47,12 @@ public class V_HomeViewModel : INotifyPropertyChanged
         set { _participationPercentage = value; OnPropertyChanged(); }
     }
 
-    
-    public V_HomeViewModel(INavigation navigation, int accountNum)
+    public V_HomeViewModel(INavigation navigation, int accountNum) : base()
     {
         _navigation = navigation;
         _loggedInAccountNum = accountNum;
 
+        // Dashboard specific button mappings
         NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
         NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
         NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
@@ -57,13 +63,17 @@ public class V_HomeViewModel : INotifyPropertyChanged
     {
         if (_loggedInAccountNum <= 0) return;
 
+        // 1. Core shared base notification fetch logic handled by the parent viewmodel
+        await RefreshNotificationsAsync(_loggedInAccountNum);
+
+        // 2. Fetch volunteer metrics from data access layer service
         try
         {
             using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
             {
                 await conn.OpenAsync();
 
-                // 1. Fetch user's first name
+                // Query 1: Fetch user's first name
                 string nameQuery = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccountNum";
                 using (SqlCommand cmdName = new SqlCommand(nameQuery, conn))
                 {
@@ -75,7 +85,7 @@ public class V_HomeViewModel : INotifyPropertyChanged
                     }
                 }
 
-                // 2. Query actual registration stats using the schema criteria
+                // Query 2: Query registration stats matching database context schemas
                 string metricsQuery = @"
                 SELECT 
                     (SELECT COUNT(*) FROM EVENT) AS TotalEvents,
@@ -91,10 +101,10 @@ public class V_HomeViewModel : INotifyPropertyChanged
                             int total = reader["TotalEvents"] != DBNull.Value ? Convert.ToInt32(reader["TotalEvents"]) : 0;
                             int joined = reader["JoinedEvents"] != DBNull.Value ? Convert.ToInt32(reader["JoinedEvents"]) : 0;
 
-                            // 3. Calculate participation rate safely (prevent division by zero)
+                            // Calculate safe percentage value bounds (prevent zero division crashes)
                             double rate = total > 0 ? Math.Round((double)joined / total * 100) : 0;
 
-                            // Update databound property values
+                            // Update local dashboard UI property binds
                             ParticipationText = $"You've joined {joined} out of {total} events!";
                             ParticipationPercentage = $"{rate}%";
                         }
@@ -108,17 +118,13 @@ public class V_HomeViewModel : INotifyPropertyChanged
         }
     }
 
+    // Button Click Tap Scale Animations
     private async Task AnimateButtonAsync(object buttonObj)
     {
-        if (buttonObj is ImageButton imgButton)
+        if (buttonObj is VisualElement element)
         {
-            await imgButton.ScaleTo(0.92, 50, Easing.Linear);
-            await imgButton.ScaleTo(1.0, 50, Easing.Linear);
-        }
-        else if (buttonObj is Button flatButton)
-        {
-            await flatButton.ScaleTo(0.92, 50, Easing.Linear);
-            await flatButton.ScaleTo(1.0, 50, Easing.Linear);
+            await element.ScaleTo(0.92, 50, Easing.Linear);
+            await element.ScaleTo(1.0, 50, Easing.Linear);
         }
     }
 
@@ -131,7 +137,7 @@ public class V_HomeViewModel : INotifyPropertyChanged
     private async Task ExecuteNavigateToEvents(object buttonObj)
     {
         await AnimateButtonAsync(buttonObj);
-        await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum)); // Assuming V_EVENTS matches your page name
+        await _navigation.PushAsync(new V_EVENTS(_loggedInAccountNum));
     }
 
     private async Task ExecuteNavigateToProposals(object buttonObj)
@@ -144,11 +150,5 @@ public class V_HomeViewModel : INotifyPropertyChanged
     {
         await AnimateButtonAsync(buttonObj);
         await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

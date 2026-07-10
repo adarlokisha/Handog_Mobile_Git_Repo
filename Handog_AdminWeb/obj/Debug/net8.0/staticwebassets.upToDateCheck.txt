@@ -1,0 +1,17 @@
+wwwroot\app.css
+wwwroot\bootstrap\bootstrap.min.css
+wwwroot\bootstrap\bootstrap.min.css.map
+wwwroot\bootstrap\images\accountIcon.png
+wwwroot\bootstrap\images\accountPageIcon.png
+wwwroot\bootstrap\images\backArrow.png
+wwwroot\bootstrap\images\clearIcon.png
+wwwroot\bootstrap\images\editIcon.png
+wwwroot\bootstrap\images\eventIcon.png
+wwwroot\bootstrap\images\eventPageIcon.png
+wwwroot\bootstrap\images\handogYellowLogo.png
+wwwroot\bootstrap\images\logoutIcon.png
+wwwroot\bootstrap\images\pendingIcon.png
+wwwroot\bootstrap\images\pendingPageIcon.png
+wwwroot\bootstrap\images\searchIcon.png
+wwwroot\bootstrap\images\whitePlusIcon.png
+wwwroot\favicon.png
