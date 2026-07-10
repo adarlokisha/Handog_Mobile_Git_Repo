@@ -22,6 +22,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         public ICommand NavigateToEventsCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand UploadProfilePictureCommand { get; }
+        public ICommand DeleteProfilePictureCommand { get; }
 
         private readonly int _currentVolunteerAccountNum;
         private readonly INavigation _navigation;
@@ -34,6 +36,21 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         private int _countJoined = 0;
         private int _countAbsences = 0;
         private string _qrCodeImageUrl = "qr_placeholder_wireframe.png";
+        private string _profileImageUrl;
+        public string ProfileImageUrl
+        {
+            get => _profileImageUrl;
+            set
+            {
+                _profileImageUrl = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasProfileImage));
+                OnPropertyChanged(nameof(HasNoProfileImage));
+            }
+        }
+
+        public bool HasProfileImage => !string.IsNullOrEmpty(ProfileImageUrl);
+        public bool HasNoProfileImage => string.IsNullOrEmpty(ProfileImageUrl);
 
         public string HeaderUsername
         {
@@ -77,6 +94,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             set { _qrCodeImageUrl = value; OnPropertyChanged(); }
         }
 
+
         
 
         public V_ProfileViewModel(int accountNum, INavigation navigation, Page page)
@@ -84,6 +102,9 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             _currentVolunteerAccountNum = accountNum;
             _navigation = navigation;
             _page = page;
+
+            UploadProfilePictureCommand = new Command(async () => await ExecuteUploadProfilePictureAsync());
+            DeleteProfilePictureCommand = new Command(async () => await ExecuteDeleteProfilePictureAsync());
 
             GoHistoryCommand = new Command(async () => await ExecuteGoHistoryAsync());
             GoNotificationsCommand = new Command(async () => await ExecuteGoNotificationsAsync());
@@ -109,7 +130,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                 {
                     await conn.OpenAsync();
 
-                    string profileSql = "SELECT Account_ID, Firstname, Lastname FROM ACCOUNT WHERE AccountNum = @AccNum";
+                    // 1. Fetch personal details AND the profile picture URL
+                    string profileSql = "SELECT Account_ID, Firstname, Lastname, ProfilePicUrl FROM ACCOUNT WHERE AccountNum = @AccNum";
                     using (SqlCommand cmd = new SqlCommand(profileSql, conn))
                     {
                         cmd.Parameters.AddWithValue("@AccNum", _currentVolunteerAccountNum);
@@ -123,6 +145,10 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                                 HeaderUsername = $"{firstName}!";
                                 FullName = $"{firstName} {lastName}".ToUpper();
                                 AccountId = reader["Account_ID"].ToString();
+
+                                // Load existing image if they have one
+                                ProfileImageUrl = reader["ProfilePicUrl"]?.ToString();
+
                                 QrCodeImageUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={AccountId}";
                             }
                         }
@@ -156,6 +182,87 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             catch (Exception ex)
             {
                 await _page.DisplayAlert("Database Fault", $"Could not load volunteer statistics: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task ExecuteUploadProfilePictureAsync()
+        {
+            try
+            {
+                var photo = await MediaPicker.Default.PickPhotoAsync();
+                if (photo == null) return;
+
+                using var stream = await photo.OpenReadAsync();
+                using var client = new HttpClient();
+                using var content = new MultipartFormDataContent();
+
+                var presetContent = new StringContent("effpkvoa");
+                presetContent.Headers.ContentType = null;
+                content.Add(presetContent, "\"upload_preset\"");
+
+                var fileContent = new StreamContent(stream);
+                content.Add(fileContent, "\"file\"", $"\"{photo.FileName}\"");
+
+                string uploadUrl = "https://api.cloudinary.com/v1_1/ahewabql/image/upload";
+                var response = await client.PostAsync(uploadUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    using var jsonDoc = System.Text.Json.JsonDocument.Parse(jsonString);
+                    string newImageUrl = jsonDoc.RootElement.GetProperty("secure_url").GetString();
+
+                    using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                    {
+                        await conn.OpenAsync();
+                        string sql = "UPDATE ACCOUNT SET ProfilePicUrl = @url WHERE AccountNum = @AccNum";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@url", newImageUrl);
+                            cmd.Parameters.AddWithValue("@AccNum", _currentVolunteerAccountNum);
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    ProfileImageUrl = newImageUrl;
+                }
+                else
+                {
+                    string errorText = await response.Content.ReadAsStringAsync();
+                    await _page.DisplayAlert("Upload Error", $"Cloudinary refused the upload: {errorText}", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _page.DisplayAlert("Error", $"Could not upload image: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task ExecuteDeleteProfilePictureAsync()
+        {
+            if (string.IsNullOrEmpty(ProfileImageUrl)) return;
+
+            try
+            {
+                bool confirm = await _page.DisplayAlert("Delete Photo", "Are you sure you want to remove your profile picture?", "Delete", "Cancel");
+                if (!confirm) return;
+
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+                    string sql = "UPDATE ACCOUNT SET ProfilePicUrl = NULL WHERE AccountNum = @AccNum";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AccNum", _currentVolunteerAccountNum);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                ProfileImageUrl = null;
+            }
+            catch (Exception ex)
+            {
+                await _page.DisplayAlert("Error", $"Could not delete image: {ex.Message}", "OK");
             }
         }
 

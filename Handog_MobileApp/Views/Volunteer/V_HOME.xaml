@@ -126,7 +126,7 @@
                                    Aspect="AspectFit"
                                    HorizontalOptions="Center" 
                                    Margin="0,2"/>
-                            <Label Text="Our platform was created with one simple goal — to make community engagement easier, more organized, and more accessible for everyone..." 
+                            <Label Text="Our platform was created with one simple goal — to make community engagement easier, more organized, and more accessible for everyone. We saw the gap between people who want to serve, those who need support, and organizers who are willing to lead initiatives, but lack a centralized system to connect them all." 
                                    TextColor="#555555" 
                                    FontSize="13" 
                                    HorizontalTextAlignment="Center" 

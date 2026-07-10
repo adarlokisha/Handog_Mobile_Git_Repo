@@ -33,7 +33,35 @@
                     </Border.Shadow>
 
                     <Grid ColumnDefinitions="Auto, *" Padding="20" VerticalOptions="Center" ColumnSpacing="16">
-                        
+
+                        <Border Grid.Column="0"
+                Stroke="#4DD0E1" 
+                StrokeThickness="2" 
+                HeightRequest="70" 
+                WidthRequest="70" 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center"
+                StrokeShape="RoundRectangle 35" 
+                BackgroundColor="#F9F9F9">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnProfileImageTapped" />
+                            </Border.GestureRecognizers>
+
+                            <Grid>
+                                <Label Text="+" 
+                       TextColor="#4DD0E1" 
+                       FontSize="35" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       Margin="0,-4,0,0"
+                       IsVisible="{Binding HasNoProfileImage}" />
+
+                                <Image Source="{Binding ProfileImageUrl}" 
+                       Aspect="AspectFill" 
+                       IsVisible="{Binding HasProfileImage}" />
+                            </Grid>
+                        </Border>
 
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
                             <Label Text="{Binding FullName}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="18"/>
@@ -43,7 +71,6 @@
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
-
                 <VerticalStackLayout Spacing="6">
                     <Label Text="Events" TextColor="#777777" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
 
