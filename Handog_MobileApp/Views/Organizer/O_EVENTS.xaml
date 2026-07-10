@@ -8,53 +8,28 @@
 
     <Grid RowDefinitions="Auto, *, Auto">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#FAD02C" IgnoreSafeArea="True" Padding="0, 48, 0, 20">
-
-            <Grid ColumnDefinitions="*, Auto" Padding="16, 0">
-
-                <HorizontalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                    <Label Text="Hi," FontSize="16" TextColor="#1A1A1A" VerticalOptions="Center"/>
-                    <Label Text="{Binding OrganizerNameHeader}" TextColor="#1A1A1A" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+        <VerticalStackLayout Grid.Row="0" BackgroundColor="#FAD02C" Padding="20, 50, 20, 20" IgnoreSafeArea="True" Spacing="15">
+            <Grid ColumnDefinitions="*, Auto">
+                <HorizontalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                    <Label Text="Hi," FontSize="20" TextColor="#1A1A1A" VerticalOptions="Center"/>
+                    <Label Text="{Binding OrganizerNameHeader}" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-
-                <ImageButton Grid.Column="1" 
-                     Source="bell_black.png" 
-                     WidthRequest="24" 
-                     HeightRequest="24" 
-                     BackgroundColor="Transparent"
-                     VerticalOptions="Center"/>
+  
             </Grid>
 
-            <VerticalStackLayout Padding="24, 20, 24, 0" HorizontalOptions="Center">
-                <Border StrokeShape="RoundRectangle 22" StrokeThickness="0" BackgroundColor="White" HeightRequest="44" WidthRequest="320">
-                    <SearchBar Text="{Binding SearchQuery}" Placeholder="Search events..." TextColor="#1A1A1A" BackgroundColor="Transparent"/>
-                </Border>
-            </VerticalStackLayout>
+            <Border StrokeShape="RoundRectangle 22" StrokeThickness="0" BackgroundColor="White" HeightRequest="44">
+                <SearchBar Text="{Binding SearchQuery}" Placeholder="Search events..." TextColor="#1A1A1A" BackgroundColor="Transparent"/>
+            </Border>
         </VerticalStackLayout>
-        
-        <Grid Grid.Row="1" RowDefinitions="Auto, Auto, *">
 
-            <Grid Grid.Row="0" 
-          HorizontalOptions="Center" 
-          VerticalOptions="Center" 
-          ColumnDefinitions="Auto, Auto" 
-          ColumnSpacing="10" 
-          Margin="16,24,16,0">
-                <Image Grid.Column="0" 
-               Source="events_black.png" 
-               HeightRequest="36" 
-               WidthRequest="36" 
-               VerticalOptions="Center" />
-                <Label Grid.Column="1" 
-               Text="EVENTS" 
-               TextColor="#1A1A1A" 
-               FontAttributes="Bold" 
-               FontSize="28" 
-               CharacterSpacing="1" 
-               VerticalOptions="Center"/>
-            </Grid>
+        <Grid Grid.Row="1" RowDefinitions="Auto, Auto, *" Margin="20, 15, 20, 0">
 
-            <Border Grid.Row="1" Margin="16,16,16,0" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
+            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0, 5, 0, 10">
+                <Image Source="events_black.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Center" />
+                <Label Text="EVENTS" TextColor="#1A1A1A" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1.5"/>
+            </VerticalStackLayout>
+
+            <Border Grid.Row="1" Margin="0, 10, 0, 5" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
                 <Grid ColumnDefinitions="*, *, *">
                     <Border Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="{Binding MyEventsTabColor}">
                         <Label Text="My Events" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
@@ -77,12 +52,15 @@
                 </Grid>
             </Border>
 
-            <CollectionView Grid.Row="2" Margin="16,8,16,0" SelectionMode="None" ItemsSource="{Binding GlobalEventsList}">
+            <CollectionView Grid.Row="2" Margin="0, 10, 0, 0" SelectionMode="None" ItemsSource="{Binding GlobalEventsList}" >
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,6" Stroke="#FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="0">
-                            <Grid ColumnDefinitions="*, *" MinimumHeightRequest="150">
+                        <Border Margin="0,6,0,10" Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 16" BackgroundColor="White" Padding="0">
+                            <Border.Shadow>
+                                <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
+                            </Border.Shadow>
 
+                            <Grid ColumnDefinitions="*, *" MinimumHeightRequest="150">
                                 <VerticalStackLayout Grid.Column="0" Padding="12" Spacing="2">
                                     <Button Text="X" 
                                             IsVisible="{Binding IsMyEvent}"
@@ -119,21 +97,20 @@
 
                                 <Grid Grid.Column="1" Padding="0">
                                     <Image Source="{Binding CategoryImage}" Aspect="AspectFill" />
-                                    <Button Text="VIEW DETAILS" 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=ViewEventDetailsCommand}" 
-                                            CommandParameter="{Binding .}" 
-                                            BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="12" 
-                                            CornerRadius="16" HorizontalOptions="Center" VerticalOptions="Center" 
-                                            HeightRequest="36" Padding="16,0"/>
+                                    <Button Text="{Binding DynamicButtonText}" 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=ViewEventDetailsCommand}" 
+                                    CommandParameter="{Binding .}" 
+                                    BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="12" 
+                                    CornerRadius="16" HorizontalOptions="Center" VerticalOptions="Center" 
+                                    HeightRequest="36" Padding="16,0"/>
                                 </Grid>
-
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button Grid.Row="2" Text="+ ORGANIZE" Command="{Binding TogglePanelCommand}" CommandParameter="OpenOrganize" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" CornerRadius="22" HeightRequest="44" WidthRequest="140" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,16"/>
+            <Button Grid.Row="2" Text="+ ORGANIZE" Command="{Binding TogglePanelCommand}" CommandParameter="OpenOrganize" BackgroundColor="#00BAC7" TextColor="White" FontAttributes="Bold" CornerRadius="22" HeightRequest="44" WidthRequest="140" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,35"/>
         </Grid>
 
         <Grid Grid.RowSpan="3" BackgroundColor="#80000000" IsVisible="{Binding IsOrganizePanelVisible}" Padding="20">
@@ -208,13 +185,20 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="2" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 20,20,0,0" HeightRequest="60" Padding="0">
+        <Border Grid.Row="2" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 35" StrokeThickness="0" HeightRequest="70" Margin="20, 0, 20, 25" VerticalOptions="End">
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
+            </Border.Shadow>
+
             <Grid ColumnDefinitions="*, *, *, *">
-                <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateCommand}" CommandParameter="Home" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateCommand}" CommandParameter="Proposals" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="2" Source="events.png" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateCommand}" CommandParameter="Profile" HeightRequest="24" WidthRequest="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <ImageButton Grid.Column="0" Source="home.png" Command="{Binding NavigateCommand}" CommandParameter="Home" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateCommand}" CommandParameter="Proposals" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="2" Source="events.png" HeightRequest="32" WidthRequest="32" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+
+                <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateCommand}" CommandParameter="Profile" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
+
     </Grid>
 </ContentPage>

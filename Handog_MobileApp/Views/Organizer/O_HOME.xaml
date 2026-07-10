@@ -6,24 +6,30 @@
              NavigationPage.HasNavigationBar="False">
 
     <Grid>
+        <Grid RowDefinitions="Auto, *, Auto">
 
-        <Grid RowDefinitions="*, Auto">
-            <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
-                <VerticalStackLayout Spacing="16" Padding="0,0,0,24">
+            <Border Grid.Row="0" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 0,0,24,24" StrokeThickness="0" Padding="20, 50, 20, 20" >
+                <Border.Shadow>
+                    <Shadow Brush="#000000" Offset="0,4" Radius="12" Opacity="0.05"/>
+                </Border.Shadow>
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="0">
+                        <Label Text="Welcome," TextColor="#1A1A1A" FontSize="14" Opacity="0.7"/>
+                        <Label Text="{Binding OrganizerName}" TextColor="#1A1A1A" FontSize="22" FontAttributes="Bold" Margin="0,2,0,0"/>
+                    </VerticalStackLayout>
 
-                    <Grid BackgroundColor="#FAD02C" RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" Padding="20, 48, 20, 24" IgnoreSafeArea="True">
-                        <VerticalStackLayout Grid.Row="0" Grid.Column="0" VerticalOptions="Center">
-                            <Label Text="Welcome," TextColor="#1A1A1A" FontSize="14" Opacity="0.7"/>
-                            <Label Text="{Binding OrganizerName}" TextColor="#1A1A1A" FontSize="24" FontAttributes="Bold" Margin="0,2,0,0"/>
-                        </VerticalStackLayout>
-
-                        <Grid Grid.Row="0" Grid.Column="1" VerticalOptions="Center" Margin="0,0,4,0">
-                            <ImageButton Source="bell_black.png" WidthRequest="24" HeightRequest="24" Command="{Binding ViewNotificationsCommand}" BackgroundColor="Transparent"/>
-                            <Ellipse Fill="Red" WidthRequest="10" HeightRequest="10" HorizontalOptions="End" VerticalOptions="Start" Margin="0,-2,-2,0" IsVisible="{Binding HasUnreadNotifications}"/>
-                        </Grid>
+                    <!-- FIXED: Added explicit size to the container Grid and adjusted badge margins to prevent cropping -->
+                    <Grid Grid.Column="1" VerticalOptions="Center" WidthRequest="34" HeightRequest="34">
+                        <ImageButton Source="bell_black.png" WidthRequest="26" HeightRequest="26" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding ViewNotificationsCommand}" BackgroundColor="Transparent"/>
+                        <Ellipse Fill="Red" WidthRequest="10" HeightRequest="10" HorizontalOptions="End" VerticalOptions="Start" Margin="0,2,2,0" IsVisible="{Binding HasUnreadNotifications}"/>
                     </Grid>
+                </Grid>
+            </Border>
 
-                    <Grid HeightRequest="210" Margin="0,4,0,0">
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="16" Padding="0, 10, 0, 100">
+
+                    <Grid HeightRequest="210" Margin="0,0,0,0">
                         <Image Source="o_greetingcard.png" Aspect="AspectFill"/>
                         <BoxView BackgroundColor="White" Opacity="0.12"/>
                         <VerticalStackLayout Padding="20" VerticalOptions="Center" Spacing="6">
@@ -33,13 +39,13 @@
                         </VerticalStackLayout>
                     </Grid>
 
-                    <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
+                    <Border Margin="20,4,20,0" StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
-                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
+                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
                         </Border.Shadow>
-                        <Grid ColumnDefinitions="*, Auto" Padding="16" VerticalOptions="Center">
+                        <Grid ColumnDefinitions="*, Auto" Padding="20" VerticalOptions="Center">
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                                <Label Text="VOLUNTEER ATTENDANCE RATE" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="15"/>
+                                <Label Text="VOLUNTEER ATTENDANCE RATE" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="14"/>
                                 <Label Text="{Binding AttendanceSummary}" TextColor="#777777" FontSize="12"/>
                             </VerticalStackLayout>
 
@@ -51,26 +57,30 @@
                         </Grid>
                     </Border>
 
-                    <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
+                    <!-- FIXED: Increased Padding, updated Margin, and Spacing for a less cramped look -->
+                    <Border Margin="20,12,20,20" StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
-                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
+                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
                         </Border.Shadow>
-                        <VerticalStackLayout Padding="20" HorizontalOptions="Center" Spacing="14">
+                        <VerticalStackLayout Padding="24, 32" HorizontalOptions="Center" Spacing="20">
                             <Label Text="OUR STORY" TextColor="#E0B513" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" CharacterSpacing="1"/>
-                            <Image Source="logo_teal.png" WidthRequest="240" Aspect="AspectFit" HorizontalOptions="Center" Margin="0,2"/>
-                            <Label Text="Our platform was created with one simple goal — to make community engagement easier, more organized, and more accessible for everyone. We saw the gap between people who want to serve, those who need support, and organizers who are willing to lead initiatives, but lack a centralized system to connect them all." TextColor="#555555" FontSize="13" HorizontalTextAlignment="Center" LineHeight="1.45"/>
+                            <Image Source="logo_teal.png" WidthRequest="240" Aspect="AspectFit" HorizontalOptions="Center" Margin="0,8"/>
+                            <Label Text="Our platform was created with one simple goal — to make community engagement easier, more organized, and more accessible for everyone. We saw the gap between people who want to serve, those who need support, and organizers who are willing to lead initiatives, but lack a centralized system to connect them all." TextColor="#555555" FontSize="13" HorizontalTextAlignment="Center" LineHeight="1.5"/>
                         </VerticalStackLayout>
                     </Border>
 
                 </VerticalStackLayout>
             </ScrollView>
 
-            <Border Grid.Row="1" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 20,20,0,0" StrokeThickness="0" HeightRequest="60" Padding="12, 0">
+            <Border Grid.Row="2" BackgroundColor="#FAD02C" StrokeShape="RoundRectangle 35" StrokeThickness="0" HeightRequest="70" Margin="20, 0, 20, 25" VerticalOptions="End">
+                <Border.Shadow>
+                    <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
+                </Border.Shadow>
                 <Grid ColumnDefinitions="*, *, *, *">
-                    <ImageButton Grid.Column="0" Source="home.png" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
-                    <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateProposalsCommand}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
-                    <ImageButton Grid.Column="2" Source="events.png" Command="{Binding NavigateEventsCommand}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
-                    <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateProfileCommand}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
+                    <ImageButton Grid.Column="0" Source="home.png" HeightRequest="32" WidthRequest="32" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                    <ImageButton Grid.Column="1" Source="proposals.png" Command="{Binding NavigateProposalsCommand}" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                    <ImageButton Grid.Column="2" Source="events.png" Command="{Binding NavigateEventsCommand}" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                    <ImageButton Grid.Column="3" Source="profile.png" Command="{Binding NavigateProfileCommand}" HeightRequest="26" WidthRequest="26" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent"/>
                 </Grid>
             </Border>
         </Grid>
@@ -81,7 +91,7 @@
             </BoxView.GestureRecognizers>
         </BoxView>
 
-        <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" StrokeThickness="0" WidthRequest="320" MaximumHeightRequest="400" HorizontalOptions="End" VerticalOptions="Start" Margin="0, 80, 16, 0" IsVisible="{Binding IsNotificationPanelVisible}">
+        <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" StrokeThickness="0" WidthRequest="320" MaximumHeightRequest="400" HorizontalOptions="End" VerticalOptions="Start" Margin="0, 95, 16, 0" IsVisible="{Binding IsNotificationPanelVisible}">
             <Border.Shadow>
                 <Shadow Brush="#000000" Offset="0,6" Radius="12" Opacity="0.15"/>
             </Border.Shadow>

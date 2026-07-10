@@ -140,9 +140,16 @@ namespace Handog_MobileApp
                 using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
                 {
                     await conn.OpenAsync();
-                    string sql = "UPDATE EVENT SET EventStatus = 'Completed' WHERE EventNum = @EvtNum";
+
+                    // FIX: Added the EventCompleted column to record the exact date and time!
+                    string sql = @"UPDATE EVENT 
+                           SET EventStatus = 'Completed', 
+                               EventCompleted = @CompletedDate 
+                           WHERE EventNum = @EvtNum";
+
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
+                        cmd.Parameters.AddWithValue("@CompletedDate", DateTime.Now);
                         cmd.Parameters.AddWithValue("@EvtNum", _eventNum);
                         await cmd.ExecuteNonQueryAsync();
                     }
@@ -153,4 +160,5 @@ namespace Handog_MobileApp
             catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
         }
     }
+
 }

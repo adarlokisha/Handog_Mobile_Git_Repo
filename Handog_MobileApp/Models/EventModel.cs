@@ -32,6 +32,11 @@ namespace Handog_MobileApp.Models
         // Label + colour for the small status badge shown on the organizer's event card
         public string StatusLabel => (EventStatus ?? string.Empty).ToUpperInvariant();
 
+        // Completion Check
+
+        // Add this inside your EventModel class
+        public string DynamicButtonText => EventStatus == "Completed" ? "VIEW REPORT" : "VIEW DETAILS";
+
         public Color StatusBadgeColor => EventStatus?.ToLowerInvariant() switch
         {
             "pending" => Color.FromArgb("#FAD02C"),   // amber

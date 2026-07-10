@@ -92,6 +92,9 @@
 	  <MauiXaml Update="Views\Organizer\O_PROPOSALS.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Organizer\O_REPORT.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Volunteer\V_EVENTS.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
