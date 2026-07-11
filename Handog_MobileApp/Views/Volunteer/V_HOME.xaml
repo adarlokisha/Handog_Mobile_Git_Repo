@@ -31,11 +31,11 @@
 
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
                                 <Label Text="Welcome back," 
-                               TextColor="#FFFFFF" 
+                               TextColor="Black" 
                                FontSize="14" 
                                Opacity="0.8"/>
                                 <Label Text="{Binding WelcomeName, StringFormat='{0}!'}" 
-                               TextColor="#FFFFFF" 
+                               TextColor="Black" 
                                FontSize="24" 
                                FontAttributes="Bold" 
                                Margin="0,2,0,0"/>
@@ -43,7 +43,7 @@
 
                             <!-- Notification Bell Container -->
                             <Grid Grid.Column="1" VerticalOptions="Center" WidthRequest="34" HeightRequest="34">
-                                <ImageButton Source="bell_white.png" 
+                                <ImageButton Source="bell_black.png" 
                                      WidthRequest="26" HeightRequest="26" 
                                      HorizontalOptions="Center" VerticalOptions="Center" 
                                      Command="{Binding ViewNotificationsCommand}" 

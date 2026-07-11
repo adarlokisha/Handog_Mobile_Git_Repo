@@ -10,17 +10,14 @@
     <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" BackgroundColor="#F5F5F5">
 
         <!-- Top Header Navigation -->
-        <Grid Grid.Row="0" BackgroundColor="#4DD0E1" Padding="15,10" ColumnDefinitions="*">
-            <Label Grid.Column="0" 
-                   Text="{Binding VolunteerNameHeader, StringFormat='Hi, {0}'}" 
-                   FontAttributes="Bold" 
-                   FontSize="18" 
-                   TextColor="Black" 
-                   HorizontalOptions="End" 
-                   VerticalOptions="Center"/>
+        <Grid Grid.Row="0" BackgroundColor="#00BAC7" Padding="20, 50, 20, 15" ColumnDefinitions="*, Auto" IgnoreSafeArea="True">
+            <HorizontalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                <Label Text="Hi," FontSize="20" TextColor="#1A1A1A" VerticalOptions="Center"/>
+                <Label Text="{Binding VolunteerNameHeader}" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
         </Grid>
-        
-        <!-- Dynamic Page Brand Indicator -->
+
+    <!-- Dynamic Page Brand Indicator -->
         <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="5" Padding="0,20,0,10">
             <Image Source="events_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
             <Label Text="EVENTS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
