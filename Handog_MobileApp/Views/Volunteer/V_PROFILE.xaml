@@ -140,53 +140,37 @@
 
         <Border Grid.Row="5" 
         BackgroundColor="#00BAC7" 
-        StrokeShape="RoundRectangle 20,20,0,0" 
+        StrokeShape="RoundRectangle 35" 
         StrokeThickness="0" 
-        HeightRequest="60"
+        HeightRequest="70" 
+        Margin="20, 0, 20, 25" 
+        VerticalOptions="End"
         Padding="12, 0">
+
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
+            </Border.Shadow>
+
             <Grid ColumnDefinitions="*, *, *, *">
+                <ImageButton x:Name="HomeBtn" Grid.Column="0" Source="home.png" 
+         Command="{Binding NavigateToHomeCommand}" CommandParameter="{x:Reference HomeBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="HomeBtn"
-                    Grid.Column="0" 
-                     Source="home.png" 
-                     Command="{Binding NavigateToHomeCommand}"
-                     CommandParameter="{x:Reference HomeBtn}"        
-                     HorizontalOptions="Center" 
-                     VerticalOptions="Center"
-                     HeightRequest="24" WidthRequest="24"
-                     BackgroundColor="Transparent"/>
+                <ImageButton x:Name="ProposalsBtn" Grid.Column="1" Source="proposals.png" 
+         Command="{Binding NavigateToProposalsCommand}" CommandParameter="{x:Reference ProposalsBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="ProposalsBtn"
-                     Grid.Column="1" 
-                     Source="proposals.png" 
-                     Command="{Binding NavigateToProposalsCommand}"
-                     CommandParameter="{x:Reference ProposalsBtn}"
-                     HorizontalOptions="Center" 
-                     VerticalOptions="Center"
-                     HeightRequest="24" WidthRequest="24"
-                     BackgroundColor="Transparent"/>
+                <ImageButton x:Name="EventsBtn" Grid.Column="2" Source="events.png" 
+         Command="{Binding NavigateToEventsCommand}" CommandParameter="{x:Reference EventsBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="EventsBtn"
-             Grid.Column="2" 
-             Source="events.png" 
-             Command="{Binding NavigateToEventsCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
-
-                <ImageButton x:Name="ProfileBtn"
-             Grid.Column="3" 
-             Source="profile.png" 
-             Command="{Binding NavigateToProfileCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
+                <ImageButton x:Name="ProfileBtn" Grid.Column="3" Source="profile.png" 
+         Command="{Binding NavigateToProfileCommand}" CommandParameter="{x:Reference ProfileBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
 
