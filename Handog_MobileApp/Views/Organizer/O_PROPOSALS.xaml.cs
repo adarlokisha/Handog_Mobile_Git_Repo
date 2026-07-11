@@ -1,26 +1,28 @@
-using Handog_MobileApp.ViewModel.Organizer; // Ensure this matches your namespace
+using Microsoft.Maui.Controls;
+using Handog_MobileApp.ViewModel.Organizer;
 
 namespace Handog_MobileApp.Views.Organizer
 {
     public partial class O_PROPOSALS : ContentPage
     {
-        // We declare the ViewModel here so we can access it if needed
         private ProposalsViewModel _viewModel;
 
-        public O_PROPOSALS(int sessionAccountNum)
+        public O_PROPOSALS(int accountNum)
         {
             InitializeComponent();
-
-            // Link the ViewModel to this Page
-            _viewModel = new ProposalsViewModel(sessionAccountNum);
+            _viewModel = new ProposalsViewModel(accountNum);
             BindingContext = _viewModel;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // Trigger the command to load data when the page appears
-            _viewModel.LoadDataCommand.Execute(null);
+
+            // This forces the data to load every time the Organizer opens this page
+            if (_viewModel.LoadDataCommand.CanExecute(null))
+            {
+                await _viewModel.LoadDataCommand.ExecuteAsync(null);
+            }
         }
     }
 }
