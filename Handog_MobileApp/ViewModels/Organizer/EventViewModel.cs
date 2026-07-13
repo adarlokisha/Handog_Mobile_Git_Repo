@@ -73,6 +73,9 @@ namespace Handog_MobileApp
         private Color _completedTabColor = Colors.Transparent;
         public Color CompletedTabColor { get => _completedTabColor; set { _completedTabColor = value; OnPropertyChanged(); } }
 
+        // Add this property to your EventsViewModel.cs
+        public EventModel CurrentEvent { get; set; }
+
         // ---- Address ---- 
 
         // --- Form Fields for Organizing ---
@@ -97,7 +100,6 @@ namespace Handog_MobileApp
         public ICommand DeleteEventCommand { get; }
         public ICommand EditEventCommand { get; }
 
-
         public EventsViewModel(int sessionAccountNum)
         {
             _currentAccountNum = sessionAccountNum;
@@ -111,7 +113,23 @@ namespace Handog_MobileApp
             NavigateCommand = new Command<string>(async (dest) => await ExecuteNavigation(dest));
 
             // This catches the exact EventModel the user clicks in the UI and sends it to the Details page
-            ViewEventDetailsCommand = new Command<EventModel>(async (selectedEvent) => await Application.Current.MainPage.Navigation.PushAsync(new O_EVENT_DETAILS(selectedEvent)));
+            // Replace your existing ViewEventDetailsCommand assignment with this:
+            ViewEventDetailsCommand = new Command<EventModel>(async (selectedEvent) =>
+            {
+                if (selectedEvent == null) return;
+
+                // Smart Routing: Check the status before navigating!
+                if (selectedEvent.EventStatus == "Completed")
+                {
+                    // Route to the new Reports page
+                    await Application.Current.MainPage.Navigation.PushAsync(new O_REPORT(selectedEvent));
+                }
+                else
+                {
+                    // Route to the normal Details page
+                    await Application.Current.MainPage.Navigation.PushAsync(new O_EVENT_DETAILS(selectedEvent));
+                }
+            });
 
             DeleteEventCommand = new Command<EventModel>(async (evt) => await ExecuteDeleteEvent(evt));
             EditEventCommand = new Command<EventModel>(async (evt) => await ExecuteEditEvent(evt));
@@ -484,3 +502,4 @@ namespace Handog_MobileApp
         }
     }
 }
+

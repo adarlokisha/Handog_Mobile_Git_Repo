@@ -10,17 +10,14 @@
     <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" BackgroundColor="#F5F5F5">
 
         <!-- Top Header Navigation -->
-        <Grid Grid.Row="0" BackgroundColor="#4DD0E1" Padding="15,10" ColumnDefinitions="*">
-            <Label Grid.Column="0" 
-                   Text="{Binding VolunteerNameHeader, StringFormat='Hi, {0}'}" 
-                   FontAttributes="Bold" 
-                   FontSize="18" 
-                   TextColor="Black" 
-                   HorizontalOptions="End" 
-                   VerticalOptions="Center"/>
+        <Grid Grid.Row="0" BackgroundColor="#00BAC7" Padding="20, 50, 20, 15" ColumnDefinitions="*, Auto" IgnoreSafeArea="True">
+            <HorizontalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                <Label Text="Hi," FontSize="20" TextColor="#1A1A1A" VerticalOptions="Center"/>
+                <Label Text="{Binding VolunteerNameHeader}" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
         </Grid>
-        
-        <!-- Dynamic Page Brand Indicator -->
+
+    <!-- Dynamic Page Brand Indicator -->
         <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center" Spacing="5" Padding="0,20,0,10">
             <Image Source="events_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
             <Label Text="EVENTS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
@@ -58,41 +55,39 @@
             <CollectionView IsVisible="{Binding IsListViewVisible}" ItemsSource="{Binding DisplayedEvents}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:EventModel">
-                        <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="#F8F8F8" Margin="0,0,0,12" HeightRequest="130">
+                        <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" BackgroundColor="#F8F8F8" Margin="0,0,0,12">
+
                             <Grid ColumnDefinitions="*, *">
 
-                                <!-- Left Side: Data Stack Description details -->
-                                <VerticalStackLayout Grid.Column="0" Padding="12" Spacing="2" VerticalOptions="Center">
-                                    <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation"/>
+                                <Grid Grid.Column="0" RowDefinitions="Auto, Auto, Auto" Padding="12" RowSpacing="2" VerticalOptions="Center">
 
-                                    <VerticalStackLayout Spacing="2" Margin="0,4">
+                                    <Label Grid.Row="0" Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="WordWrap"/>
+
+                                    <VerticalStackLayout Grid.Row="1" Spacing="2" Margin="0,4">
                                         <Label Text="{Binding EventVenue, StringFormat='• {0}'}" TextColor="#777777" FontSize="11" LineBreakMode="TailTruncation"/>
                                         <Label Text="{Binding EventDate, StringFormat='• {0}'}" TextColor="#777777" FontSize="11"/>
                                         <Label Text="{Binding EventTime, StringFormat='• {0}'}" TextColor="#777777" FontSize="11"/>
                                     </VerticalStackLayout>
 
-                                    <Label Text="{Binding EventDetails}" FontSize="11" TextColor="#777777" MaxLines="2" LineBreakMode="TailTruncation"/>
-                                </VerticalStackLayout>
+                                    <Label Grid.Row="2" Text="{Binding EventDetails}" FontSize="11" TextColor="#777777" MaxLines="3" LineBreakMode="WordWrap"/>
+                                </Grid>
 
-                                <!-- Right Side: Layered Action Layout Panel matching Organizer aspect view -->
                                 <Grid Grid.Column="1" Padding="0">
-                                    <!-- Background Category Image -->
                                     <Image Source="{Binding CategoryImage}" Aspect="AspectFill" />
 
-                                    <!-- REGISTER BUTTON: Hidden by default, only appears if IsMyEvent is False -->
                                     <Button Text="REGISTER" 
-                                            IsVisible="False"
-                                            BackgroundColor="#F4D03F" 
-                                            TextColor="Black" 
-                                            FontAttributes="Bold" 
-                                            FontSize="11" 
-                                            CornerRadius="16"
-                                            HeightRequest="36"
-                                            WidthRequest="110"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            Command="{Binding BindingContext.RegisterCommand, Source={x:Reference thisPage}}"
-                                            CommandParameter="{Binding .}">
+                                IsVisible="False"
+                                BackgroundColor="#F4D03F" 
+                                TextColor="Black" 
+                                FontAttributes="Bold" 
+                                FontSize="11" 
+                                CornerRadius="16"
+                                HeightRequest="36"
+                                WidthRequest="110"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Command="{Binding BindingContext.RegisterCommand, Source={x:Reference thisPage}}"
+                                CommandParameter="{Binding .}">
                                         <Button.Triggers>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="False">
                                                 <Setter Property="IsVisible" Value="True"/>
@@ -100,20 +95,19 @@
                                         </Button.Triggers>
                                     </Button>
 
-                                    <!-- VIEW DETAILS BUTTON: Hidden by default, only appears if IsMyEvent is True -->
                                     <Button Text="VIEW DETAILS" 
-                                            IsVisible="False"
-                                            BackgroundColor="#F4D03F" 
-                                            TextColor="Black" 
-                                            FontAttributes="Bold" 
-                                            FontSize="11" 
-                                            CornerRadius="16"
-                                            HeightRequest="36"
-                                            WidthRequest="110"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            Command="{Binding BindingContext.ViewEventDetailsCommand, Source={x:Reference thisPage}}"
-                                            CommandParameter="{Binding .}">
+                                IsVisible="False"
+                                BackgroundColor="#F4D03F" 
+                                TextColor="Black" 
+                                FontAttributes="Bold" 
+                                FontSize="11" 
+                                CornerRadius="16"
+                                HeightRequest="36"
+                                WidthRequest="110"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Command="{Binding BindingContext.ViewEventDetailsCommand, Source={x:Reference thisPage}}"
+                                CommandParameter="{Binding .}">
                                         <Button.Triggers>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="True">
                                                 <Setter Property="IsVisible" Value="True"/>
@@ -202,53 +196,38 @@
 
         <!-- Bottom Tab Footer Layout Navigation Bar -->
         <Border Grid.Row="4" 
-                BackgroundColor="#00BAC7" 
-                StrokeShape="RoundRectangle 20,20,0,0" 
-                StrokeThickness="0" 
-                HeightRequest="60"
-                Padding="12, 0">
+        BackgroundColor="#00BAC7" 
+        StrokeShape="RoundRectangle 35" 
+        StrokeThickness="0" 
+        HeightRequest="70" 
+        Margin="20, 0, 20, 25" 
+        VerticalOptions="End"
+        Padding="12, 0">
+
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
+            </Border.Shadow>
+
             <Grid ColumnDefinitions="*, *, *, *">
+                <ImageButton x:Name="HomeBtn" Grid.Column="0" Source="home.png" 
+         Command="{Binding NavigateToHomeCommand}" CommandParameter="{x:Reference HomeBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="HomeBtn"
-                             Grid.Column="0" 
-                             Source="home.png" 
-                             Command="{Binding NavigateToHomeCommand}"
-                             CommandParameter="{x:Reference HomeBtn}"        
-                             HorizontalOptions="Center" 
-                             VerticalOptions="Center"
-                             HeightRequest="24" WidthRequest="24"
-                             BackgroundColor="Transparent"/>
+                <ImageButton x:Name="ProposalsBtn" Grid.Column="1" Source="proposals.png" 
+         Command="{Binding NavigateToProposalsCommand}" CommandParameter="{x:Reference ProposalsBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="ProposalsBtn"
-                             Grid.Column="1" 
-                             Source="proposals.png" 
-                             Command="{Binding NavigateToProposalsCommand}"
-                             CommandParameter="{x:Reference ProposalsBtn}"
-                             HorizontalOptions="Center" 
-                             VerticalOptions="Center"
-                             HeightRequest="24" WidthRequest="24"
-                             BackgroundColor="Transparent"/>
+                <ImageButton x:Name="EventsBtn" Grid.Column="2" Source="events.png" 
+         Command="{Binding NavigateToEventsCommand}" CommandParameter="{x:Reference EventsBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="EventsBtn"
-                             Grid.Column="2" 
-                             Source="events.png" 
-                             Command="{Binding NavigateToEventsCommand}"
-                             CommandParameter="{x:Reference EventsBtn}"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             HeightRequest="28" WidthRequest="28"
-                             BackgroundColor="Transparent"/>
-
-                <ImageButton x:Name="ProfileBtn"
-                             Grid.Column="3" 
-                             Source="profile.png" 
-                             Command="{Binding NavigateToProfileCommand}"
-                             CommandParameter="{x:Reference ProfileBtn}"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             HeightRequest="28" WidthRequest="28"
-                             BackgroundColor="Transparent"/>
-
+                <ImageButton x:Name="ProfileBtn" Grid.Column="3" Source="profile.png" 
+         Command="{Binding NavigateToProfileCommand}" CommandParameter="{x:Reference ProfileBtn}" 
+         HorizontalOptions="Center" VerticalOptions="Center" 
+         HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
     </Grid>

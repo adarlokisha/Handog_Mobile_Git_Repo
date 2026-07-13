@@ -22,5 +22,24 @@ namespace Handog_MobileApp.Views.Volunteer
             base.OnAppearing();
             await _viewModel.LoadProfileDataAsync();
         }
+
+        private async void OnProfileImageTapped(object sender, EventArgs e)
+        {
+            if (BindingContext is V_ProfileViewModel vm)
+            {
+                string action = await DisplayActionSheet("Profile Photo", "Cancel", "Remove Current Photo", "Upload New Photo");
+
+                if (action == "Upload New Photo")
+                {
+                    if (vm.UploadProfilePictureCommand.CanExecute(null))
+                        vm.UploadProfilePictureCommand.Execute(null);
+                }
+                else if (action == "Remove Current Photo")
+                {
+                    if (vm.DeleteProfilePictureCommand.CanExecute(null))
+                        vm.DeleteProfilePictureCommand.Execute(null);
+                }
+            }
+        }
     }
 }
