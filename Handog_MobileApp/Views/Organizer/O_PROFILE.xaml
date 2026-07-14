@@ -79,15 +79,15 @@
                         </Border.Shadow>
                         <Grid ColumnDefinitions="*, *, *" Padding="12,20">
                             <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{Binding CountOrganized}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="{Binding CountOrganized}" TextColor="#FAD02C" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
                                 <Label Text="Organized" TextColor="#777777" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{Binding CountJoined}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="{Binding CountJoined}" TextColor="#FAD02C" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
                                 <Label Text="Joined" TextColor="#777777" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="4">
-                                <Label Text="{Binding CountAbsences}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
+                                <Label Text="{Binding CountAbsences}" TextColor="Red" FontAttributes="Bold" FontSize="26" HorizontalOptions="Center"/>
                                 <Label Text="Absences" TextColor="#777777" FontSize="12" HorizontalOptions="Center"/>
                             </VerticalStackLayout>
                         </Grid>

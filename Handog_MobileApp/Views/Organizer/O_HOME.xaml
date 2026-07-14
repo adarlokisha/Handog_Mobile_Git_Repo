@@ -18,7 +18,6 @@
                         <Label Text="{Binding OrganizerName}" TextColor="#1A1A1A" FontSize="22" FontAttributes="Bold" Margin="0,2,0,0"/>
                     </VerticalStackLayout>
 
-                    <!-- FIXED: Added explicit size to the container Grid and adjusted badge margins to prevent cropping -->
                     <Grid Grid.Column="1" VerticalOptions="Center" WidthRequest="34" HeightRequest="34">
                         <ImageButton Source="bell_black.png" WidthRequest="26" HeightRequest="26" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding ViewNotificationsCommand}" BackgroundColor="Transparent"/>
                         <Ellipse Fill="Red" WidthRequest="10" HeightRequest="10" HorizontalOptions="End" VerticalOptions="Start" Margin="0,2,2,0" IsVisible="{Binding HasUnreadNotifications}"/>
@@ -43,21 +42,18 @@
                         <Border.Shadow>
                             <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
                         </Border.Shadow>
-                        <Grid ColumnDefinitions="*, Auto" Padding="20" VerticalOptions="Center">
-                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                                <Label Text="VOLUNTEER ATTENDANCE RATE" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="14"/>
-                                <Label Text="{Binding AttendanceSummary}" TextColor="#777777" FontSize="12"/>
-                            </VerticalStackLayout>
+                        <VerticalStackLayout Padding="20,24" HorizontalOptions="Center" Spacing="0">
 
-                            <Grid Grid.Column="1" WidthRequest="64" HeightRequest="64" HorizontalOptions="End">
-                                <Ellipse Stroke="#F0F2F5" StrokeThickness="6" WidthRequest="60" HeightRequest="60"/>
-                                <Ellipse Stroke="#FAD02C" StrokeThickness="6" StrokeDashArray="10, 2" WidthRequest="60" HeightRequest="60"/>
-                                <Label Text="{Binding AttendancePercentage}" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="14" HorizontalOptions="Center" VerticalOptions="Center"/>
-                            </Grid>
-                        </Grid>
+                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="8" VerticalOptions="End">
+                                <Label Text="{Binding MyEventsCount}" TextColor="#00BAC7" FontAttributes="Bold" FontSize="42" VerticalOptions="End" LineHeight="1"/>
+                                <Label Text="EVENTS" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="16" VerticalOptions="End" Margin="0,0,0,8"/>
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding TotalEventsText}" TextColor="#777777" FontSize="12" HorizontalOptions="Center" Margin="0,4,0,0"/>
+
+                        </VerticalStackLayout>
                     </Border>
 
-                    <!-- FIXED: Increased Padding, updated Margin, and Spacing for a less cramped look -->
                     <Border Margin="20,12,20,20" StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
                             <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>

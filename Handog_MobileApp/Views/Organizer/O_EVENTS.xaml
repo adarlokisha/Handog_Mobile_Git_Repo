@@ -63,12 +63,12 @@
                             <Grid ColumnDefinitions="*, *" MinimumHeightRequest="150">
                                 <VerticalStackLayout Grid.Column="0" Padding="12" Spacing="2">
                                     <Button Text="X" 
-                                            IsVisible="{Binding IsMyEvent}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=DeleteEventCommand}" 
-                                            CommandParameter="{Binding .}" 
-                                            BackgroundColor="Red" TextColor="White" FontAttributes="Bold"
-                                            WidthRequest="24" HeightRequest="24" CornerRadius="4" Padding="0"
-                                            HorizontalOptions="Start" Margin="0,0,0,4"/>
+                                        IsVisible="{Binding IsMyEvent}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:EventsViewModel}}, Path=CancelEventCommand}" 
+                                        CommandParameter="{Binding .}" 
+                                        BackgroundColor="Red" TextColor="White" FontAttributes="Bold"
+                                        WidthRequest="24" HeightRequest="24" CornerRadius="4" Padding="0"
+                                        HorizontalOptions="Start" Margin="0,0,0,4"/>
 
                                     <HorizontalStackLayout Spacing="6">
                                         <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation" VerticalOptions="Center"/>

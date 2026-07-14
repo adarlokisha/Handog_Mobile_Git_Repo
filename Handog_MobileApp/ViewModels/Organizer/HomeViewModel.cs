@@ -58,18 +58,18 @@ namespace Handog_MobileApp.ViewModels.Organizer
             set { _organizerName = value; OnPropertyChanged(); }
         }
 
-        private string _attendanceSummary = "Loading metrics...";
-        public string AttendanceSummary
+        private string _myEventsCount = "0";
+        public string MyEventsCount
         {
-            get => _attendanceSummary;
-            set { _attendanceSummary = value; OnPropertyChanged(); }
+            get => _myEventsCount;
+            set { _myEventsCount = value; OnPropertyChanged(); }
         }
 
-        private string _attendancePercentage = "0%";
-        public string AttendancePercentage
+        private string _totalEventsText = "out of 0 platform events";
+        public string TotalEventsText
         {
-            get => _attendancePercentage;
-            set { _attendancePercentage = value; OnPropertyChanged(); }
+            get => _totalEventsText;
+            set { _totalEventsText = value; OnPropertyChanged(); }
         }
 
         private bool _hasUnreadNotifications;
@@ -119,15 +119,25 @@ namespace Handog_MobileApp.ViewModels.Organizer
         }
 
         // --- Database Logic ---
+        // --- Database Logic ---
         public async Task LoadDashboardDataAsync()
         {
-            try
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                try
                 {
                     await conn.OpenAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Connection Error: {ex.Message}");
+                    OrganizerName = "Connection Error";
+                    return; // Stop if we can't even connect to the DB
+                }
 
-                    // 1. Get Name
+                // 1. Get Name (Isolated)
+                try
+                {
                     string nameQuery = "SELECT Firstname FROM ACCOUNT WHERE AccountNum = @AccountNum";
                     using (SqlCommand cmd = new SqlCommand(nameQuery, conn))
                     {
@@ -135,14 +145,21 @@ namespace Handog_MobileApp.ViewModels.Organizer
                         var result = await cmd.ExecuteScalarAsync();
                         OrganizerName = (result != null && result != DBNull.Value) ? result.ToString() : "Organizer";
                     }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading name: {ex.Message}");
+                    OrganizerName = "Organizer"; // Fallback name
+                }
 
-                    // 2. Get Metrics
+                // 2. Get Contribution Metrics (Isolated)
+                try
+                {
+                    // FIXED: Changed 'AccountNum' to 'OrganizerNum' for the EVENT table query
                     string metricsQuery = @"
                         SELECT 
-                            ISNULL(SUM(TotalExpected), 0) as OverallExpected, 
-                            ISNULL(SUM(TotalPresent), 0) as OverallPresent 
-                        FROM EVENTREPORT 
-                        WHERE GeneratedBy = @AccountNum";
+                            (SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccountNum) AS MyEvents,
+                            (SELECT COUNT(*) FROM EVENT) AS TotalEvents";
 
                     using (SqlCommand cmd = new SqlCommand(metricsQuery, conn))
                     {
@@ -151,25 +168,25 @@ namespace Handog_MobileApp.ViewModels.Organizer
                         {
                             if (await reader.ReadAsync())
                             {
-                                int expected = Convert.ToInt32(reader["OverallExpected"]);
-                                int present = Convert.ToInt32(reader["OverallPresent"]);
+                                string myEvents = reader["MyEvents"] != DBNull.Value ? reader["MyEvents"].ToString() : "0";
+                                string totalEvents = reader["TotalEvents"] != DBNull.Value ? reader["TotalEvents"].ToString() : "0";
 
-                                if (expected > 0)
-                                {
-                                    double rate = ((double)present / expected) * 100;
-                                    AttendanceSummary = $"{present} out of {expected} attended your events!";
-                                    AttendancePercentage = $"{Math.Round(rate)}%";
-                                }
-                                else
-                                {
-                                    AttendanceSummary = "No events concluded yet.";
-                                    AttendancePercentage = "0%";
-                                }
+                                MyEventsCount = myEvents;
+                                TotalEventsText = $"out of {totalEvents} total platform events";
                             }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading metrics: {ex.Message}");
+                    MyEventsCount = "0";
+                    TotalEventsText = "metrics unavailable";
+                }
 
-                    // 3. Fetch Top 10 Notifications
+                // 3. Fetch Top 10 Notifications (Isolated)
+                try
+                {
                     string notifQuery = @"
                         SELECT TOP 10 NotificationID, Title, Message, IsRead 
                         FROM NOTIFICATION 
@@ -205,12 +222,10 @@ namespace Handog_MobileApp.ViewModels.Organizer
                         HasUnreadNotifications = unreadCount > 0;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                OrganizerName = "Error!";
-                AttendanceSummary = "Metrics sync currently offline.";
-                System.Diagnostics.Debug.WriteLine($"DB Error: {ex.Message}");
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading notifications: {ex.Message}");
+                }
             }
         }
 
