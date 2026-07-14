@@ -12,5 +12,7 @@ namespace Handog_MobileApp.Models
         public TimeSpan PreferredEndTime { get; set; }
         public int CategoryNum { get; set; }
         public string Proposal_ID { get; set; }
+
+        public string ProposalStatus { get; set; }
     }
 }

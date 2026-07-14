@@ -76,31 +76,36 @@ namespace Handog_MobileApp.ViewModels.Organizer
                                 HeaderUsername = $"{firstName}!";
                                 FullName = $"{firstName} {lastName}".ToUpper();
                                 AccountId = reader["Account_ID"].ToString();
-
-                                // Load existing image if they have one
                                 ProfileImageUrl = reader["ProfilePicUrl"]?.ToString();
-
                                 QrCodeImageUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={AccountId}";
                             }
                         }
                     }
 
-                    // 2. Count "Organized"
-                    string organizedCountSql = "SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccNum";
+                    // 2. Count "Organized" (ONLY COMPLETED EVENTS)
+                    string organizedCountSql = "SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccNum AND EventStatus = 'Completed'";
                     using (SqlCommand cmdOrg = new SqlCommand(organizedCountSql, conn))
                     {
                         cmdOrg.Parameters.AddWithValue("@AccNum", _currentOrganizerAccountNum);
                         CountOrganized = (int)await cmdOrg.ExecuteScalarAsync();
                     }
 
-                    // 3. Count "Joined"
-                    string joinedCountSql = "SELECT COUNT(*) FROM EVENT WHERE OrganizerNum = @AccNum AND EventStatus = 'Completed'";
+                    // 3. Count "Joined" (Applying the exact same rule: ONLY COMPLETED EVENTS)
+                    string joinedCountSql = @"
+                SELECT COUNT(*) 
+                FROM EVENTREGISTRATION r
+                INNER JOIN EVENT e ON r.EventNum = e.EventNum
+                WHERE r.AccountNum = @AccNum 
+                  AND e.EventStatus = 'Completed'
+                  AND r.RegistrationStatus = 'Active'";
+
                     using (SqlCommand cmdJoined = new SqlCommand(joinedCountSql, conn))
                     {
                         cmdJoined.Parameters.AddWithValue("@AccNum", _currentOrganizerAccountNum);
                         CountJoined = (int)await cmdJoined.ExecuteScalarAsync();
                     }
 
+                    // You can implement absences later by checking r.AttendanceStatus = 'Absent'
                     CountAbsences = 0;
                 }
             }

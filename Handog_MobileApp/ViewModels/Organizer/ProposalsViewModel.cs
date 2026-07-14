@@ -4,8 +4,8 @@ using Handog_MobileApp.Views.Organizer;
 using Handog_MobileApp.Models;
 using Microsoft.Data.SqlClient;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Windows.Input; // Required for ICommand
+using System.Windows.Input;
+using Microsoft.Maui.Graphics;
 
 namespace Handog_MobileApp.ViewModel.Organizer
 {
@@ -19,15 +19,30 @@ namespace Handog_MobileApp.ViewModel.Organizer
         [ObservableProperty]
         private string _headerUsername;
 
-        // Command for navigation
+        // --- NEW TAB PROPERTIES ---
+        private string _activeTab = "Pending";
+
+        [ObservableProperty]
+        private Color _pendingTabColor = Colors.White;
+
+        [ObservableProperty]
+        private Color _completedTabColor = Colors.Transparent;
+
+        [ObservableProperty]
+        private bool _isPendingView = true;
+
+        // NEW PROPERTY to replace the missing InvertedBoolConverter
+        [ObservableProperty]
+        private bool _isCompletedView = false;
+
+        [ObservableProperty]
+        private string _listTitle = "PENDING PROPOSALS";
+
         public ICommand NavigateCommand { get; }
 
-        // Combined Constructor
         public ProposalsViewModel(int accountNum)
         {
             _currentAccountNum = accountNum;
-
-            // Initialize the navigation command
             NavigateCommand = new Command<string>(async (dest) => await ExecuteNavigation(dest));
         }
 
@@ -35,6 +50,22 @@ namespace Handog_MobileApp.ViewModel.Organizer
         public async Task LoadData()
         {
             await FetchOrganizerName();
+            await FetchProposals();
+        }
+
+        // --- NEW SWITCH TAB COMMAND ---
+        [RelayCommand]
+        public async Task SwitchTab(string tab)
+        {
+            _activeTab = tab;
+            IsPendingView = tab == "Pending";
+            IsCompletedView = !IsPendingView; // Update the new property automatically
+
+            ListTitle = tab == "Pending" ? "PENDING PROPOSALS" : "REVIEWED PROPOSALS";
+
+            PendingTabColor = tab == "Pending" ? Colors.White : Colors.Transparent;
+            CompletedTabColor = tab == "Completed" ? Colors.White : Colors.Transparent;
+
             await FetchProposals();
         }
 
@@ -63,11 +94,15 @@ namespace Handog_MobileApp.ViewModel.Organizer
             {
                 var list = new List<O_EventProposal>();
                 using var conn = new SqlConnection(AppConfig.DbConnectionString);
-                string sql = @"SELECT p.ProposalNum, p.Proposal_ID, p.CategoryNum, p.ProposalTitle, p.ProposalDetails, 
+
+                string statusFilter = _activeTab == "Pending" ? "='Pending'" : "IN ('Approved', 'Rejected')";
+
+                string sql = $@"SELECT p.ProposalNum, p.Proposal_ID, p.CategoryNum, p.ProposalTitle, p.ProposalDetails, 
                       p.PreferredDate, p.PreferredStartTime, p.PreferredEndTime, p.ProposalStatus,
                       a.Firstname + ' ' + a.Lastname as ProposerName
                FROM EVENTPROPOSAL p
-               JOIN ACCOUNT a ON p.AccountNum = a.AccountNum";
+               JOIN ACCOUNT a ON p.AccountNum = a.AccountNum
+               WHERE p.ProposalStatus {statusFilter}";
 
                 await conn.OpenAsync();
                 using var cmd = new SqlCommand(sql, conn);
@@ -85,9 +120,12 @@ namespace Handog_MobileApp.ViewModel.Organizer
                         ProposerName = reader["ProposerName"].ToString(),
                         PreferredDate = Convert.ToDateTime(reader["PreferredDate"]),
                         PreferredStartTime = (TimeSpan)reader["PreferredStartTime"],
-                        PreferredEndTime = (TimeSpan)reader["PreferredEndTime"]
+                        PreferredEndTime = (TimeSpan)reader["PreferredEndTime"],
+                        ProposalStatus = reader["ProposalStatus"].ToString()
                     });
                 }
+
+                // Safe to set a new collection entirely from a background thread
                 Proposals = new ObservableCollection<O_EventProposal>(list);
             }
             catch (Exception ex)
@@ -108,11 +146,15 @@ namespace Handog_MobileApp.ViewModel.Organizer
                 cmd.Parameters.AddWithValue("@ProposalNum", p.ProposalNum);
                 await cmd.ExecuteNonQueryAsync();
 
-                Proposals.Remove(p);
+                // Safely update the ObservableCollection on the Main UI Thread
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Proposals.Remove(p);
+                });
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Could not reject: {ex.Message}", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Could not reject: {ex.Message}", "OK");
             }
         }
 
@@ -121,7 +163,6 @@ namespace Handog_MobileApp.ViewModel.Organizer
         {
             try
             {
-                // 1. Update the database status first
                 using var conn = new SqlConnection(AppConfig.DbConnectionString);
                 await conn.OpenAsync();
                 string sql = "UPDATE EVENTPROPOSAL SET ProposalStatus = 'Approved' WHERE ProposalNum = @ProposalNum";
@@ -129,15 +170,17 @@ namespace Handog_MobileApp.ViewModel.Organizer
                 cmd.Parameters.AddWithValue("@ProposalNum", p.ProposalNum);
                 await cmd.ExecuteNonQueryAsync();
 
-                // 2. Remove it from the current UI list (Optional: leave this out if you want it to stay in the list)
-                // Proposals.Remove(p);
+                // Safely update the ObservableCollection on the Main UI Thread
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Proposals.Remove(p);
+                });
 
-                // 3. Navigate to the Events page
-                await Application.Current.MainPage.Navigation.PushAsync(new O_EVENTS(_currentAccountNum, p));
+                await Application.Current.MainPage.Navigation.PushAsync(new O_EVENTS(_currentAccountNum));
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Could not accept: {ex.Message}", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Could not accept: {ex.Message}", "OK");
             }
         }
 
@@ -151,6 +194,7 @@ namespace Handog_MobileApp.ViewModel.Organizer
                 "Profile" => new O_PROFILE(_currentAccountNum),
                 _ => null
             };
+
             if (targetPage != null)
                 await Application.Current.MainPage.Navigation.PushAsync(targetPage);
         }

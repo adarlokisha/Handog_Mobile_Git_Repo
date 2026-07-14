@@ -11,5 +11,6 @@ namespace Handog_MobileApp.Models
         public string RequestorName { get; set; } = "Unknown";
         public string RequestType { get; set; } = "General";
         public string Description { get; set; } = string.Empty;
+
     }
 }
