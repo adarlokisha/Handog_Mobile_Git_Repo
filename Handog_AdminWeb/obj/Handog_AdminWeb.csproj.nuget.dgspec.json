@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {}
+    "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {
+    "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+        "projectUniqueName": "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
         "projectName": "Handog_AdminWeb",
-        "projectPath": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
-        "packagesPath": "C:\\Users\\Kisha Adarlo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kisha Adarlo\\Desktop\\Handog_Mobile_GitRepo\\Handog_AdminWeb\\obj\\",
+        "projectPath": "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+        "packagesPath": "C:\\Users\\Windows 11\\.nuget\\packages\\",
+        "outputPath": "C:\\Handog_MobileApp\\Handog_AdminWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Kisha Adarlo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows 11\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
