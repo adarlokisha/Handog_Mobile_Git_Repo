@@ -9,23 +9,23 @@
 
     <Grid RowDefinitions="Auto, *, Auto">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="0" BackgroundColor="#4DD0E1" IgnoreSafeArea="True" Padding="0, 48, 0, 16">
-            <Grid ColumnDefinitions="Auto, *, Auto" Padding="16, 0">
-
-                <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
-                    <Label Text="Hi," FontSize="18" TextColor="#1A1A1A" Opacity="0.7" VerticalOptions="Center"/>
-                    <Label Text="{Binding HeaderUsername}" TextColor="#1A1A1A" FontSize="18" FontAttributes="Bold" VerticalOptions="Center"/>
-                </HorizontalStackLayout>
-            </Grid>
-
-            <VerticalStackLayout Padding="24, 16, 24, 0" HorizontalOptions="Center" Spacing="8">
-                <Image Source="profile_black.png" HeightRequest="44" WidthRequest="44" HorizontalOptions="Center" />
-                <Label Text="PROFILE" TextColor="#1A1A1A" FontAttributes="Bold" FontSize="26" CharacterSpacing="1" HorizontalOptions="Center"/>
-            </VerticalStackLayout>
-        </VerticalStackLayout>
+        <!-- UPDATED HEADER: Matches O_PROFILE structure -->
+        <Grid Grid.Row="0" BackgroundColor="#00BAC7" Padding="20, 50, 20, 15" ColumnDefinitions="*, Auto" IgnoreSafeArea="True">
+            <HorizontalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                <Label Text="Hi," FontSize="20" TextColor="#1A1A1A" VerticalOptions="Center"/>
+                <Label Text="{Binding HeaderUsername, StringFormat='{0}'}" FontSize="20" FontAttributes="Bold" TextColor="#1A1A1A" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Grid>
 
         <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
-            <VerticalStackLayout Spacing="16" Padding="16,20,16,24">
+            <!-- UPDATED PADDING: Matches O_PROFILE to prevent overlap with bottom nav -->
+            <VerticalStackLayout Spacing="16" Padding="20, 20, 20, 100">
+
+                <!-- UPDATED PROFILE ICON: Moved inside ScrollView, size adjusted to 60x60 -->
+                <VerticalStackLayout Spacing="5" Margin="0, 0, 0, 10">
+                    <Image Source="profile_black.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Center" />
+                    <Label Text="PROFILE" TextColor="#1A1A1A" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1.5"/>
+                </VerticalStackLayout>
 
                 <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
                     <Border.Shadow>
@@ -35,31 +35,31 @@
                     <Grid ColumnDefinitions="Auto, *" Padding="20" VerticalOptions="Center" ColumnSpacing="16">
 
                         <Border Grid.Column="0"
-                Stroke="#4DD0E1" 
-                StrokeThickness="2" 
-                HeightRequest="70" 
-                WidthRequest="70" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Center"
-                StrokeShape="RoundRectangle 35" 
-                BackgroundColor="#F9F9F9">
+                                Stroke="#4DD0E1" 
+                                StrokeThickness="2" 
+                                HeightRequest="70" 
+                                WidthRequest="70" 
+                                HorizontalOptions="Center" 
+                                VerticalOptions="Center"
+                                StrokeShape="RoundRectangle 35" 
+                                BackgroundColor="#F9F9F9">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnProfileImageTapped" />
                             </Border.GestureRecognizers>
 
                             <Grid>
                                 <Label Text="+" 
-                       TextColor="#4DD0E1" 
-                       FontSize="35" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Center" 
-                       Margin="0,-4,0,0"
-                       IsVisible="{Binding HasNoProfileImage}" />
+                                       TextColor="#4DD0E1" 
+                                       FontSize="35" 
+                                       FontAttributes="Bold" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" 
+                                       Margin="0,-4,0,0"
+                                       IsVisible="{Binding HasNoProfileImage}" />
 
                                 <Image Source="{Binding ProfileImageUrl}" 
-                       Aspect="AspectFill" 
-                       IsVisible="{Binding HasProfileImage}" />
+                                       Aspect="AspectFill" 
+                                       IsVisible="{Binding HasProfileImage}" />
                             </Grid>
                         </Border>
 
@@ -71,6 +71,7 @@
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
+
                 <VerticalStackLayout Spacing="6">
                     <Label Text="Events" TextColor="#777777" FontAttributes="Bold" FontSize="11" Margin="4,0,0,0"/>
 
@@ -138,55 +139,40 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Border Grid.Row="5" 
-        BackgroundColor="#00BAC7" 
-        StrokeShape="RoundRectangle 20,20,0,0" 
-        StrokeThickness="0" 
-        HeightRequest="60"
-        Padding="12, 0">
+        <!-- UPDATED ROW: Changed from Grid.Row="5" to Grid.Row="2" -->
+        <Border Grid.Row="2" 
+                BackgroundColor="#00BAC7" 
+                StrokeShape="RoundRectangle 35" 
+                StrokeThickness="0" 
+                HeightRequest="70" 
+                Margin="20, 0, 20, 25" 
+                VerticalOptions="End"
+                Padding="12, 0">
+
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
+            </Border.Shadow>
+
             <Grid ColumnDefinitions="*, *, *, *">
+                <ImageButton x:Name="HomeBtn" Grid.Column="0" Source="home.png" 
+                             Command="{Binding NavigateToHomeCommand}" CommandParameter="{x:Reference HomeBtn}" 
+                             HorizontalOptions="Center" VerticalOptions="Center" 
+                             HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="HomeBtn"
-                    Grid.Column="0" 
-                     Source="home.png" 
-                     Command="{Binding NavigateToHomeCommand}"
-                     CommandParameter="{x:Reference HomeBtn}"        
-                     HorizontalOptions="Center" 
-                     VerticalOptions="Center"
-                     HeightRequest="24" WidthRequest="24"
-                     BackgroundColor="Transparent"/>
+                <ImageButton x:Name="ProposalsBtn" Grid.Column="1" Source="proposals.png" 
+                             Command="{Binding NavigateToProposalsCommand}" CommandParameter="{x:Reference ProposalsBtn}" 
+                             HorizontalOptions="Center" VerticalOptions="Center" 
+                             HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="ProposalsBtn"
-                     Grid.Column="1" 
-                     Source="proposals.png" 
-                     Command="{Binding NavigateToProposalsCommand}"
-                     CommandParameter="{x:Reference ProposalsBtn}"
-                     HorizontalOptions="Center" 
-                     VerticalOptions="Center"
-                     HeightRequest="24" WidthRequest="24"
-                     BackgroundColor="Transparent"/>
+                <ImageButton x:Name="EventsBtn" Grid.Column="2" Source="events.png" 
+                             Command="{Binding NavigateToEventsCommand}" CommandParameter="{x:Reference EventsBtn}" 
+                             HorizontalOptions="Center" VerticalOptions="Center" 
+                             HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
 
-                <ImageButton x:Name="EventsBtn"
-             Grid.Column="2" 
-             Source="events.png" 
-             Command="{Binding NavigateToEventsCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
-
-                <ImageButton x:Name="ProfileBtn"
-             Grid.Column="3" 
-             Source="profile.png" 
-             Command="{Binding NavigateToProfileCommand}"
-             CommandParameter="{x:Reference EventsBtn}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             HeightRequest="28" WidthRequest="28"
-             BackgroundColor="Transparent"/>
-
+                <ImageButton x:Name="ProfileBtn" Grid.Column="3" Source="profile.png" 
+                             Command="{Binding NavigateToProfileCommand}" CommandParameter="{x:Reference ProfileBtn}" 
+                             HorizontalOptions="Center" VerticalOptions="Center" 
+                             HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
             </Grid>
         </Border>
 
