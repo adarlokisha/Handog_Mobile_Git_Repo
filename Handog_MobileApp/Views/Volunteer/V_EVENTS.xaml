@@ -30,7 +30,7 @@
             </Border>
 
             <Border Margin="0,5,0,5" StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="#EFEFEF" Padding="2">
-                <Grid ColumnDefinitions="*, *">
+                <Grid ColumnDefinitions="*, *, *">
                     <Border x:Name="TabMyEvents" Grid.Column="0" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
                         <Label Text="My Events" FontAttributes="Bold" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
@@ -42,6 +42,13 @@
                         <Label Text="All Events" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="AllEventsTab_Tapped"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border x:Name="TabCompleted" Grid.Column="2" StrokeShape="RoundRectangle 18" StrokeThickness="0" BackgroundColor="Transparent">
+                        <Label Text="Completed" FontAttributes="Bold" FontSize="11" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center" Padding="0,8"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="CompletedTab_Tapped"/>
                         </Border.GestureRecognizers>
                     </Border>
                 </Grid>
@@ -69,47 +76,58 @@
                                         <Label Text="{Binding EventTime, StringFormat='• {0}'}" TextColor="#777777" FontSize="11"/>
                                     </VerticalStackLayout>
 
-                                    <Label Grid.Row="2" Text="{Binding EventDetails}" FontSize="11" TextColor="#777777" MaxLines="3" LineBreakMode="WordWrap"/>
+                                    <Label Grid.Row="2" Text="{Binding EventDescription}" FontSize="11" TextColor="#777777" MaxLines="3" LineBreakMode="WordWrap"/>
                                 </Grid>
 
                                 <Grid Grid.Column="1" Padding="0">
                                     <Image Source="{Binding CategoryImage}" Aspect="AspectFill" />
 
                                     <Button Text="REGISTER" 
-                                IsVisible="False"
-                                BackgroundColor="#F4D03F" 
-                                TextColor="Black" 
-                                FontAttributes="Bold" 
-                                FontSize="11" 
-                                CornerRadius="16"
-                                HeightRequest="36"
-                                WidthRequest="110"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Command="{Binding BindingContext.RegisterCommand, Source={x:Reference thisPage}}"
-                                CommandParameter="{Binding .}">
+                                            IsVisible="False"
+                                            BackgroundColor="#F4D03F" 
+                                            TextColor="Black" 
+                                            FontAttributes="Bold" 
+                                            FontSize="11" 
+                                            CornerRadius="16"
+                                            HeightRequest="36"
+                                            WidthRequest="110"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            Command="{Binding BindingContext.RegisterCommand, Source={x:Reference thisPage}}"
+                                            CommandParameter="{Binding .}">
                                         <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="False">
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsMyEvent}" Value="False"/>
+                                                    <BindingCondition Binding="{Binding EventStatus}" Value="Published"/>
+                                                </MultiTrigger.Conditions>
                                                 <Setter Property="IsVisible" Value="True"/>
-                                            </DataTrigger>
+                                            </MultiTrigger>
                                         </Button.Triggers>
                                     </Button>
 
-                                    <Button Text="VIEW DETAILS" 
-                                IsVisible="False"
-                                BackgroundColor="#F4D03F" 
-                                TextColor="Black" 
-                                FontAttributes="Bold" 
-                                FontSize="11" 
-                                CornerRadius="16"
-                                HeightRequest="36"
-                                WidthRequest="110"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Command="{Binding BindingContext.ViewEventDetailsCommand, Source={x:Reference thisPage}}"
-                                CommandParameter="{Binding .}">
+                                    <Button Text="VIEW DETAILS"
+                                            IsVisible="False"
+                                            BackgroundColor="#F4D03F" 
+                                            TextColor="Black" 
+                                            FontAttributes="Bold" 
+                                            FontSize="11" 
+                                            CornerRadius="16"
+                                            HeightRequest="36"
+                                            WidthRequest="110"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            Command="{Binding BindingContext.ViewEventDetailsCommand, Source={x:Reference thisPage}}"
+                                            CommandParameter="{Binding .}">
                                         <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding IsMyEvent}" Value="True">
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsMyEvent}" Value="True"/>
+                                                    <BindingCondition Binding="{Binding EventStatus}" Value="Published"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="IsVisible" Value="True"/>
+                                            </MultiTrigger>
+                                            <DataTrigger TargetType="Button" Binding="{Binding EventStatus}" Value="Completed">
                                                 <Setter Property="IsVisible" Value="True"/>
                                             </DataTrigger>
                                         </Button.Triggers>
@@ -124,6 +142,11 @@
 
             <!-- VIEW COMPONENT B: Inline Event Details Display Form Overlay Panel -->
             <ScrollView IsVisible="{Binding IsDetailsViewVisible}" Padding="5,0,5,15">
+                <ScrollView.Triggers>
+                    <DataTrigger TargetType="ScrollView" Binding="{Binding IsDetailsViewVisible}" Value="True">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </ScrollView.Triggers>
                 <Border BackgroundColor="#FDFDFD" Stroke="#C0C0C0" StrokeThickness="1.5" StrokeShape="RoundRectangle 20" Padding="20">
                     <VerticalStackLayout Spacing="15">
                         <Label Text="{Binding SelectedEventTarget.EventTitle}" FontAttributes="Bold" FontSize="24" TextColor="Black" HorizontalOptions="Center"/>
@@ -139,31 +162,13 @@
                         <Label Text="{Binding SelectedEventTarget.EventAddress}" TextColor="Gray" FontSize="13"/>
 
                         <Label Text="Description" FontAttributes="Bold" TextColor="#4A4A4A" FontSize="14" Margin="0,5,0,0"/>
-                        <Label Text="{Binding SelectedEventTarget.EventDetails}" TextColor="#555555" FontSize="14" LineBreakMode="WordWrap"/>
+                        <Label Text="{Binding SelectedEventTarget.EventDescription}" TextColor="#555555" FontSize="14" LineBreakMode="WordWrap"/>
 
                         <BoxView HeightRequest="1" BackgroundColor="#D3D3D3" Margin="0,10,0,5"/>
 
-                        <!-- REGISTER PANEL BUTTON -->
-                        <Button Text="REGISTER FOR EVENT" 
-                                BackgroundColor="#F4D03F" 
-                                TextColor="Black" 
-                                FontAttributes="Bold" 
-                                CornerRadius="12" 
-                                HeightRequest="45"
-                                Command="{Binding RegisterCommand}"
-                                CommandParameter="{Binding SelectedEventTarget}">
-                            <Button.Triggers>
-                                <DataTrigger TargetType="Button" Binding="{Binding SelectedEventTarget.IsMyEvent}" Value="True">
-                                    <Setter Property="IsVisible" Value="False"/>
-                                </DataTrigger>
-                                <DataTrigger TargetType="Button" Binding="{Binding SelectedEventTarget.IsMyEvent}" Value="False">
-                                    <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                            </Button.Triggers>
-                        </Button>
-
                         <!-- UNREGISTER PANEL BUTTON -->
                         <Button Text="CANCEL REGISTRATION (UNREGISTER)" 
+                                IsVisible="False"
                                 BackgroundColor="#E74C3C" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 
@@ -172,11 +177,26 @@
                                 Command="{Binding UnregisterCommand}"
                                 CommandParameter="{Binding SelectedEventTarget}">
                             <Button.Triggers>
-                                <DataTrigger TargetType="Button" Binding="{Binding SelectedEventTarget.IsMyEvent}" Value="True">
+                                <MultiTrigger TargetType="Button">
+                                    <MultiTrigger.Conditions>
+                                        <BindingCondition Binding="{Binding SelectedEventTarget.IsMyEvent}" Value="True"/>
+                                        <BindingCondition Binding="{Binding SelectedEventTarget.EventStatus}" Value="Published"/>
+                                    </MultiTrigger.Conditions>
                                     <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                                <DataTrigger TargetType="Button" Binding="{Binding SelectedEventTarget.IsMyEvent}" Value="False">
-                                    <Setter Property="IsVisible" Value="False"/>
+                                </MultiTrigger>
+                            </Button.Triggers>
+                        </Button>
+
+                        <Button Text="EVENT COMPLETED" 
+                                    BackgroundColor="#777777" 
+                                    TextColor="White" 
+                                    FontAttributes="Bold" 
+                                    CornerRadius="12" 
+                                    HeightRequest="45"
+                                    IsVisible="False">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding SelectedEventTarget.EventStatus}" Value="Completed">
+                                    <Setter Property="IsVisible" Value="True"/>
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>
@@ -196,13 +216,13 @@
 
         <!-- Bottom Tab Footer Layout Navigation Bar -->
         <Border Grid.Row="4" 
-        BackgroundColor="#00BAC7" 
-        StrokeShape="RoundRectangle 35" 
-        StrokeThickness="0" 
-        HeightRequest="70" 
-        Margin="20, 0, 20, 25" 
-        VerticalOptions="End"
-        Padding="12, 0">
+                BackgroundColor="#00BAC7" 
+                StrokeShape="RoundRectangle 35" 
+                StrokeThickness="0" 
+                HeightRequest="70" 
+                Margin="20, 0, 20, 25" 
+                VerticalOptions="End"
+                Padding="12, 0">
 
             <Border.Shadow>
                 <Shadow Brush="#000000" Offset="0,4" Radius="10" Opacity="0.15"/>
@@ -222,7 +242,7 @@
                 <ImageButton x:Name="EventsBtn" Grid.Column="2" Source="events.png" 
          Command="{Binding NavigateToEventsCommand}" CommandParameter="{x:Reference EventsBtn}" 
          HorizontalOptions="Center" VerticalOptions="Center" 
-         HeightRequest="28" WidthRequest="28" BackgroundColor="Transparent"/>
+         HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"/>
 
                 <ImageButton x:Name="ProfileBtn" Grid.Column="3" Source="profile.png" 
          Command="{Binding NavigateToProfileCommand}" CommandParameter="{x:Reference ProfileBtn}" 

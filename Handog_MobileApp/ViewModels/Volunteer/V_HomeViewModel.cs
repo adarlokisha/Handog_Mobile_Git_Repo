@@ -1,20 +1,20 @@
-﻿using Handog_MobileApp.Services; // Ensure your NotificationService is accessible here
+﻿using Handog_MobileApp.Services; 
 using Handog_MobileApp.Views.Volunteer;
+using Microsoft.Data.SqlClient;
 using Microsoft.Maui.Controls;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Data.SqlClient;
+using Handog_MobileApp.ViewModels.Organizer;
+using Handog_MobileApp.Models;
 
 namespace Handog_MobileApp.ViewModels;
 
-public class V_HomeViewModel : NotificationViewModel
+public class V_HomeViewModel : INotifyPropertyChanged
 {
-    // Services
-    // Note: If NotificationViewModel already instantiates a service named _notificationService,
-    // you can safely use it here by changing its access modifier to protected in the base class.
 
     // Page navigation commands specific to the Volunteer Hub
     public ICommand NavigateToHomeCommand { get; }
@@ -22,8 +22,30 @@ public class V_HomeViewModel : NotificationViewModel
     public ICommand NavigateToProposalsCommand { get; }
     public ICommand NavigateToProfileCommand { get; }
 
+    public ICommand NotificationTappedCommand { get; }
+    public ICommand ViewNotificationsCommand { get; }
+
     private readonly int _loggedInAccountNum;
     private readonly INavigation _navigation;
+    private readonly NotificationService _notifService = new();
+    private IDispatcherTimer _timer;
+
+    // Notification properties (replicated for the volunteer dashboard)
+    public ObservableCollection<NotificationModel> Notifications { get; set; } = new();
+
+    private bool _hasUnreadNotifications;
+    public bool HasUnreadNotifications
+    {
+        get => _hasUnreadNotifications;
+        set { _hasUnreadNotifications = value; OnPropertyChanged(); }
+    }
+
+    private bool _isNotificationPanelVisible;
+    public bool IsNotificationPanelVisible
+    {
+        get => _isNotificationPanelVisible;
+        set { _isNotificationPanelVisible = value; OnPropertyChanged(); }
+    }
 
     // View dashboard properties
     private string _welcomeName = "Volunteer";
@@ -33,38 +55,62 @@ public class V_HomeViewModel : NotificationViewModel
         set { _welcomeName = value; OnPropertyChanged(); }
     }
 
-    private string _participationText = "Loading details...";
-    public string ParticipationText
+    private int _joinedEvents;
+    public int JoinedEvents
     {
-        get => _participationText;
-        set { _participationText = value; OnPropertyChanged(); }
+        get => _joinedEvents;
+        set { _joinedEvents = value; OnPropertyChanged(); }
     }
 
-    private string _participationPercentage = "0%";
-    public string ParticipationPercentage
+    private int _totalEvents;
+    public int TotalEvents
     {
-        get => _participationPercentage;
-        set { _participationPercentage = value; OnPropertyChanged(); }
+        get => _totalEvents;
+        set { _totalEvents = value; OnPropertyChanged(); }
     }
 
-    public V_HomeViewModel(INavigation navigation, int accountNum) : base()
+    public V_HomeViewModel(INavigation navigation, int accountNum)
     {
         _navigation = navigation;
         _loggedInAccountNum = accountNum;
 
+        //timer that trigger refresh logic
+        _timer = Application.Current.Dispatcher.CreateTimer();
+        _timer.Interval = TimeSpan.FromSeconds(30);
+        _timer.Tick += async (s, e) => await InitializeAsync();
+        _timer.Start();
+
         // Dashboard specific button mappings
+        NotificationTappedCommand = new Command<NotificationModel>(async (notif) => await MarkNotificationAsReadAsync(notif));
+        ViewNotificationsCommand = new Command(() => IsNotificationPanelVisible = !IsNotificationPanelVisible);
+
         NavigateToHomeCommand = new Command<object>(async (btn) => await ExecuteNavigateToHome(btn));
         NavigateToEventsCommand = new Command<object>(async (btn) => await ExecuteNavigateToEvents(btn));
         NavigateToProposalsCommand = new Command<object>(async (btn) => await ExecuteNavigateToProposals(btn));
         NavigateToProfileCommand = new Command<object>(async (btn) => await ExecuteNavigateToProfile(btn));
+    }
+    public void StopTimer()
+    {
+        _timer?.Stop();
     }
 
     public async Task InitializeAsync()
     {
         if (_loggedInAccountNum <= 0) return;
 
-        // 1. Core shared base notification fetch logic handled by the parent viewmodel
-        await RefreshNotificationsAsync(_loggedInAccountNum);
+        // 1. Fetch Notifications via the Service
+        try
+        {
+            var data = await _notifService.GetNotificationsAsync(_loggedInAccountNum);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Notifications.Clear();
+                foreach (var n in data) Notifications.Add(n);
+                HasUnreadNotifications = data.Any(n => !n.IsRead);
+            });
+        }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Notification Error: {ex.Message}"); }
+
 
         // 2. Fetch volunteer metrics from data access layer service
         try
@@ -87,9 +133,9 @@ public class V_HomeViewModel : NotificationViewModel
 
                 // Query 2: Query registration stats matching database context schemas
                 string metricsQuery = @"
-                SELECT 
-                    (SELECT COUNT(*) FROM EVENT) AS TotalEvents,
-                    (SELECT COUNT(*) FROM EVENTREGISTRATION WHERE AccountNum = @AccountNum) AS JoinedEvents";
+    SELECT 
+        (SELECT COUNT(*) FROM EVENT) AS TotalEvents,
+        (SELECT COUNT(*) FROM EVENTREGISTRATION WHERE AccountNum = @AccountNum) AS JoinedEvents";
 
                 using (SqlCommand cmdMetrics = new SqlCommand(metricsQuery, conn))
                 {
@@ -98,15 +144,16 @@ public class V_HomeViewModel : NotificationViewModel
                     {
                         if (await reader.ReadAsync())
                         {
+                            // This is the bridge: it takes the raw data and saves it to the properties
                             int total = reader["TotalEvents"] != DBNull.Value ? Convert.ToInt32(reader["TotalEvents"]) : 0;
                             int joined = reader["JoinedEvents"] != DBNull.Value ? Convert.ToInt32(reader["JoinedEvents"]) : 0;
 
-                            // Calculate safe percentage value bounds (prevent zero division crashes)
-                            double rate = total > 0 ? Math.Round((double)joined / total * 100) : 0;
-
-                            // Update local dashboard UI property binds
-                            ParticipationText = $"You've joined {joined} out of {total} events!";
-                            ParticipationPercentage = $"{rate}%";
+                            // This ensures the screen updates immediately
+                            MainThread.BeginInvokeOnMainThread(() =>
+                            {
+                                TotalEvents = total;
+                                JoinedEvents = joined;
+                            });
                         }
                     }
                 }
@@ -116,6 +163,19 @@ public class V_HomeViewModel : NotificationViewModel
         {
             await Application.Current.MainPage.DisplayAlert("Database Error", $"Could not load home data: {ex.Message}", "OK");
         }
+    }
+
+    private async Task MarkNotificationAsReadAsync(NotificationModel notif)
+    {
+        if (notif == null || notif.IsRead) return;
+
+        try
+        {
+            await _notifService.MarkAsReadAsync(notif.NotificationID);
+            notif.IsRead = true;
+            HasUnreadNotifications = Notifications.Any(n => !n.IsRead);
+        }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Mark Read Error: {ex.Message}"); }
     }
 
     // Button Click Tap Scale Animations
@@ -151,4 +211,8 @@ public class V_HomeViewModel : NotificationViewModel
         await AnimateButtonAsync(buttonObj);
         await _navigation.PushAsync(new V_PROFILE(_loggedInAccountNum));
     }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

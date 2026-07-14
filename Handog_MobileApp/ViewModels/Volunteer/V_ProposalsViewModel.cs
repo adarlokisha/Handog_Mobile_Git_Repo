@@ -265,7 +265,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    ShowAlertRequested?.Invoke("Success", $"Proposal {proposalIdFormatted} submitted successfully!");
+                    ShowAlertRequested?.Invoke("Success", $"Proposal submitted successfully!");
 
                     // Reset form properties
                     ProposalTitle = string.Empty;

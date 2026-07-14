@@ -7,48 +7,20 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Windows.Input;
 using Microsoft.Maui.Graphics;
+using Handog_MobileApp.Services;
+using Handog_MobileApp.Models;
 
 namespace Handog_MobileApp.ViewModels.Organizer
 {
     // --- 1. THE DATA MODEL ---
-    public class AppNotification : INotifyPropertyChanged
-    {
-        public int NotificationID { get; set; }
-        public string Title { get; set; }
-        public string Message { get; set; }
-
-        private bool _isRead;
-        public bool IsRead
-        {
-            get => _isRead;
-            set
-            {
-                if (_isRead != value)
-                {
-                    _isRead = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(BgColor));
-                    OnPropertyChanged(nameof(TitleFont));
-                }
-            }
-        }
-
-        // UI Helpers bound to IsRead
-        public Color BgColor => IsRead ? Colors.White : Color.FromArgb("#F4F6F8");
-        public FontAttributes TitleFont => IsRead ? FontAttributes.None : FontAttributes.Bold;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    
 
     // --- 2. THE VIEW MODEL ---
     public class OrganizerHomeViewModel : INotifyPropertyChanged
     {
         private int _currentAccountNum;
         private INavigation _navigation;
+        private readonly NotificationService _notifService = new();
 
         // --- Data Binding Properties ---
         private string _organizerName = "Loading...";
@@ -80,7 +52,7 @@ namespace Handog_MobileApp.ViewModels.Organizer
         }
 
         // --- Notification Panel Properties ---
-        public ObservableCollection<AppNotification> Notifications { get; set; } = new();
+        public ObservableCollection<NotificationModel> Notifications { get; set; } = new();
 
         private bool _isNotificationPanelVisible;
         public bool IsNotificationPanelVisible
@@ -115,7 +87,7 @@ namespace Handog_MobileApp.ViewModels.Organizer
             });
 
             // Mark specific notification as read
-            NotificationTappedCommand = new Command<AppNotification>(async (notif) => await MarkNotificationAsReadAsync(notif));
+            NotificationTappedCommand = new Command<NotificationModel>(async (notif) => await MarkNotificationAsReadAsync(notif));
         }
 
         // --- Database Logic ---
@@ -187,77 +159,30 @@ namespace Handog_MobileApp.ViewModels.Organizer
                 // 3. Fetch Top 10 Notifications (Isolated)
                 try
                 {
-                    string notifQuery = @"
-                        SELECT TOP 10 NotificationID, Title, Message, IsRead 
-                        FROM NOTIFICATION 
-                        WHERE AccountNum = @AccountNum 
-                        ORDER BY CreatedAt DESC";
-
-                    using (SqlCommand cmd = new SqlCommand(notifQuery, conn))
+                    var data = await _notifService.GetNotificationsAsync(_currentAccountNum);
+                    MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        cmd.Parameters.AddWithValue("@AccountNum", _currentAccountNum);
-                        int unreadCount = 0;
-
-                        // Clear on main thread to avoid UI crash
-                        MainThread.BeginInvokeOnMainThread(() => Notifications.Clear());
-
-                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                        {
-                            while (await reader.ReadAsync())
-                            {
-                                bool isRead = Convert.ToBoolean(reader["IsRead"]);
-                                if (!isRead) unreadCount++;
-
-                                var notification = new AppNotification
-                                {
-                                    NotificationID = Convert.ToInt32(reader["NotificationID"]),
-                                    Title = reader["Title"].ToString(),
-                                    Message = reader["Message"].ToString(),
-                                    IsRead = isRead
-                                };
-
-                                MainThread.BeginInvokeOnMainThread(() => Notifications.Add(notification));
-                            }
-                        }
-                        HasUnreadNotifications = unreadCount > 0;
-                    }
+                        Notifications.Clear();
+                        foreach (var n in data) Notifications.Add(n);
+                        HasUnreadNotifications = data.Any(n => !n.IsRead);
+                    });
                 }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error loading notifications: {ex.Message}");
-                }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error Loading Notificatins: {ex.Message}"); }
             }
         }
 
-        private async Task MarkNotificationAsReadAsync(AppNotification notif)
+
+        private async Task MarkNotificationAsReadAsync(NotificationModel notif)
         {
             if (notif == null || notif.IsRead) return;
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
-                {
-                    await conn.OpenAsync();
-                    string query = "UPDATE NOTIFICATION SET IsRead = 1 WHERE NotificationID = @ID";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID", notif.NotificationID);
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                }
-
-                // Update UI State locally
+                await _notifService.MarkAsReadAsync(notif.NotificationID);
                 notif.IsRead = true;
-
-                // Recalculate unread badge
-                int unreadCount = 0;
-                foreach (var n in Notifications) { if (!n.IsRead) unreadCount++; }
-                HasUnreadNotifications = unreadCount > 0;
+                HasUnreadNotifications = Notifications.Any(n => !n.IsRead);
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error marking read: {ex.Message}");
-            }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}"); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

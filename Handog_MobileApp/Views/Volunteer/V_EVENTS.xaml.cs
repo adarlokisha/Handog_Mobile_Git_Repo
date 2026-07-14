@@ -39,6 +39,8 @@ namespace Handog_MobileApp.Views.Volunteer
             // Explicitly set the background color to your custom hex color
             TabMyEvents.BackgroundColor = _accentColor;
             TabAllEvents.BackgroundColor = Colors.Transparent;
+            TabCompleted.BackgroundColor = Colors.Transparent;
+
 
             _viewModel.FilterCommand.Execute("MyEvents");
         }
@@ -48,8 +50,19 @@ namespace Handog_MobileApp.Views.Volunteer
             // Explicitly set the background color to your custom hex color
             TabAllEvents.BackgroundColor = _accentColor;
             TabMyEvents.BackgroundColor = Colors.Transparent;
+            TabCompleted.BackgroundColor = Colors.Transparent;
+
 
             _viewModel.FilterCommand.Execute("AllEvents");
+        }
+
+        private void CompletedTab_Tapped(object sender, EventArgs e)
+        {
+            TabCompleted.BackgroundColor = _accentColor;
+            TabMyEvents.BackgroundColor = Colors.Transparent;
+            TabAllEvents.BackgroundColor = Colors.Transparent;
+
+            _viewModel.FilterCommand.Execute("Completed");
         }
     }
 }

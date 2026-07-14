@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls;
 
 namespace Handog_MobileApp.Models
 {
     public class NotificationModel : INotifyPropertyChanged
     {
-        public int NotificationId { get; set; }
+        public int NotificationID { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public int TargetAccountNum { get; set; }

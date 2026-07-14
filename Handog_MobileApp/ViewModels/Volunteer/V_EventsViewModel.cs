@@ -78,7 +78,12 @@ namespace Handog_MobileApp.ViewModels.Volunteer
             _navigation = navigation;
             _loggedInAccountNum = accountNum;
 
-            FilterCommand = new Command<string>(async (filterType) => await ExecuteFilterAsync(filterType));
+            FilterCommand = new Command<string>(async (filterType) =>
+            {
+                _activeTabMode = filterType; // Make sure this line exists!
+                await LoadEventsFromDatabaseAsync();
+            });
+
             RegisterCommand = new Command<EventModel>(async (ev) => await ExecuteRegisterAsync(ev));
             UnregisterCommand = new Command<EventModel>(async (ev) => await ExecuteUnregisterAsync(ev));
 
@@ -155,16 +160,27 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                              FROM EVENT e
                              INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum
                              LEFT JOIN EVENTREGISTRATION er ON e.EventNum = er.EventNum AND er.AccountNum = @UserNum
-                             WHERE e.EventStatus = 'Published'";
+                             WHERE 1=1";
 
+                    // 2. Apply status filter based on the active tab
+
+                    if (_activeTabMode == "Completed")
+                    {
+                        query += " AND e.EventStatus = 'Completed' AND er.Registration_ID IS NOT NULL";
+                    }
+                    else if (_activeTabMode == "MyEvents")
+                    {
+                        query += " AND e.EventStatus = 'Published' AND er.Registration_ID IS NOT NULL";
+                    }
+                    else // Default to "AllEvents"
+                    {
+                        query += " AND e.EventStatus = 'Published'";
+                    }
+
+                    // 3. Append Search
                     if (!string.IsNullOrWhiteSpace(SearchQuery))
                     {
                         query += " AND e.EventTitle LIKE @Search";
-                    }
-
-                    if (_activeTabMode == "MyEvents")
-                    {
-                        query += " AND er.Registration_ID IS NOT NULL";
                     }
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -202,11 +218,12 @@ namespace Handog_MobileApp.ViewModels.Volunteer
 
                                 DisplayedEvents.Add(new EventModel
                                 {
-                                    EventID = currentEventId,
+                                    EventID = Convert.ToInt32(reader["EventNum"]),
                                     EventTitle = reader["EventTitle"]?.ToString() ?? "New Event",
-                                    EventDetails = reader["EventDescription"]?.ToString() ?? "",
+                                    EventStatus = reader["EventStatus"]?.ToString() ?? "Published",
                                     EventVenue = reader["EventVenue"]?.ToString() ?? "",
                                     EventAddress = reader["EventAddress"]?.ToString() ?? "TBD",
+                                    EventDescription = reader["EventDescription"]?.ToString() ?? "",
                                     OrganizerName = reader["OrganizerName"]?.ToString() ?? "Anonymous",
                                     EventDate = Convert.ToDateTime(reader["EventDate"]).ToString("yyyy-MM-dd"),
                                     EventTime = reader["StartTime"]?.ToString() ?? "",
@@ -307,7 +324,10 @@ namespace Handog_MobileApp.ViewModels.Volunteer
 
         private void ExecuteViewDetails(EventModel selectedEvent)
         {
-            if (selectedEvent == null || !selectedEvent.IsMyEvent) return;
+            if (selectedEvent == null) return;
+
+            if (!selectedEvent.IsMyEvent && selectedEvent.EventStatus != "Completed")
+                return;
 
             SelectedEventTarget = selectedEvent;
             IsListViewVisible = false;
