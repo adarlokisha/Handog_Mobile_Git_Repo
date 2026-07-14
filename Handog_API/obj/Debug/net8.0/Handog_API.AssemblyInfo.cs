@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Handog_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ed3d1e628392d5abbdab5c73c205cc75e648862")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+768bf589ac1475336800590ba6e193e53324c6d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Handog_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Handog_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

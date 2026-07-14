@@ -8,8 +8,7 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Handog_MobileApp"
     Shell.NavBarIsVisible="False">
-    <ShellContent Title="Home"
+        <ShellContent Title="Home"
               ContentTemplate="{DataTemplate views:LoginPage}"
               Route="LoginPage" />
-
-</Shell>
+    </Shell>

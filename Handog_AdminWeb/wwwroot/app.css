@@ -69,3 +69,15 @@ h1:focus {
     border-right: 4px solid #FAD02C !important;
     font-weight: 600;
 }
+
+/* Add this to wwwroot/app.css to automatically handle active states */
+.header-nav span {
+    background-color: transparent;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.header-nav .active span {
+    background-color: #E9ECEF !important;
+    font-weight: 600 !important;
+}

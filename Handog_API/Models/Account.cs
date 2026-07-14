@@ -1,7 +1,10 @@
-﻿namespace Handog_API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Handog_API.Models
 {
     public class Account
     {
+        [Key]
         public int AccountNum { get; set; }              // PK
         public string Account_ID { get; set; }           // NVARCHAR(10)
         public string Lastname { get; set; }

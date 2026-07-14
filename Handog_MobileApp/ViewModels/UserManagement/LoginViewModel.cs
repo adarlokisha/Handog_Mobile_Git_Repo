@@ -14,7 +14,7 @@ namespace Handog_MobileApp.ViewModels.UserManagement
     public class LoginViewModel : BindableObject
     {
         private const string SavedEmailKey = "User Email";
-        private readonly string _apiBaseUrl = "https://handog-api-crhyajbgcxapfgd3.southeastasia-01.azurewebsites.net\r\n"; // 👈 replace with your Azure API URL
+        private readonly string _apiBaseUrl = "https://handog-api-crhyajbgcxapfgd3.southeastasia-01.azurewebsites.net"; // 👈 replace with your Azure API URL
 
         private string _email;
         private string _password;
@@ -74,7 +74,7 @@ namespace Handog_MobileApp.ViewModels.UserManagement
             try
             {
                 using var client = new HttpClient();
-                var response = await client.PostAsJsonAsync($"{_apiBaseUrl}/login", new { Email, Password });
+                var response = await client.PostAsJsonAsync($"{_apiBaseUrl}/api/account/login", new { Email, Password });
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -91,7 +91,16 @@ namespace Handog_MobileApp.ViewModels.UserManagement
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Login Failed", "Invalid credentials or inactive account.", "OK");
+                    // Extract the exact error message from the backend
+                    var errorContent = await response.Content.ReadAsStringAsync();
+
+                    // Log it to your Output window for debugging
+                    System.Diagnostics.Debug.WriteLine($"[API Error] Status: {response.StatusCode}, Content: {errorContent}");
+
+                    // Display a more specific alert to help you troubleshoot
+                    await Application.Current.MainPage.DisplayAlert("Login Failed",
+                        $"Status: {response.StatusCode}\nDetails: {errorContent}\n\nPlease check your credentials or account status.",
+                        "OK");
                 }
             }
             catch (Exception ex)

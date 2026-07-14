@@ -97,8 +97,8 @@ namespace Handog_MobileApp
         public ICommand BackCommand { get; }
         public ICommand NavigateCommand { get; }
         public ICommand ViewEventDetailsCommand { get; }
-        public ICommand DeleteEventCommand { get; }
         public ICommand EditEventCommand { get; }
+        public ICommand CancelEventCommand { get; }
 
         public EventsViewModel(int sessionAccountNum)
         {
@@ -131,7 +131,7 @@ namespace Handog_MobileApp
                 }
             });
 
-            DeleteEventCommand = new Command<EventModel>(async (evt) => await ExecuteDeleteEvent(evt));
+            CancelEventCommand = new Command<EventModel>(async (evt) => await ExecuteCancelEvent(evt));
             EditEventCommand = new Command<EventModel>(async (evt) => await ExecuteEditEvent(evt));
         }
         public void LoadProposalIntoForm(O_EventProposal proposal)
@@ -217,11 +217,13 @@ namespace Handog_MobileApp
                 {
                     await conn.OpenAsync();
 
-                    // FIX 1: Removed the LOCALE join. e.* already grabs EventVenue and EventAddress!
+                    // ADDED: AND e.EventStatus != 'Cancelled'
+                    // This acts as a global filter, stripping cancelled events from ALL tabs instantly.
                     string baseSql = @"SELECT e.*, a.Firstname + ' ' + a.Lastname AS OrganizerName
                                FROM EVENT e 
                                INNER JOIN ACCOUNT a ON e.OrganizerNum = a.AccountNum 
-                               WHERE (e.EventTitle LIKE @Search)";
+                               WHERE (e.EventTitle LIKE @Search) 
+                               AND e.EventStatus != 'Cancelled'";
 
                     if (_activeTabMode == "MyEvents") baseSql += " AND e.OrganizerNum = @UserNum AND e.EventStatus != 'Completed'";
                     else if (_activeTabMode == "AllEvents") baseSql += " AND e.EventStatus != 'Completed'";
@@ -451,28 +453,6 @@ namespace Handog_MobileApp
             await SyncEventRegistryDataset();
         }
 
-        private async Task ExecuteDeleteEvent(EventModel evt)
-        {
-            bool confirm = await Application.Current.MainPage.DisplayAlert("Delete Event", $"Are you sure you want to delete '{evt.EventTitle}'?", "Yes", "No");
-            if (!confirm) return;
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
-                {
-                    await conn.OpenAsync();
-                    string sql = "DELETE FROM EVENT WHERE EventNum = @EvtNum";
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@EvtNum", evt.EventID);
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                }
-                await SyncEventRegistryDataset(); // Refresh the list
-            }
-            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
-        }
-
         private void ExecuteTogglePanel(string action)
         {
             if (action == "OpenOrganize")
@@ -485,6 +465,48 @@ namespace Handog_MobileApp
             {
                 _editingEventNum = 0;
                 IsOrganizePanelVisible = false;
+            }
+        }
+        private async Task ExecuteCancelEvent(EventModel evt)
+        {
+            if (evt == null) return;
+
+            if (evt.EventStatus == "Cancelled" || evt.EventStatus == "Completed")
+            {
+                await Application.Current.MainPage.DisplayAlert("Notice", $"This event is already {evt.EventStatus.ToLower()}.", "OK");
+                return;
+            }
+
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Cancel Event",
+                $"Are you sure you want to cancel '{evt.EventTitle}'? Registered volunteers will be notified automatically.",
+                "Yes, Cancel",
+                "No");
+
+            if (!confirm) return;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                {
+                    await conn.OpenAsync();
+
+                    // Soft delete using UPDATE instead of DELETE
+                    string sql = "UPDATE EVENT SET EventStatus = 'Cancelled' WHERE EventNum = @EvtNum";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@EvtNum", evt.EventID);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                await SyncEventRegistryDataset();
+                await Application.Current.MainPage.DisplayAlert("Cancelled", "The event has been cancelled successfully.", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Database Error", ex.Message, "OK");
             }
         }
 
@@ -502,4 +524,3 @@ namespace Handog_MobileApp
         }
     }
 }
-

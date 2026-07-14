@@ -92,7 +92,11 @@
             <Border.Shadow>
                 <Shadow Brush="#000000" Offset="0,-2" Radius="4" Opacity="0.05"/>
             </Border.Shadow>
-            <Button Text="COMPLETE EVENT" Command="{Binding ConfirmEventCommand}" BackgroundColor="#FAD02C" TextColor="#1A1A1A" FontAttributes="Bold" CornerRadius="22" HeightRequest="44"/>
+            <Button Text="Complete Event" 
+                Command="{Binding ConfirmEventCommand}" 
+                IsVisible="{Binding IsCompleteButtonVisible}" 
+                BackgroundColor="#FAD02C" 
+                TextColor="White" />
         </Border>
 
     </Grid>

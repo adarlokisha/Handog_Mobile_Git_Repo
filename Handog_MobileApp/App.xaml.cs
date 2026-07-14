@@ -1,4 +1,4 @@
-﻿using Handog_MobileApp.Views.UserManagement;
+using Handog_MobileApp.Views.UserManagement;
 
 namespace Handog_MobileApp
 {
