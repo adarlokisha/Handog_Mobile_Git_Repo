@@ -92,17 +92,20 @@ namespace Handog_MobileApp.ViewModels.Organizer
 
                     // 3. Count "Joined" (Applying the exact same rule: ONLY COMPLETED EVENTS)
                     string joinedCountSql = @"
-                SELECT COUNT(*) 
-                FROM EVENTREGISTRATION r
-                INNER JOIN EVENT e ON r.EventNum = e.EventNum
-                WHERE r.AccountNum = @AccNum 
-                  AND e.EventStatus = 'Completed'
-                  AND r.RegistrationStatus = 'Active'";
+                                            SELECT COUNT(*) 
+                                            FROM EVENTREGISTRATION r
+                                            INNER JOIN EVENT e ON r.EventNum = e.EventNum
+                                            WHERE r.AccountNum = @AccNum 
+                                              AND e.EventStatus = 'Completed'
+                                              AND r.AttendanceStatus = 'Present'";
 
                     using (SqlCommand cmdJoined = new SqlCommand(joinedCountSql, conn))
                     {
                         cmdJoined.Parameters.AddWithValue("@AccNum", _currentOrganizerAccountNum);
-                        CountJoined = (int)await cmdJoined.ExecuteScalarAsync();
+                        int volunteerJoinedCount = (int)await cmdJoined.ExecuteScalarAsync();
+
+                        // THE FIX: Total Joined = Events Organized + Events Volunteered
+                        CountJoined = CountOrganized + volunteerJoinedCount;
                     }
 
                     // You can implement absences later by checking r.AttendanceStatus = 'Absent'
