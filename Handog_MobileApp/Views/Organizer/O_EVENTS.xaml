@@ -69,13 +69,14 @@
                                         BackgroundColor="Red" TextColor="White" FontAttributes="Bold"
                                         WidthRequest="24" HeightRequest="24" CornerRadius="4" Padding="0"
                                         HorizontalOptions="Start" Margin="0,0,0,4"/>
+                                    
+                                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
+                                        <Label Grid.Column="0" Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="WordWrap" VerticalOptions="Center"/>
 
-                                    <HorizontalStackLayout Spacing="6">
-                                        <Label Text="{Binding EventTitle}" FontAttributes="Bold" FontSize="15" TextColor="#1A1A1A" TextDecorations="Underline" LineBreakMode="TailTruncation" VerticalOptions="Center"/>
-                                        <Border StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="{Binding StatusBadgeColor}" Padding="6,2" VerticalOptions="Center">
+                                        <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="{Binding StatusBadgeColor}" Padding="6,2" VerticalOptions="Center">
                                             <Label Text="{Binding StatusLabel}" TextColor="{Binding StatusTextColor}" FontSize="9" FontAttributes="Bold"/>
                                         </Border>
-                                    </HorizontalStackLayout>
+                                    </Grid>
 
                                     <VerticalStackLayout Spacing="2" Margin="0,6,0,6">
                                         <Label Text="{Binding EventVenue, StringFormat='• {0}'}" TextColor="#777777" FontSize="12" LineBreakMode="TailTruncation"/>

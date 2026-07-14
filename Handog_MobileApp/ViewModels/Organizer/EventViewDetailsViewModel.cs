@@ -42,6 +42,17 @@ namespace Handog_MobileApp
             OpenScannerCommand = new Command(async () => await ExecuteOpenScanner());
         }
 
+        public bool IsCompleteButtonVisible
+        {
+            get
+            {
+                if (CurrentEvent == null) return false;
+
+                // Hide the button if the event is still pending approval or already finished
+                return CurrentEvent.EventStatus != "Pending" && CurrentEvent.EventStatus != "Completed";
+            }
+        }
+
         private async Task ExecuteOpenScanner()
         {
             try
@@ -141,11 +152,18 @@ namespace Handog_MobileApp
                 {
                     await conn.OpenAsync();
 
-                    // FIX: Added the EventCompleted column to record the exact date and time!
-                    string sql = @"UPDATE EVENT 
-                           SET EventStatus = 'Completed', 
-                               EventCompleted = @CompletedDate 
-                           WHERE EventNum = @EvtNum";
+                    string sql = @"
+                -- 1. Mark Event as Completed and record the time
+                UPDATE EVENT 
+                SET EventStatus = 'Completed', 
+                    EventCompleted = @CompletedDate 
+                WHERE EventNum = @EvtNum;
+
+                -- 2. Clean up unconfirmed attendees to Absent
+                UPDATE EVENTREGISTRATION 
+                SET AttendanceStatus = 'Absent' 
+                WHERE EventNum = @EvtNum 
+                  AND (AttendanceStatus != 'Present' OR AttendanceStatus IS NULL);";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -154,11 +172,14 @@ namespace Handog_MobileApp
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
+
                 await Application.Current.MainPage.DisplayAlert("Success", "Event successfully completed.", "OK");
-                await Application.Current.MainPage.Navigation.PopAsync(); // Send user back to events list
+                await Application.Current.MainPage.Navigation.PopAsync();
             }
-            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
-
 }
