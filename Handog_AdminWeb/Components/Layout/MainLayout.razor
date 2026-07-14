@@ -8,11 +8,18 @@
 
     <main style="flex: 1; display: flex; flex-direction: column;">
         <header style="background-color: #FFFFFF; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #EAEAEA;">
-            <div style="display: flex; gap: 10px;">
-                <span style="background-color: #E9ECEF; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #495057; cursor: pointer;">Home</span>
-                <span style="padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: #495057; cursor: pointer;">Statistics</span>
+            <!-- Left side: Navigation links using dynamic CSS classes -->
+            <div class="header-nav" style="display: flex; gap: 10px;">
+                <NavLink href="/admin/accounts" style="text-decoration: none;">
+                    <span style="padding: 6px 16px; border-radius: 6px; font-size: 13px; color: #495057; display: inline-block;">Home</span>
+                </NavLink>
+
+                <NavLink href="/dashboard" style="text-decoration: none;">
+                    <span style="padding: 6px 16px; border-radius: 6px; font-size: 13px; color: #495057; display: inline-block;">Statistics</span>
+                </NavLink>
             </div>
 
+            <!-- Right side: Quick profile actions -->
             <div style="display: flex; align-items: center; gap: 20px;">
                 <span class="bi bi-bell" style="font-size: 20px; color: #555555; cursor: pointer;"></span>
                 <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">

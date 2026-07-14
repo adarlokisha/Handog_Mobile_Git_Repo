@@ -162,7 +162,7 @@
                                 @locale.LocaleAddress
                             }
                         </td>
-                        <td style="padding: 15px; color: #333333; vertical-align: middle; position: relative; padding-right: 50px;">
+                        <td style="padding: 15px; color: #333333; vertical-align: middle; position: relative; padding-right: 70px;">
                             @if (locale.IsEditing && locale.IsSelected)
                             {
                                 <input type="text" @bind="locale.ChurchId" style="width: 100%; padding: 4px;" />
@@ -174,7 +174,7 @@
                             <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px;">
                                 @if (locale.IsEditing && locale.IsSelected)
                                 {
-                                    <span class="bi bi-check-square-fill" style="color: #28a745; cursor: pointer; font-size: 18px;" @onclick="() => SaveLocaleChanges(locale)"></span>
+                                    <button @onclick="() => SaveLocaleChanges(locale)" @onclick:stopPropagation="true" style="background-color: #28a745; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Save</button>
                                 }
                                 else
                                 {
@@ -230,19 +230,65 @@
                     <th style="padding: 15px; font-weight: 600;">Venue:</th>
                     <th style="padding: 15px; font-weight: 600;">Type:</th>
                     <th style="padding: 15px; font-weight: 600;">Volunteers:</th>
+                    <th style="padding: 15px; width: 60px;"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var ev in FilteredEvents)
                 {
-                    <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(ev.IsSelected ? "#E9ECEF" : "transparent");">
-                        <td style="padding: 15px;"><input type="checkbox" @bind="ev.IsSelected" /></td>
+                    <tr style="border-bottom: 1px solid #EAEAEA; background-color: @(ev.IsSelected ? "#E9ECEF" : "transparent"); border-left: @(ev.IsSelected ? "4px solid #00BAC7" : "none");">
+                        <td style="padding: 15px;">
+                            <input type="checkbox" @bind="ev.IsSelected" @bind:after="() => OnEventRowUnchecked(ev)" />
+                        </td>
                         <td style="padding: 15px;">@ev.LocaleName</td>
                         <td style="padding: 15px;">@ev.OrganizerName</td>
-                        <td style="padding: 15px;">@ev.Title</td>
-                        <td style="padding: 15px;">@ev.Venue</td>
+
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                            @if (ev.IsEditing && ev.IsSelected)
+                            {
+                                <input type="text" @bind="ev.Title" style="width: 100%; padding: 4px;" />
+                            }
+                            else
+                            {
+                                @ev.Title
+                            }
+                        </td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                            @if (ev.IsEditing && ev.IsSelected)
+                            {
+                                <input type="text" @bind="ev.Venue" style="width: 100%; padding: 4px;" />
+                            }
+                            else
+                            {
+                                @ev.Venue
+                            }
+                        </td>
                         <td style="padding: 15px;">@ev.CategoryName</td>
-                        <td style="padding: 15px;">@ev.VolunteerCapacity</td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle;">
+                            @if (ev.IsEditing && ev.IsSelected)
+                            {
+                                <input type="number" @bind="ev.VolunteerCapacity" style="width: 100%; padding: 4px;" />
+                            }
+                            else
+                            {
+                                @ev.VolunteerCapacity
+                            }
+                        </td>
+                        <td style="padding: 15px; color: #333333; vertical-align: middle; position: relative; padding-right: 70px;">
+                            <div style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px;">
+                                @if (ev.IsEditing && ev.IsSelected)
+                                {
+                                    <button @onclick="() => SaveEventChanges(ev)" @onclick:stopPropagation="true" style="background-color: #28a745; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Save</button>
+                                }
+                                else
+                                {
+                                    <img src="/bootstrap/images/editIcon.png"
+                                         alt="Edit"
+                                         style="width: 16px; height: 16px; object-fit: contain; @(ev.IsSelected ? "cursor: pointer; opacity: 1;" : "cursor: not-allowed; opacity: 0.3;")"
+                                         @onclick="() => { if (ev.IsSelected) ev.IsEditing = true; }" />
+                                }
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -251,7 +297,7 @@
 </div>
 
 @code {
-    private readonly string _connectionString = "Server = tcp:handog-mobile-server.database.windows.net,1433;Initial Catalog = HandogMobileDB;Persist Security Info=False;User ID = handogmobileadmin;Password=password123!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+    private readonly string _connectionString = "Server=tcp:handogmobile.database.windows.net,1433;Initial Catalog=handog-mobile-v3;Persist Security Info=False;User ID=handogadmin;Password=HandogMobileDB!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
     private bool SelectAllLocales { get; set; }
     private bool SelectAllEvents { get; set; }
@@ -279,6 +325,7 @@
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
+        // 1. Load Locales
         string localeSql = @"
             SELECT
                 L.LocaleNum,
@@ -308,8 +355,9 @@
         }
         await locReader.CloseAsync();
 
+        // 2. Load Events
         string eventSql = @"
-            SELECT L.LocaleName, A.Firstname, A.Lastname, E.EventTitle, E.EventVenue, C.CategoryName, E.VolunteerCapacity
+            SELECT E.EventNum, L.LocaleName, A.Firstname, A.Lastname, E.EventTitle, E.EventVenue, C.CategoryName, E.VolunteerCapacity
             FROM EVENT E
             INNER JOIN LOCALE L ON E.LocaleNum = L.LocaleNum
             INNER JOIN ACCOUNT A ON E.OrganizerNum = A.AccountNum
@@ -321,14 +369,16 @@
         {
             EventsList.Add(new EventDBModel
             {
-                LocaleName = evReader.GetString(0),
-                OrganizerName = $"{evReader.GetString(1)} {evReader.GetString(2)}",
-                Title = evReader.GetString(3),
-                Venue = evReader.IsDBNull(4) ? "No Venue" : evReader.GetString(4),
-                CategoryName = evReader.GetString(5),
-                VolunteerCapacity = evReader.GetInt32(6)
+                EventNum = evReader.GetInt32(0),
+                LocaleName = evReader.GetString(1),
+                OrganizerName = $"{evReader.GetString(2)} {evReader.GetString(3)}",
+                Title = evReader.GetString(4),
+                Venue = evReader.IsDBNull(5) ? "No Venue" : evReader.GetString(5),
+                CategoryName = evReader.GetString(6),
+                VolunteerCapacity = evReader.GetInt32(7)
             });
         }
+        await evReader.CloseAsync();
     }
 
     private void ShowCreateLocaleModal()
@@ -344,20 +394,17 @@
     {
         LocaleValidationError = string.Empty;
 
-        // Locale Name and Address are the only required fields.
         if (string.IsNullOrWhiteSpace(NewLocale.LocaleName) || string.IsNullOrWhiteSpace(NewLocale.LocaleAddress))
         {
             LocaleValidationError = "Locale Name and Address are required.";
             return;
         }
 
-        // An organizer is only created if enough of their details were entered.
         bool createOrganizer = !string.IsNullOrWhiteSpace(NewLocale.OrgEmail) && !string.IsNullOrWhiteSpace(NewLocale.OrgFirstname);
 
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        // 1. Structural Insertion of the unique Locale record
         int generatedLocaleNum = 0;
         string insertLocaleSql = @"
             INSERT INTO LOCALE (Locale_ID, LocaleName, LocaleAddress)
@@ -379,7 +426,6 @@
             generatedLocaleNum = Convert.ToInt32(await locCmd.ExecuteScalarAsync());
         }
 
-        // 2. Optionally generate the designated Organizer Account (skipped for a bare, pre-populated locale)
         if (createOrganizer)
         {
             string countQuery = "SELECT COUNT(*) + 1 FROM ACCOUNT WHERE AccRole = 'Organizer'";
@@ -390,7 +436,6 @@
             }
             string generatedAccountId = $"ORG{nextOrgSequence:D5}";
 
-            // Removed explicit ContactNum and AccPassword configurations to prevent missing values exceptions
             string insertAccountSql = @"
                 INSERT INTO ACCOUNT (Account_ID, Firstname, Lastname, Email, AccPassword, ContactNum, AccRole, AccountStatus, ChurchID, LocaleNum, AbsenceCount)
                 VALUES (@AccountId, @First, @Last, @Email, 'PendingSet123!', '00000000000', 'Organizer', 'Active', @ChurchID, @LocaleNum, 0)";
@@ -413,33 +458,46 @@
 
     private async Task SaveLocaleChanges(LocaleUIModel locale)
     {
-        locale.IsEditing = false;
-        using var connection = new SqlConnection(_connectionString);
-        await connection.OpenAsync();
-
-        string updateLocaleSql = "UPDATE LOCALE SET LocaleName = @LocaleName, LocaleAddress = @LocaleAddress WHERE LocaleNum = @LocaleNum";
-        using var localeCmd = new SqlCommand(updateLocaleSql, connection);
-        localeCmd.Parameters.AddWithValue("@LocaleName", locale.LocaleName);
-        localeCmd.Parameters.AddWithValue("@LocaleAddress", locale.LocaleAddress);
-        localeCmd.Parameters.AddWithValue("@LocaleNum", locale.LocaleNum);
-        await localeCmd.ExecuteNonQueryAsync();
-
-        if (locale.AccountNum.HasValue)
+        try
         {
-            var nameParts = locale.OrganizerName.Split(' ', 2);
-            string firstName = nameParts.Length > 0 ? nameParts[0] : locale.OrganizerName;
-            string lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+            locale.IsEditing = false;
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
 
-            string updateAccountSql = "UPDATE ACCOUNT SET Firstname = @First, Lastname = @Last, Email = @Email, ChurchID = @Church WHERE AccountNum = @AccountNum";
-            using var accountCmd = new SqlCommand(updateAccountSql, connection);
-            accountCmd.Parameters.AddWithValue("@First", firstName);
-            accountCmd.Parameters.AddWithValue("@Last", lastName);
-            accountCmd.Parameters.AddWithValue("@Email", locale.Email);
-            accountCmd.Parameters.AddWithValue("@Church", locale.ChurchId == "NULL" ? DBNull.Value : locale.ChurchId);
-            accountCmd.Parameters.AddWithValue("@AccountNum", locale.AccountNum.Value);
-            await accountCmd.ExecuteNonQueryAsync();
+            string updateLocaleSql = "UPDATE LOCALE SET LocaleName = @LocaleName, LocaleAddress = @LocaleAddress WHERE LocaleNum = @LocaleNum";
+            using var localeCmd = new SqlCommand(updateLocaleSql, connection);
+            localeCmd.Parameters.AddWithValue("@LocaleName", locale.LocaleName);
+            localeCmd.Parameters.AddWithValue("@LocaleAddress", locale.LocaleAddress);
+            localeCmd.Parameters.AddWithValue("@LocaleNum", locale.LocaleNum);
+            await localeCmd.ExecuteNonQueryAsync();
+
+            if (locale.AccountNum.HasValue)
+            {
+                var nameParts = locale.OrganizerName.Split(' ', 2);
+                string firstName = nameParts.Length > 0 ? nameParts[0] : locale.OrganizerName;
+                string lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+
+                string updateAccountSql = "UPDATE ACCOUNT SET Firstname = @First, Lastname = @Last, Email = @Email, ChurchID = @Church WHERE AccountNum = @AccountNum";
+                using var accountCmd = new SqlCommand(updateAccountSql, connection);
+                accountCmd.Parameters.AddWithValue("@First", firstName);
+                accountCmd.Parameters.AddWithValue("@Last", lastName);
+                accountCmd.Parameters.AddWithValue("@Email", string.IsNullOrWhiteSpace(locale.Email) ? DBNull.Value : locale.Email);
+
+                // Fixed DBNull handling for ChurchId
+                accountCmd.Parameters.AddWithValue("@Church", string.IsNullOrWhiteSpace(locale.ChurchId) || locale.ChurchId == "NULL" ? DBNull.Value : locale.ChurchId);
+
+                accountCmd.Parameters.AddWithValue("@AccountNum", locale.AccountNum.Value);
+                await accountCmd.ExecuteNonQueryAsync();
+            }
         }
-        await LoadData();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving locale: {ex.Message}");
+        }
+        finally
+        {
+            await LoadData();
+        }
     }
 
     private List<LocaleUIModel> FilteredLocales => LocalesList
@@ -453,6 +511,9 @@
         .Where(e => SelectedEventType == "All" || e.CategoryName.Equals(SelectedEventType, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
+    // ----------------------------------------------------
+    // LOCALE SELECTION LOGIC
+    // ----------------------------------------------------
     private void ToggleSelectAllLocales()
     {
         foreach (var locale in FilteredLocales)
@@ -471,9 +532,66 @@
         }
     }
 
-    private void ToggleSelectAllEvents() => FilteredEvents.ForEach(e => e.IsSelected = SelectAllEvents);
+    // ----------------------------------------------------
+    // EVENT SELECTION & EDITING LOGIC
+    // ----------------------------------------------------
     private void ClearEventFilters() { SelectedEventType = "All"; EventSearchQuery = string.Empty; }
 
+    private void ToggleSelectAllEvents()
+    {
+        foreach (var ev in FilteredEvents)
+        {
+            ev.IsSelected = SelectAllEvents;
+            if (!SelectAllEvents) ev.IsEditing = false;
+        }
+    }
+
+    private void OnEventRowUnchecked(EventDBModel ev)
+    {
+        if (!ev.IsSelected)
+        {
+            ev.IsEditing = false;
+            SelectAllEvents = false;
+        }
+    }
+
+    private async Task SaveEventChanges(EventDBModel ev)
+    {
+        try
+        {
+            ev.IsEditing = false;
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            string updateEventSql = @"
+            UPDATE EVENT
+            SET EventTitle = @Title,
+                EventVenue = @Venue,
+                VolunteerCapacity = @Capacity
+            WHERE EventNum = @EventNum";
+
+            using var eventCmd = new SqlCommand(updateEventSql, connection);
+            eventCmd.Parameters.AddWithValue("@Title", ev.Title);
+            eventCmd.Parameters.AddWithValue("@Venue", string.IsNullOrWhiteSpace(ev.Venue) ? DBNull.Value : ev.Venue);
+            eventCmd.Parameters.AddWithValue("@Capacity", ev.VolunteerCapacity);
+            eventCmd.Parameters.AddWithValue("@EventNum", ev.EventNum);
+
+            await eventCmd.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving event: {ex.Message}");
+        }
+        finally
+        {
+            await LoadData();
+        }
+    }
+
+    // ----------------------------------------------------
+    // DATA MODELS
+    // ----------------------------------------------------
     public class LocaleUIModel
     {
         public int LocaleNum { get; set; }
@@ -489,6 +607,7 @@
 
     public class EventDBModel
     {
+        public int EventNum { get; set; }
         public string LocaleName { get; set; } = string.Empty;
         public string OrganizerName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
@@ -496,6 +615,7 @@
         public string CategoryName { get; set; } = string.Empty;
         public int VolunteerCapacity { get; set; }
         public bool IsSelected { get; set; } = false;
+        public bool IsEditing { get; set; } = false;
     }
 
     public class CreateLocaleBindingModel

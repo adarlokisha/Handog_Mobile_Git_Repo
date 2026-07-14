@@ -149,3 +149,16 @@ C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\ne
 C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.pdb
 C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.genruntimeconfig.cache
 C:\Users\Kisha Adarlo\Desktop\Handog_Mobile_GitRepo\Handog_AdminWeb\obj\Debug\net8.0\ref\Handog_AdminWeb.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Radzen.Blazor.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\de\Radzen.Blazor.resources.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\es\Radzen.Blazor.resources.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\fr\Radzen.Blazor.resources.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\it\Radzen.Blazor.resources.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\ja\Radzen.Blazor.resources.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
