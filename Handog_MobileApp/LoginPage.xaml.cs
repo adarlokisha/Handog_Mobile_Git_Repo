@@ -10,9 +10,9 @@ namespace Handog_MobileApp
     public partial class LoginPage : ContentPage
     {
         private readonly string _connectionString =
-            "Server = tcp:handog-mobile-server.database.windows.net,1433;" +
-            "Initial Catalog = HandogMobileDB; Persist Security Info=False;" +
-            "User ID = handogmobileadmin; Password=password123!!; " +
+            "Server = tcp:handogmobile.database.windows.net,1433;" +
+            "Initial Catalog = handog-mobile-v3; Persist Security Info=False;" +
+            "User ID = handogadmin; Password=HandogMobileDB!; " +
             "MultipleActiveResultSets=False;" +
             "Encrypt=True;" +
             "TrustServerCertificate=False;" +
