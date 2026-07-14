@@ -1,91 +1,106 @@
-﻿@page "/admin/dashboard"
+﻿@page "/dashboard"
 @rendermode InteractiveServer
-@using System
+@using Handog_AdminWeb.Data
+@inject DashboardService DashboardService
 
-<div style="padding: 30px; background-color: #F4F6F8; min-height: 100vh; font-family: sans-serif;">
-
-    <div style="background-color: #1A1A1A; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid #FAD02C;">
-        <h1 style="color: #FAD02C; margin: 0; font-size: 24px; font-weight: bold;">HANDOG Admin Central</h1>
-        <p style="color: #888888; margin: 5px 0 0 0; font-size: 14px;">Mock Database Demo Mode</p>
-    </div>
-
-    <div style="margin-bottom: 20px;">
-        <div style="background-color: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #00BAC7; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <span style="color: #777777; font-size: 12px; font-weight: bold;">VOLUNTEERS REGISTERED:</span>
-            <span style="font-size: 20px; font-weight: bold; margin-left: 10px;">@TotalVolunteers</span>
-        </div>
-
-        <div style="background-color: white; padding: 15px; border-radius: 8px; border-left: 5px solid #E60026; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <span style="color: #777777; font-size: 12px; font-weight: bold;">PENDING HOST REQUESTS:</span>
-            <span style="font-size: 20px; font-weight: bold; margin-left: 10px; color: #E60026;">@PendingProposalsCount</span>
-        </div>
-    </div>
-
-    <div style="background-color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-        <h3 style="margin-top: 0; font-size: 16px; color: #1A1A1A; font-weight: bold;">System Operations Feed</h3>
-        <div style="max-height: 180px; overflow-y: auto; background: #1E1E1E; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 13px; line-height: 1.6;">
-            @foreach (var log in RecentLogs)
-            {
-                <div style="margin-bottom: 6px; color: #D4D4D4;">
-                    <span style="color: #00BAC7; font-weight: bold;">[@log.Timestamp]</span> @log.Message
-                </div>
-            }
-        </div>
-    </div>
-
-    <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-        <h3 style="margin-top: 0; font-size: 16px; color: #1A1A1A; font-weight: bold;">Local State Simulation Tools</h3>
-        <button @onclick="RefreshSystemMetrics" style="background-color: #00BAC7; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px; font-weight: bold; font-size: 13px;">
-            Simulate User Registration
-        </button>
-        <button @onclick="SimulateIncomingProposal" style="background-color: #1A1A1A; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px;">
-            Simulate Request Inflow
-        </button>
-    </div>
-
+<div class="dashboard-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <h3>Dashboard Statistics</h3>
 </div>
 
+@if (isLoading)
+{
+    <p>Loading analytics...</p>
+}
+else
+{
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+        <div class="kpi-card" style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="color: #666; font-size: 14px;">Total Event Attendance (Volunteers)</div>
+            <div style="font-size: 28px; font-weight: bold;">@kpis.TotalAttendance.ToString("N0")</div>
+        </div>
+        <div class="kpi-card" style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="color: #666; font-size: 14px;">Total Active Events</div>
+            <div style="font-size: 28px; font-weight: bold;">@kpis.ActiveEvents</div>
+        </div>
+        <div class="kpi-card" style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="color: #666; font-size: 14px;">Total Distinct Organizers</div>
+            <div style="font-size: 28px; font-weight: bold;">@kpis.DistinctOrganizers</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h5>Volunteer Event Attendance</h5>
+            <RadzenChart>
+                <RadzenBarSeries Data="@attendanceData" CategoryProperty="EventName" ValueProperty="AttendanceCount" Fill="#00BAC7" />
+                <RadzenValueAxis>
+                    <RadzenGridLines Visible="true" />
+                </RadzenValueAxis>
+                <RadzenBarOptions Radius="5" />
+                <RadzenLegend Visible="false" />
+            </RadzenChart>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h5>Events per Organizer</h5>
+            <RadzenDataGrid Data="@organizerData" TItem="OrganizerData" AllowSorting="true" Style="height: 300px; border: none;">
+                <Columns>
+                    <RadzenDataGridColumn TItem="OrganizerData" Property="OrganizerName" Title="Organizer Name" />
+                    <RadzenDataGridColumn TItem="OrganizerData" Property="Role" Title="Role" />
+                    <RadzenDataGridColumn TItem="OrganizerData" Title="Events" Width="150px">
+                        <Template Context="data">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="height: 12px; background-color: #00BAC7; width: @(data.EventCount * 15)px; border-radius: 2px;"></div>
+                                <span>@data.EventCount</span>
+                            </div>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h5>Events per Month (YTD)</h5>
+            <RadzenChart>
+                <RadzenLineSeries Data="@monthlyData" CategoryProperty="Month" ValueProperty="EventCount" Stroke="#00BAC7">
+                    <RadzenMarkers MarkerType="MarkerType.Circle" />
+                </RadzenLineSeries>
+                <RadzenColumnSeries Data="@monthlyData" CategoryProperty="Month" ValueProperty="EventCount" Fill="#CFF4F6" />
+                <RadzenCategoryAxis Padding="20" />
+                <RadzenLegend Visible="false" />
+            </RadzenChart>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h5>Events per Type</h5>
+            <RadzenChart>
+                <RadzenPieSeries Data="@typeData" Title="Events" CategoryProperty="TypeName" ValueProperty="EventCount">
+                    <RadzenSeriesDataLabels Visible="true" />
+                </RadzenPieSeries>
+                <RadzenLegend Position="LegendPosition.Right" />
+            </RadzenChart>
+        </div>
+
+    </div>
+}
 @code {
-    // 1. BACKING FIELD PROPERTIES
-    protected int TotalVolunteers { get; set; } = 142;
-    protected int ActiveEventsCount { get; set; } = 6;
-    protected int PendingProposalsCount { get; set; } = 3;
+    private bool isLoading = true;
+    private DashboardKpis kpis = new();
+    private List<VolunteerAttendance> attendanceData = new();
+    private List<MonthlyEventData> monthlyData = new();
+    private List<EventTypeData> typeData = new();
+    private List<OrganizerData> organizerData = new();
 
-    // 2. MOCK DATA CONTEXT LOG COLLECTION
-    protected List<SystemLogItem> RecentLogs { get; set; } = new()
+    protected override async Task OnInitializedAsync()
     {
-        new() { Timestamp = "16:15", Message = "System core mapping online for Laguna operational sector." },
-        new() { Timestamp = "15:42", Message = "New user registered under role: Volunteer" },
-        new() { Timestamp = "14:10", Message = "Proposal 'Barangay Tree Planting' reviewed and approved" }
-    };
+        // Fetch all live data from Azure SQL
+        kpis = await DashboardService.GetKpisAsync();
+        typeData = await DashboardService.GetEventsByTypeAsync();
+        attendanceData = await DashboardService.GetAttendanceByEventAsync();
+        monthlyData = await DashboardService.GetMonthlyDataAsync();
+        organizerData = await DashboardService.GetOrganizerDataAsync();
 
-    // 3. INTERNAL DATA STRUCTURE MODEL
-    public class SystemLogItem
-    {
-        public string Timestamp { get; set; } = string.Empty;
-        public string Message { get; set; } = string.Empty;
-    }
-
-    // 4. INTERACTIVE CLICK HANDLERS
-    protected void RefreshSystemMetrics()
-    {
-        TotalVolunteers += 4;
-
-        RecentLogs.Insert(0, new SystemLogItem
-        {
-            Timestamp = DateTime.Now.ToString("HH:mm"),
-            Message = "Admin triggered simulation validation pipeline. Metric cache incremented (+4 Vol)."
-        });
-    }
-
-    protected void SimulateIncomingProposal()
-    {
-        PendingProposalsCount++;
-
-        RecentLogs.Insert(0, new SystemLogItem
-        {
-            Timestamp = DateTime.Now.ToString("HH:mm"),
-            Message = "⚠️ Notification: New corporate/community host proposal queued up for verification."
-        });
+        isLoading = false;
     }
 }
