@@ -226,6 +226,7 @@ C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net
 C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.pdb
 C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.genruntimeconfig.cache
 C:\Users\Rance\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\ref\Handog_AdminWeb.dll
+<<<<<<< HEAD
 C:\Handog_MobileApp\Handog_AdminWeb\bin\Debug\net8.0\appsettings.Development.json
 C:\Handog_MobileApp\Handog_AdminWeb\bin\Debug\net8.0\appsettings.json
 C:\Handog_MobileApp\Handog_AdminWeb\bin\Debug\net8.0\Handog_AdminWeb.staticwebassets.runtime.json
@@ -303,6 +304,8 @@ C:\Handog_MobileApp\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.pdb
 C:\Handog_MobileApp\Handog_AdminWeb\obj\Debug\net8.0\Handog_AdminWeb.genruntimeconfig.cache
 C:\Handog_MobileApp\Handog_AdminWeb\obj\Debug\net8.0\ref\Handog_AdminWeb.dll
 =======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
+=======
 C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Radzen.Blazor.dll
 C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\de\Radzen.Blazor.resources.dll
@@ -317,4 +320,7 @@ C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\ne
 C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\LENOVO\Source\Repos\Handog_Mobile_Git_Repo\Handog_AdminWeb\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 >>>>>>> 3e92b3bf4ac7ca716932c1cb1969fda8c4b10f3e
+<<<<<<< HEAD
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
+=======
 >>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b

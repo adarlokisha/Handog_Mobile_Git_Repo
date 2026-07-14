@@ -108,7 +108,10 @@
             <inheritdoc/>
             <inheritdoc/>
             <inheritdoc/>
+<<<<<<< HEAD
             <inheritdoc/>
+=======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
         </member>
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.Proposals">
             <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._proposals"/>
@@ -116,6 +119,7 @@
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.HeaderUsername">
             <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._headerUsername"/>
         </member>
+<<<<<<< HEAD
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.PendingTabColor">
             <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._pendingTabColor"/>
         </member>
@@ -131,18 +135,23 @@
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.ListTitle">
             <inheritdoc cref="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel._listTitle"/>
         </member>
+=======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
         <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.loadDataCommand">
             <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadDataCommand"/>.</summary>
         </member>
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadDataCommand">
             <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.LoadData"/>.</summary>
         </member>
+<<<<<<< HEAD
         <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.switchTabCommand">
             <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.SwitchTabCommand"/>.</summary>
         </member>
         <member name="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.SwitchTabCommand">
             <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand`1"/> instance wrapping <see cref="M:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.SwitchTab(System.String)"/>.</summary>
         </member>
+=======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
         <member name="F:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.rejectCommand">
             <summary>The backing field for <see cref="P:Handog_MobileApp.ViewModel.Organizer.ProposalsViewModel.RejectCommand"/>.</summary>
         </member>
@@ -197,6 +206,7 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Proposals">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Proposals" generated properties.</summary>
         </member>
+<<<<<<< HEAD
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.PendingTabColor">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "PendingTabColor" generated properties.</summary>
         </member>
@@ -212,6 +222,8 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ListTitle">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ListTitle" generated properties.</summary>
         </member>
+=======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
         <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
             <summary>
             A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
@@ -251,6 +263,7 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Proposals">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Proposals" generated properties.</summary>
         </member>
+<<<<<<< HEAD
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.PendingTabColor">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "PendingTabColor" generated properties.</summary>
         </member>
@@ -266,5 +279,7 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ListTitle">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ListTitle" generated properties.</summary>
         </member>
+=======
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
     </members>
 </doc>
