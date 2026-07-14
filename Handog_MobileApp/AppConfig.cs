@@ -8,6 +8,6 @@ namespace Handog_MobileApp
 {
     public static class AppConfig
     {
-        public const string DbConnectionString = "Server=handog-mobile-server.database.windows.net;Initial Catalog=HandogMobileDB;Persist Security Info=False;User ID=handogmobileadmin;Password=password123!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
+        public const string DbConnectionString = "Server=handogmobile.database.windows.net;Initial Catalog=handog-mobile-v3;Persist Security Info=False;User ID=handogadmin;Password=HandogMobileDB!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
     }
 }
