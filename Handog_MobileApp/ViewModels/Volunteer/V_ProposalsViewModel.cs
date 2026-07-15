@@ -187,7 +187,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                     else if (CurrentTab == "ApprovedProposals")
                     {
                         // Strictly displays only approved proposals globally
-                        query += "ProposalStatus = 'Approved'";
+                        query += "ProposalStatus = 'Approved' AND AccountNum = @AccountNum";
                     }
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -265,7 +265,7 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    ShowAlertRequested?.Invoke("Success", $"Proposal {proposalIdFormatted} submitted successfully!");
+                    ShowAlertRequested?.Invoke("Success", $"Proposal submitted successfully!");
 
                     // Reset form properties
                     ProposalTitle = string.Empty;
@@ -303,8 +303,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
         }
     
 
-    // 1. Add backing field near your other fields
-private string _headerUsername = "...";
+        // 1. Add backing field near your other fields
+        private string _headerUsername = "...";
 
         // 2. Add public UI tracking property
         public string HeaderUsername

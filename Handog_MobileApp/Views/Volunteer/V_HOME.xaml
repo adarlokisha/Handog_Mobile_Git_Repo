@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:Handog_MobileApp.ViewModels"
              xmlns:models="clr-namespace:Handog_MobileApp.Models"
+             xmlns:viewmodels="clr-namespace:Handog_MobileApp.ViewModels"
              x:Class="Handog_MobileApp.V_HOME"
              BackgroundColor="#F4F6F8"
              NavigationPage.HasNavigationBar="False"
@@ -15,10 +15,10 @@
 
                     <!-- Welcome Header Area -->
                     <Border BackgroundColor="#00BAC7" 
-                    StrokeShape="RoundRectangle 0,0,24,24" 
-                    StrokeThickness="0" 
-                    Padding="0" 
-                    Margin="0">
+                            StrokeShape="RoundRectangle 0,0,24,24" 
+                            StrokeThickness="0" 
+                            Padding="0" 
+                            Margin="0">     
 
                         <!-- Added Shadow as per original request -->
                         <Border.Shadow>
@@ -26,19 +26,19 @@
                         </Border.Shadow>
 
                         <Grid RowDefinitions="Auto" 
-                      ColumnDefinitions="*, Auto" 
-                      Padding="20, 48, 20, 24">
+                              ColumnDefinitions="*, Auto" 
+                              Padding="20, 48, 20, 24">
 
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
                                 <Label Text="Welcome back," 
-                               TextColor="Black" 
-                               FontSize="14" 
-                               Opacity="0.8"/>
+                                       TextColor="Black" 
+                                       FontSize="16" 
+                                       Opacity="0.8"/>
                                 <Label Text="{Binding WelcomeName, StringFormat='{0}!'}" 
-                               TextColor="Black" 
-                               FontSize="24" 
-                               FontAttributes="Bold" 
-                               Margin="0,2,0,0"/>
+                                       TextColor="Black" 
+                                       FontSize="24" 
+                                       FontAttributes="Bold" 
+                                       Margin="0,2,0,0"/>
                             </VerticalStackLayout>
 
                             <!-- Notification Bell Container -->
@@ -87,36 +87,43 @@
                     </Grid>
 
                     <!-- Metrics Analytics Card -->
-                    <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
+                    <Border Margin="20,4,20,0" StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
-                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
+                            <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.05"/>
                         </Border.Shadow>
 
-                        <Grid ColumnDefinitions="*, Auto" Padding="16" VerticalOptions="Center">
-                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                                <Label Text="PARTICIPATION RATE" 
-                                       TextColor="#1A1A1A" 
-                                       FontAttributes="Bold" 
-                                       FontSize="15"/>
-                                <Label Text="{Binding ParticipationText}" 
-                                       TextColor="#777777" 
-                                       FontSize="12"/>
-                            </VerticalStackLayout>
+                        <VerticalStackLayout Padding="20,24" Spacing="0" VerticalOptions="Center">
 
-                            <Grid Grid.Column="1" WidthRequest="64" HeightRequest="64" HorizontalOptions="End">
-                                <Ellipse Stroke="#F0F2F5" StrokeThickness="6" WidthRequest="60" HeightRequest="60"/>
-                                <Ellipse Stroke="#FAD02C" StrokeThickness="6" StrokeDashArray="10, 2" WidthRequest="60" HeightRequest="60"/>
-                                <Label Text="{Binding ParticipationPercentage}" 
+                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="8" VerticalOptions="Center">
+                                <Label Text="YOU'VE JOINED" 
                                        TextColor="#1A1A1A" 
                                        FontAttributes="Bold" 
-                                       FontSize="14" 
-                                       HorizontalOptions="Center" 
-                                       VerticalOptions="Center"/>
-                            </Grid>
-                        </Grid>
+                                       FontSize="18" 
+                                       VerticalOptions="End" 
+                                       Margin="0,0,0,9"/>
+                                <Label Text="{Binding JoinedEvents}" 
+                                       TextColor="#00BAC7" 
+                                       FontAttributes="Bold" 
+                                       FontSize="38" 
+                                       VerticalOptions="End" 
+                                       LineHeight="1"/>
+
+                                <Label Text="EVENTS" 
+                                       TextColor="#1A1A1A" 
+                                       FontAttributes="Bold" 
+                                       FontSize="18" 
+                                       VerticalOptions="End" 
+                                       Margin="0,0,0,9"/>
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding TotalEvents, StringFormat='out of {0} total events'}" 
+                                   TextColor="#777777" 
+                                   FontSize="15" 
+                                   HorizontalOptions="Center" 
+                                   Margin="0,2,0,0"/>
+                        </VerticalStackLayout>
                     </Border>
-
-                    <!-- Info About Platform Content Section Card -->
+                <!-- Info About Platform Content Section Card -->
                     <Border Margin="16,4,16,0" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="White">
                         <Border.Shadow>
                             <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.04"/>
@@ -163,7 +170,7 @@
                     <ImageButton x:Name="HomeBtn" Grid.Column="0" Source="home.png" 
                      Command="{Binding NavigateToHomeCommand}" CommandParameter="{x:Reference HomeBtn}" 
                      HorizontalOptions="Center" VerticalOptions="Center" 
-                     HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent"/>
+                     HeightRequest="32" WidthRequest="32" BackgroundColor="Transparent"/>
 
                     <ImageButton x:Name="ProposalsBtn" Grid.Column="1" Source="proposals.png" 
                      Command="{Binding NavigateToProposalsCommand}" CommandParameter="{x:Reference ProposalsBtn}" 

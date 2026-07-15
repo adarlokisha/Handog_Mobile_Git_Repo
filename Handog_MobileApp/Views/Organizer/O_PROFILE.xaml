@@ -116,7 +116,7 @@
                 </VerticalStackLayout>
 
                 <Button Text="LOGOUT"
-                        BackgroundColor="Red"
+                        BackgroundColor="#D32F2F"
                         TextColor="White"
                         FontAttributes="Bold"
                         FontSize="12"

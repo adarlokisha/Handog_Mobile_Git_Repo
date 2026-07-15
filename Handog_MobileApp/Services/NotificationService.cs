@@ -1,80 +1,76 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using Handog_MobileApp.ViewModels.Organizer; // Adjust based on where AppNotification is located
+using Handog_MobileApp.Models;
 
 namespace Handog_MobileApp.Services
 {
     public class NotificationService
     {
-        // Centralized fetch for either Organizer or Volunteer
-        public async Task<List<AppNotification>> GetNotificationsAsync(int accountNum, int topCount = 10)
+        public async Task<List<NotificationModel>> GetNotificationsAsync(int accountNum)
         {
-            var list = new List<AppNotification>();
-
-            try
+            var notifications = new List<NotificationModel>();
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
-                {
-                    await conn.OpenAsync();
-                    string query = $@"
-                        SELECT TOP {topCount} NotificationID, Title, Message, IsRead 
-                        FROM NOTIFICATION 
-                        WHERE AccountNum = @AccountNum 
-                        ORDER BY CreatedAt DESC";
+                await conn.OpenAsync();
+                string query = @"SELECT TOP 10 NotificationID, Title, Message, IsRead 
+                                 FROM NOTIFICATION 
+                                 WHERE AccountNum = @AccountNum 
+                                 ORDER BY CreatedAt DESC";
 
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@AccountNum", System.Data.SqlDbType.Int).Value = accountNum;
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        cmd.Parameters.AddWithValue("@AccountNum", accountNum);
-                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
                         {
-                            while (await reader.ReadAsync())
+                            notifications.Add(new NotificationModel
                             {
-                                list.Add(new AppNotification
-                                {
-                                    NotificationID = Convert.ToInt32(reader["NotificationID"]),
-                                    Title = reader["Title"]?.ToString() ?? "",
-                                    Message = reader["Message"]?.ToString() ?? "",
-                                    IsRead = Convert.ToBoolean(reader["IsRead"])
-                                });
-                            }
+                                NotificationID = Convert.ToInt32(reader["NotificationID"]),
+                                Title = reader["Title"].ToString(),
+                                Message = reader["Message"].ToString(),
+                                IsRead = Convert.ToBoolean(reader["IsRead"])
+                            });
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error fetching notifications: {ex.Message}");
-                // Optional: Fallback item if database goes down
-                list.Add(new AppNotification { NotificationID = -1, Title = "Offline", Message = "Could not sync updates.", IsRead = true });
-            }
-
-            return list;
+            return notifications;
         }
 
-        // Centralized update
-        public async Task<bool> MarkAsReadAsync(int notificationId)
+        public async Task CreateNotificationAsync(int accountNum, string title, string message)
         {
-            try
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
+                await conn.OpenAsync();
+                string query = @"INSERT INTO NOTIFICATION (AccountNum, Title, Message, IsRead, CreatedAt) 
+                         VALUES (@AccountNum, @Title, @Message, 0, GETDATE())";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    await conn.OpenAsync();
-                    string query = "UPDATE NOTIFICATION SET IsRead = 1 WHERE NotificationID = @ID";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID", notificationId);
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
-                        return rowsAffected > 0;
-                    }
+                    cmd.Parameters.AddWithValue("@AccountNum", accountNum);
+                    cmd.Parameters.AddWithValue("@Title", title);
+                    cmd.Parameters.AddWithValue("@Message", message);
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
-            catch (Exception ex)
+        }
+
+        public async Task MarkAsReadAsync(int notificationId)
+        {
+            using (SqlConnection conn = new SqlConnection(AppConfig.DbConnectionString))
             {
-                System.Diagnostics.Debug.WriteLine($"Error marking read in service: {ex.Message}");
-                return false;
+                await conn.OpenAsync();
+                string query = "UPDATE NOTIFICATION SET IsRead = 1 WHERE NotificationID = @ID";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@ID", System.Data.SqlDbType.Int).Value = notificationId;
+                    await cmd.ExecuteNonQueryAsync();
+                }
             }
         }
+
+
     }
 }

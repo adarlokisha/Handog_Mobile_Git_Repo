@@ -12,9 +12,7 @@ namespace Handog_MobileApp.Models
         public int JoinedEvents { get; set; }
         public int TotalEvents { get; set; }
 
-        // Calculates the percentage automatically
-        public double ParticipationRate => TotalEvents > 0
-            ? Math.Round((double)JoinedEvents / TotalEvents * 100)
-            : 0;
+        
     }
 }
+ 
