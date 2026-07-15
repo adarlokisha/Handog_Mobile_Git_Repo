@@ -1992,23 +1992,39 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\LENOVO\\.nuget\\packages\\": {},
+<<<<<<< HEAD
+    "C:\\Users\\Windows 11\\.nuget\\packages\\": {},
+=======
+    "C:\\Users\\Rance\\.nuget\\packages\\": {},
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LENOVO\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+<<<<<<< HEAD
+      "projectUniqueName": "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
       "projectName": "Handog_AdminWeb",
-      "projectPath": "C:\\Users\\LENOVO\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
-      "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LENOVO\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\obj\\",
+      "projectPath": "C:\\Handog_MobileApp\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+      "packagesPath": "C:\\Users\\Windows 11\\.nuget\\packages\\",
+      "outputPath": "C:\\Handog_MobileApp\\Handog_AdminWeb\\obj\\",
+=======
+      "projectUniqueName": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+      "projectName": "Handog_AdminWeb",
+      "projectPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\Handog_AdminWeb.csproj",
+      "packagesPath": "C:\\Users\\Rance\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Rance\\Source\\Repos\\Handog_Mobile_Git_Repo\\Handog_AdminWeb\\obj\\",
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+<<<<<<< HEAD
+        "C:\\Users\\Windows 11\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+        "C:\\Users\\Rance\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> 77d3ebbadf9a75aab7d636772facc07b8b8d629b
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2078,7 +2094,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

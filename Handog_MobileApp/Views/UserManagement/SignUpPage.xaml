@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Handog_MobileApp.Views.UserManagement.SignUpPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#4DD0E1" Offset="0.0" />
+            <GradientStop Color="White" Offset="0.4" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15" VerticalOptions="Center">
+
+            <!-- Logo -->
+            <Image Source="login_logo.png"
+                   HeightRequest="100"
+                   WidthRequest="220"
+                   HorizontalOptions="Center"
+                   Aspect="AspectFit"
+                   Margin="0,0,0,5"/>
+
+            <!-- Role label -->
+            <Label x:Name="RoleLabel"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Black" />
+
+            <!-- Card container -->
+            <Border StrokeShape="RoundRectangle 25"
+                    StrokeThickness="0"
+                    BackgroundColor="White"
+                    HorizontalOptions="Center"
+                    WidthRequest="350"
+                    Padding="25,30">
+                <Border.Shadow>
+                    <Shadow Brush="#000000"
+                            Offset="0,10"
+                            Radius="20"
+                            Opacity="0.1" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="15">
+
+                    <!-- First name -->
+                    <Border StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#EAEAEA"
+                            Padding="15,4">
+                        <Entry x:Name="FirstNameEntry"
+                               Placeholder="First Name"
+                               PlaceholderColor="#A0A0A0"
+                               TextColor="Black"
+                               FontSize="14" />
+                    </Border>
+
+                    <!-- Last name -->
+                    <Border StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#EAEAEA"
+                            Padding="15,4">
+                        <Entry x:Name="LastNameEntry"
+                               Placeholder="Last Name"
+                               PlaceholderColor="#A0A0A0"
+                               TextColor="Black"
+                               FontSize="14" />
+                    </Border>
+
+                    <!-- Email -->
+                    <Border StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#EAEAEA"
+                            Padding="15,4">
+                        <Entry x:Name="EmailEntry"
+                               Placeholder="Email*"
+                               PlaceholderColor="#A0A0A0"
+                               Keyboard="Email"
+                               TextColor="Black"
+                               FontSize="14" />
+                    </Border>
+
+                    <!-- Contact -->
+                    <VerticalStackLayout Spacing="5">
+                        <Border StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#EAEAEA"
+                                Padding="15,4">
+                            <Entry x:Name="ContactEntry"
+                                   Placeholder="Contact Number*"
+                                   PlaceholderColor="#A0A0A0"
+                                   Keyboard="Telephone"
+                                   TextColor="Black"
+                                   FontSize="14" />
+                        </Border>
+                        <Label Text="Please ensure that you enter a valid mobile number as it may be used to contact you."
+                               FontSize="11"
+                               TextColor="#444444"
+                               LineHeight="1.2"
+                               Margin="5,0" />
+                    </VerticalStackLayout>
+
+                    <!-- Organizer-specific field -->
+                    <VerticalStackLayout x:Name="OrganizerFieldsContainer" Spacing="5" IsVisible="False">
+                        <Border StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#EAEAEA"
+                                Padding="15,4">
+                            <Entry x:Name="LocaleEntry"
+                                   Placeholder="Locale / Region / Branch*"
+                                   PlaceholderColor="#A0A0A0"
+                                   TextColor="Black"
+                                   FontSize="14" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Password + Confirm -->
+                    <VerticalStackLayout Spacing="10">
+                        <Border StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#EAEAEA"
+                                Padding="15,4">
+                            <Entry x:Name="PasswordEntry"
+                                   Placeholder="Password*"
+                                   PlaceholderColor="#A0A0A0"
+                                   IsPassword="True"
+                                   TextColor="Black"
+                                   FontSize="14" />
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#EAEAEA"
+                                Padding="15,4">
+                            <Entry x:Name="ConfirmPasswordEntry"
+                                   Placeholder="Confirm Password*"
+                                   PlaceholderColor="#A0A0A0"
+                                   IsPassword="True"
+                                   TextColor="Black"
+                                   FontSize="14" />
+                        </Border>
+
+                        <!-- Password rules -->
+                        <VerticalStackLayout Spacing="2" Margin="5,0">
+                            <Label Text="• Must be between 8-32 characters" FontSize="11" TextColor="Black" />
+                            <Label Text="• Must have 1 uppercase letter (A-Z)" FontSize="11" TextColor="Black" />
+                            <Label Text="• Must have 1 lowercase letter (a-z)" FontSize="11" TextColor="Black" />
+                            <Label Text="• Must have 1 number (0-9)" FontSize="11" TextColor="Black" />
+                            <Label Text="• Must have a special character (!@#$%^&amp;*)" FontSize="11" TextColor="Black" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Sign up button -->
+                    <Grid HeightRequest="48" Margin="0,10,0,0">
+                        <Border StrokeShape="RoundRectangle 24" StrokeThickness="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#17C3EE" Offset="0.0" />
+                                    <GradientStop Color="#F3D968" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <Button x:Name="SignUp"
+                                Text="SIGN UP"
+                                BackgroundColor="Transparent"
+                                TextColor="White"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                CornerRadius="24"
+                                Clicked="OnSignUpClicked" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

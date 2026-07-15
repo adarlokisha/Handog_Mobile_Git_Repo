@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handog_MobileApp", "Handog_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handog_AdminWeb", "..\Handog_AdminWeb\Handog_AdminWeb.csproj", "{F6361A3B-C5DE-40CD-A866-C376788CFB9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handog_API", "..\Handog_API\Handog_API.csproj", "{61CFB82A-4245-47B2-860B-41E39A525C5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,14 @@ Global
 		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|ARM32.ActiveCfg = Release|Any CPU
 		{F6361A3B-C5DE-40CD-A866-C376788CFB9D}.Release|ARM32.Build.0 = Release|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Debug|ARM32.ActiveCfg = Debug|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Debug|ARM32.Build.0 = Debug|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Release|ARM32.ActiveCfg = Release|Any CPU
+		{61CFB82A-4245-47B2-860B-41E39A525C5D}.Release|ARM32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

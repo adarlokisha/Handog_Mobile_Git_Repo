@@ -1,4 +1,6 @@
-﻿namespace Handog_MobileApp
+using Handog_MobileApp.Views.UserManagement;
+
+namespace Handog_MobileApp
 {
     public partial class App : Application
     {
