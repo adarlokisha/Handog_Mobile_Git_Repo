@@ -14,10 +14,7 @@
     "configProperties": {
       "MVVMTOOLKIT_ENABLE_INOTIFYPROPERTYCHANGING_SUPPORT": true,
       "System.GC.Server": true,
-<<<<<<< HEAD
-=======
       "System.Reflection.NullabilityInfoContext.IsSupported": true,
->>>>>>> 3e92b3bf4ac7ca716932c1cb1969fda8c4b10f3e
       "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
     }
   }
