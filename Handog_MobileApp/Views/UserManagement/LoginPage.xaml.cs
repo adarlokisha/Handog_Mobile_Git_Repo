@@ -1,5 +1,5 @@
-using Handog_MobileApp.ViewModels.UserManagement;
 using Microsoft.Maui.Controls;
+using Handog_MobileApp.ViewModels.UserManagement;
 
 namespace Handog_MobileApp.Views.UserManagement
 {
@@ -8,7 +8,8 @@ namespace Handog_MobileApp.Views.UserManagement
         public LoginPage()
         {
             InitializeComponent();
-            BindingContext = new ViewModels.UserManagement.LoginViewModel { Navigation = this.Navigation };
+
+            BindingContext = new LoginViewModel { Navigation = this.Navigation };
         }
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Handog_AdminWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93096c9d39c5aa795c58f8a437da566b157614d0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76367e067408db7094d62ec30b2cb278fc56d146")]
 [assembly: System.Reflection.AssemblyProductAttribute("Handog_AdminWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Handog_AdminWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

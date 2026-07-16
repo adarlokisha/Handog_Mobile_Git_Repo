@@ -228,7 +228,8 @@
             FROM EVENT E
             INNER JOIN EVENTCATEGORY C ON E.CategoryNum = C.CategoryNum
             INNER JOIN ACCOUNT A ON E.OrganizerNum = A.AccountNum
-            WHERE E.EventStatus = 'Pending'";
+            WHERE E.EventStatus = 'Pending'
+            ORDER BY E.EventNum DESC";
 
         using var command = new SqlCommand(query, connection);
         await connection.OpenAsync();

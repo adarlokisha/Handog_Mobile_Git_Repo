@@ -190,6 +190,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                         query += "ProposalStatus = 'Approved' AND AccountNum = @AccountNum";
                     }
 
+                    query += " ORDER BY ProposalNum DESC";
+
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Add parameter safe-guards

@@ -183,6 +183,8 @@ namespace Handog_MobileApp.ViewModels.Volunteer
                         query += " AND e.EventTitle LIKE @Search";
                     }
 
+                    query += " ORDER BY e.EventNum DESC";
+
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Always add UserNum parameter since it's needed for the LEFT JOIN status check

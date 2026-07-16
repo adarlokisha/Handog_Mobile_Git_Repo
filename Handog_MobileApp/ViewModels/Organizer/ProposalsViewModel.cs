@@ -102,7 +102,8 @@ namespace Handog_MobileApp.ViewModel.Organizer
                       a.Firstname + ' ' + a.Lastname as ProposerName
                FROM EVENTPROPOSAL p
                JOIN ACCOUNT a ON p.AccountNum = a.AccountNum
-               WHERE p.ProposalStatus {statusFilter}";
+               WHERE p.ProposalStatus {statusFilter}
+               ORDER BY p.ProposalNum DESC";
 
                 await conn.OpenAsync();
                 using var cmd = new SqlCommand(sql, conn);
@@ -176,7 +177,8 @@ namespace Handog_MobileApp.ViewModel.Organizer
                     Proposals.Remove(p);
                 });
 
-                await Application.Current.MainPage.Navigation.PushAsync(new O_EVENTS(_currentAccountNum));
+                // MODIFIED: Pass the proposal 'p' along to the Events page
+                await Application.Current.MainPage.Navigation.PushAsync(new O_EVENTS(_currentAccountNum, p));
             }
             catch (Exception ex)
             {

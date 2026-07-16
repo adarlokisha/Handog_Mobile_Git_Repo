@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Handog_MobileApp.LoginPage"
+             x:Class="Handog_MobileApp.Views.UserManagement.LoginPage"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
 
@@ -43,6 +43,7 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry x:Name="EmailEntry"
+                                   Text="{Binding Email}"
                                    Placeholder="Email Address"
                                    Keyboard="Email"
                                    BackgroundColor="Transparent"
@@ -58,8 +59,9 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <Entry x:Name="PasswordEntry"
+                                   Text="{Binding Password}"
                                    Placeholder="Password"
-                                   IsPassword="True"
+                                   IsPassword="{Binding IsPasswordHidden}"
                                    BackgroundColor="Transparent"
                                    PlaceholderColor="#A0A0A0"
                                    TextColor="#333333"
@@ -68,7 +70,7 @@
 
                         <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,5">
                             <HorizontalStackLayout Grid.Column="0" Spacing="5">
-                                <CheckBox CheckedChanged="OnShowPasswordChecked"
+                                <CheckBox IsChecked="{Binding IsPasswordVisible}"
                                           Color="#333333" 
                                           VerticalOptions="Center"/>
                                 <Label Text="Show Password"
@@ -85,17 +87,17 @@
                                    HorizontalOptions="End"
                                    Grid.Column="1">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnForgotPasswordTapped"/>
+                                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}"/>
                                 </Label.GestureRecognizers>
                             </Label>
                         </Grid>
 
                         <Button x:Name="LoginBtn"
                                 Text="LOGIN"
+                                Command="{Binding LoginCommand}"
                                 FontSize="15"
                                 FontAttributes="Bold"
                                 TextColor="White"
-                                Clicked="OnLogin_Clicked"
                                 HorizontalOptions="Fill"
                                 HeightRequest="50"
                                 CornerRadius="25">
@@ -121,7 +123,7 @@
                            FontSize="13"
                            HorizontalOptions="Center">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnSignUpTapped"/>
+                            <TapGestureRecognizer Command="{Binding SignUpCommand}"/>
                         </Label.GestureRecognizers>
                     </Label>
                 </VerticalStackLayout>
@@ -129,7 +131,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Grid x:Name="AppealOverlay" BackgroundColor="#80000000" IsVisible="False" InputTransparent="False">
+        <Grid BackgroundColor="#80000000" IsVisible="{Binding IsAppealVisible}" InputTransparent="False">
             <Border BackgroundColor="White" 
                     StrokeThickness="0" 
                     Margin="30" 
@@ -144,7 +146,7 @@
                     <Label Text="Account Suspended" FontSize="20" FontAttributes="Bold" TextColor="#D32F2F" HorizontalOptions="Center"/>
                     <Label Text="Your account has been banned. If you believe this was an error, you may submit an appeal to the administrators below." FontSize="14" TextColor="#333" HorizontalTextAlignment="Center"/>
 
-                    <Editor x:Name="AppealReasonEditor"
+                    <Editor Text="{Binding AppealReason}"
                             Placeholder="Explain why your account should be unbanned..."
                             HeightRequest="120"
                             BackgroundColor="#F5F5F5"
@@ -152,16 +154,16 @@
                             FontSize="14"/>
 
                     <Button Text="Submit Appeal" 
+                            Command="{Binding SubmitAppealCommand}"
                             BackgroundColor="#00BAC7" 
                             TextColor="White" 
                             FontAttributes="Bold" 
-                            CornerRadius="8" 
-                            Clicked="OnSubmitAppeal_Clicked"/>
+                            CornerRadius="8" />
 
                     <Button Text="Cancel" 
+                            Command="{Binding CancelAppealCommand}"
                             BackgroundColor="Transparent" 
-                            TextColor="#777" 
-                            Clicked="OnCancelAppeal_Clicked"/>
+                            TextColor="#777" />
                 </VerticalStackLayout>
             </Border>
         </Grid>

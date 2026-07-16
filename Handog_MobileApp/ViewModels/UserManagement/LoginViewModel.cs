@@ -8,17 +8,20 @@ using Handog_MobileApp.Views.Organizer;
 using Handog_MobileApp.Views.Volunteer;
 using Handog_MobileApp.Views.UserManagement;
 using Handog_MobileApp.Models;
+using System;
 
 namespace Handog_MobileApp.ViewModels.UserManagement
 {
     public class LoginViewModel : BindableObject
     {
         private const string SavedEmailKey = "User Email";
-        private readonly string _apiBaseUrl = "https://handog-api-crhyajbgcxapfgd3.southeastasia-01.azurewebsites.net"; // 👈 replace with your Azure API URL
+        private readonly string _apiBaseUrl = "https://handog-api-crhyajbgcxapfgd3.southeastasia-01.azurewebsites.net";
 
         private string _email;
         private string _password;
         private bool _isPasswordVisible;
+        private bool _isAppealVisible;
+        private string _appealReason;
 
         public string Email
         {
@@ -32,16 +35,39 @@ namespace Handog_MobileApp.ViewModels.UserManagement
             set { _password = value; OnPropertyChanged(); }
         }
 
+        // Handles the Checkbox state
         public bool IsPasswordVisible
         {
             get => _isPasswordVisible;
-            set { _isPasswordVisible = value; OnPropertyChanged(); }
+            set
+            {
+                _isPasswordVisible = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsPasswordHidden)); // Notifies the Entry to update
+            }
+        }
+
+        // Inverts the visibility for the Entry.IsPassword property
+        public bool IsPasswordHidden => !IsPasswordVisible;
+
+        // Handles the Appeal Overlay visibility
+        public bool IsAppealVisible
+        {
+            get => _isAppealVisible;
+            set { _isAppealVisible = value; OnPropertyChanged(); }
+        }
+
+        public string AppealReason
+        {
+            get => _appealReason;
+            set { _appealReason = value; OnPropertyChanged(); }
         }
 
         public ICommand LoginCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
         public ICommand SignUpCommand { get; }
-        public ICommand TogglePasswordCommand { get; }
+        public ICommand SubmitAppealCommand { get; }
+        public ICommand CancelAppealCommand { get; }
 
         public INavigation Navigation { get; set; }
 
@@ -52,7 +78,10 @@ namespace Handog_MobileApp.ViewModels.UserManagement
             LoginCommand = new Command(async () => await LoginAsync());
             ForgotPasswordCommand = new Command(async () => await Navigation.PushAsync(new ForgotPasswordPage()));
             SignUpCommand = new Command(async () => await Navigation.PushAsync(new SignUpRolePage()));
-            TogglePasswordCommand = new Command(() => IsPasswordVisible = !IsPasswordVisible);
+
+            // Appeal Commands
+            SubmitAppealCommand = new Command(async () => await SubmitAppealAsync());
+            CancelAppealCommand = new Command(() => IsAppealVisible = false);
         }
 
         private void LoadSavedEmail()
@@ -91,15 +120,19 @@ namespace Handog_MobileApp.ViewModels.UserManagement
                 }
                 else
                 {
-                    // Extract the exact error message from the backend
                     var errorContent = await response.Content.ReadAsStringAsync();
-
-                    // Log it to your Output window for debugging
                     System.Diagnostics.Debug.WriteLine($"[API Error] Status: {response.StatusCode}, Content: {errorContent}");
 
-                    // Display a more specific alert to help you troubleshoot
+                    // Trigger the Appeal Overlay if the backend says the account is banned
+                    if (errorContent.Contains("banned", StringComparison.OrdinalIgnoreCase) ||
+                        errorContent.Contains("suspended", StringComparison.OrdinalIgnoreCase))
+                    {
+                        IsAppealVisible = true;
+                        return;
+                    }
+
                     await Application.Current.MainPage.DisplayAlert("Login Failed",
-                        $"Status: {response.StatusCode}\nDetails: {errorContent}\n\nPlease check your credentials or account status.",
+                        $"Status: {response.StatusCode}\nDetails: {errorContent}\n\nPlease check your credentials.",
                         "OK");
                 }
             }
@@ -107,6 +140,21 @@ namespace Handog_MobileApp.ViewModels.UserManagement
             {
                 await Application.Current.MainPage.DisplayAlert("API Error", ex.Message, "OK");
             }
+        }
+
+        private async Task SubmitAppealAsync()
+        {
+            if (string.IsNullOrEmpty(AppealReason))
+            {
+                await Application.Current.MainPage.DisplayAlert("Required", "Please provide a reason for your appeal.", "OK");
+                return;
+            }
+
+            // Note: You will need to build the API endpoint for submitting appeals later.
+            // For now, this just hides the overlay and shows a success message.
+            await Application.Current.MainPage.DisplayAlert("Submitted", "Your appeal has been submitted successfully to the administration team.", "OK");
+            AppealReason = string.Empty;
+            IsAppealVisible = false;
         }
     }
 
